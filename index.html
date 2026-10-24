@@ -203,13 +203,12 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
 </div></div>
 <div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-8">
+<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
 <section><h3 class="opt-sec">Leitura</h3>
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
-<section><h3 class="opt-sec">Você</h3>
-<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
 
 <!-- Sub-Menu Específico para Gerenciamento de Backup -->
 <section><h3 class="opt-sec">Gerenciamento de Backup</h3>
