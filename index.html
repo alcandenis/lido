@@ -282,7 +282,7 @@ function inicializarGoogleDrive() {
       client_id: CLIENT_ID,
       scope: SCOPES,
       ux_mode: 'popup',
-      callback: (response) => {
+      callback: async (response) => {
         if (response.error !== undefined) {
           aviso('Erro na autenticação com o Google.');
           return;
@@ -290,7 +290,7 @@ function inicializarGoogleDrive() {
         accessToken = response.access_token;
         atualizarStatusGoogleUI();
         aviso('Conectado ao Google Drive com sucesso!');
-        sincronizarComDrive();
+        await restaurarDoGoogleDriveAutomatico();
       },
     });
   }
@@ -303,9 +303,9 @@ function conectarGoogleDrive() {
 
 async function sincronizarComDrive() {
   if (!accessToken) {
-    return conectarGoogleDrive();
+    return;
   }
-  const conteudoJson = JSON.stringify({ biblioteca, notas }, null, 2);
+  const conteudoJson = JSON.stringify({ userProfile: { name: usuarioNome }, biblioteca, notas }, null, 2);
   const nomeArquivo = 'LidosBackup_Nuvem.json';
   try {
     const buscaRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${nomeArquivo}'%20and%20trashed%3Dfalse`, {
@@ -343,6 +343,36 @@ async function sincronizarComDrive() {
   }
 }
 
+async function restaurarDoGoogleDriveAutomatico() {
+  const nomeArquivo = 'LidosBackup_Nuvem.json';
+  try {
+    const buscaRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${nomeArquivo}'%20and%20trashed%3Dfalse`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const buscaDados = await buscaRes.json();
+    if (!buscaDados.files || buscaDados.files.length === 0) return;
+    const arquivoId = buscaDados.files[0].id;
+    const arquivoRes = await fetch(`https://www.googleapis.com/drive/v3/files/${arquivoId}?alt=media`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const dadosNuvem = await arquivoRes.text();
+    
+    // Processamento customizado para incluir userProfile
+    try {
+      const parsed = JSON.parse(dadosNuvem);
+      if (parsed && parsed.userProfile && parsed.userProfile.name) {
+        usuarioNome = parsed.userProfile.name;
+        lsSet('lido_usuario_nome', usuarioNome);
+      }
+    } catch(e) {}
+
+    importarTexto(dadosNuvem);
+    aviso('Dados e perfil restaurados automaticamente do Google Drive!');
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 async function restaurarDoGoogleDrive() {
   if (!accessToken) {
     inicializarGoogleDrive();
@@ -363,6 +393,15 @@ async function restaurarDoGoogleDrive() {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
     const dadosNuvem = await arquivoRes.text();
+    
+    try {
+      const parsed = JSON.parse(dadosNuvem);
+      if (parsed && parsed.userProfile && parsed.userProfile.name) {
+        usuarioNome = parsed.userProfile.name;
+        lsSet('lido_usuario_nome', usuarioNome);
+      }
+    } catch(e) {}
+
     importarTexto(dadosNuvem);
     aviso('Biblioteca restaurada do Google Drive!');
   } catch (err) {
@@ -953,7 +992,7 @@ a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();set
 }
 function nomeBackup(ext){const d=new Date(),p=n=>String(n).padStart(2,'0');return `LidosBackup_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}h${p(d.getMinutes())}.${ext}`}
 function temDados(){return biblioteca.length>0||notas.length>0}
-function exportarJSON(){if(!temDados())return aviso('Sua biblioteca está vazia.');baixarArquivo(JSON.stringify({biblioteca,notas},null,2),nomeBackup('json'),'application/json')}
+function exportarJSON(){if(!temDados())return aviso('Sua biblioteca está vazia.');baixarArquivo(JSON.stringify({userProfile:{name:usuarioNome},biblioteca,notas},null,2),nomeBackup('json'),'application/json')}
 function csvCampo(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
 function gerarCSV(){
 const livros=biblioteca.map(l=>[l.titulo,l.autor,l.formato,l.nota,l.data_fim,l.observacao,l.capa,'livro',''].map(csvCampo).join(';'));
@@ -985,7 +1024,7 @@ let txt='Oi, faça uma análise completa do meu histórico literário com os dad
 const s=statusDe(l);
 let p=`${s==='lido'?'Eu li':'Registrei'} o livro intitulado "${l.titulo}", escrito por ${l.autor}, ${onde[l.formato]||'em formato '+l.formato}. `;
 if(l.data_inicio)p+=`Comecei a leitura em ${l.data_inicio}. `;
-p+=s==='lido'?`Eu concluí a leitura${l.data_fim?' em '+l.data_fim:''}${l.nota>0?` e dei nota ${String(l.nota).replace('.',',')} de 5`:''}. `:{lendo:'Eu ainda não concluí a leitura, pois estou lendo no momento. ',abandonado:'Eu abandonei a leitura. ',desejado:'Eu ainda não li, é um livro que desejo ler. '}[s];
+p+=s==='lido'?`Eu concluí a leitura${l.data_fim?' em '+l.data_fim:''}${l.nota>0?` e dei nota ${String(l.nota).replace('.',',')} de 5`:''}. `:{lendo:'Eu ainda não concluí a leitura, pois estou lendo no momento. ',abandonado:'I abandonei a leitura. ',desejado:'Eu ainda não li, é um livro que desejo ler. '}[s];
 const obs=(l.observacao||'').trim();
 p+=obs?`A minha anotação sobre o livro foi: "${obs}".`:'Não fiz nenhuma anotação sobre o livro.';
 txt+=p+'\n\n';
