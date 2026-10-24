@@ -12,6 +12,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<!-- Google Identity Services e API Client -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://apis.google.com/js/api.js" async defer></script>
 <script>tailwind.config={theme:{extend:{colors:{gold:{400:'#FACC15',500:'#EAB308',600:'#CA8A04'}},fontFamily:{serif:['Inter','sans-serif'],sans:['Inter','sans-serif']}}}}</script>
 <style>
 html{background:#0b0f17}
@@ -190,8 +193,11 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
 <section><h3 class="opt-sec">Perfil</h3>
 <div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="Seu nome" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
-<section><h3 class="opt-sec">Dados</h3>
-<label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup</span><span class="opt-chev">›</span></label>
+<section><h3 class="opt-sec">Dados e Nuvem</h3>
+<button onclick="conectarGoogleDrive()" class="opt-row"><span>Conectar / Sincronizar com Google Drive</span><span class="opt-chev">›</span></button>
+<p class="opt-desc">Conecte sua conta do Google para salvar e restaurar o backup diretamente na nuvem de forma automática.</p>
+<button onclick="restaurarDoGoogleDrive()" class="opt-row"><span>Restaurar backup do Google Drive</span><span class="opt-chev">›</span></button>
+<label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup (Local)</span><span class="opt-chev">›</span></label>
 <div class="opt-block"><label>Se o seletor falhar, cole o conteúdo do backup</label><textarea id="csv-colado" rows="2" placeholder="Cole o texto do CSV ou JSON..." class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-gold-400"></textarea><button onclick="importarColado()" class="opt-act">Importar texto colado</button></div>
 <button onclick="abrirEnviarIA()" class="opt-row"><span>Enviar para IA</span><span class="opt-chev">›</span></button>
 <p class="opt-desc">Copia um texto com seu histórico de livros para você colar no chat de uma IA e receber indicações e estatísticas profundas.</p>
@@ -247,6 +253,105 @@ el.textContent=msg;el.style.display='block';clearTimeout(toastTimer);toastTimer=
 function doisToques(btn,fn){
 if(btn&&btn.dataset.conf!=='1'){btn.dataset.conf='1';btn.dataset.t=btn.innerText;btn.innerText='Confirmar';setTimeout(()=>{if(btn.isConnected){btn.dataset.conf='';btn.innerText=btn.dataset.t}},3000);return}
 fn();
+}
+
+/* INTEGRAÇÃO GOOGLE DRIVE */
+const CLIENT_ID = '968043927996-v3tq3afeukj60nj40rt8rlc37m0nh7lg.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+let tokenClient;
+let accessToken = null;
+
+function inicializarGoogleDrive() {
+  if (!tokenClient) {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: (response) => {
+        if (response.error !== undefined) {
+          aviso('Erro na autenticação com o Google.');
+          return;
+        }
+        accessToken = response.access_token;
+        aviso('Conectado ao Google Drive com sucesso!');
+        sincronizarComDrive();
+      },
+    });
+  }
+}
+
+function conectarGoogleDrive() {
+  inicializarGoogleDrive();
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+async function sincronizarComDrive() {
+  if (!accessToken) {
+    return conectarGoogleDrive();
+  }
+  const conteudoJson = JSON.stringify({ biblioteca, notas }, null, 2);
+  const nomeArquivo = 'LidosBackup_Nuvem.json';
+  try {
+    const buscaRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${nomeArquivo}'%20and%20trashed%3Dfalse`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const buscaDados = await buscaRes.json();
+    let arquivoId = buscaDados.files && buscaDados.files.length > 0 ? buscaDados.files[0].id : null;
+
+    if (arquivoId) {
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${arquivoId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: conteudoJson
+      });
+      aviso('Backup atualizado no Google Drive!');
+    } else {
+      const metadata = { name: nomeArquivo, mimeType: 'application/json' };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      form.append('file', new Blob([conteudoJson], { type: 'application/json' }));
+
+      await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}` },
+        body: form
+      });
+      aviso('Novo arquivo de backup criado no Google Drive!');
+    }
+  } catch (err) {
+    aviso('Erro ao sincronizar com o Google Drive.');
+    console.error(err);
+  }
+}
+
+async function restaurarDoGoogleDrive() {
+  if (!accessToken) {
+    inicializarGoogleDrive();
+    tokenClient.requestAccessToken({ prompt: '' });
+    return aviso('Faça login primeiro para restaurar.');
+  }
+  const nomeArquivo = 'LidosBackup_Nuvem.json';
+  try {
+    const buscaRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${nomeArquivo}'%20and%20trashed%3Dfalse`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const buscaDados = await buscaRes.json();
+    if (!buscaDados.files || buscaDados.files.length === 0) {
+      return aviso('Nenhum backup encontrado no Google Drive.');
+    }
+    const arquivoId = buscaDados.files[0].id;
+    const arquivoRes = await fetch(`https://www.googleapis.com/drive/v3/files/${arquivoId}?alt=media`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    const dadosNuっている = await arquivoRes.text();
+    importarTexto(dadosNuっている);
+    aviso('Biblioteca restaurada do Google Drive!');
+  } catch (err) {
+    aviso('Erro ao baixar backup do Google Drive.');
+    console.error(err);
+  }
 }
 
 /* tela cheia */
@@ -841,7 +946,7 @@ return '\ufeffTitulo;Autor;Formato;Nota;Fim;Observacao;Capa;Registro;Musica\n'+[
 function exportarCSV(){if(!temDados())return aviso('Sua biblioteca está vazia.');baixarArquivo(gerarCSV(),nomeBackup('csv'),'text/csv;charset=utf-8;')}
 function autoBackupAtivo(){return lsGet('lido_autobackup')!=='off'}
 function alternarAutoBackup(on){lsSet('lido_autobackup',on?'on':'off')}
-function backupAutomatico(){if(autoBackupAtivo()&&temDados())baixarArquivo(gerarCSV(),nomeBackup('csv'),'text/csv;charset=utf-8;')}
+function backupAutomatico(){if(autoBackupAtivo()&&temDados()){baixarArquivo(gerarCSV(),nomeBackup('csv'),'text/csv;charset=utf-8;');if(accessToken)sincronizarComDrive();}}
 async function enviarBackupPorEmail(){
 if(!temDados())return aviso('Nada para enviar ainda.');
 const ag=new Date(),quando=`${ag.toLocaleDateString('pt-BR')} às ${ag.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
