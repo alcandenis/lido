@@ -194,7 +194,10 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <section><h3 class="opt-sec">Perfil</h3>
 <div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="Seu nome" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
 <section><h3 class="opt-sec">Dados e Nuvem</h3>
-<button onclick="conectarGoogleDrive()" class="opt-row"><span>Conectar / Sincronizar com Google Drive</span><span class="opt-chev">›</span></button>
+<div class="flex items-center justify-between opt-row">
+  <button onclick="conectarGoogleDrive()" class="text-left flex-1"><span>Conectar / Sincronizar com Google Drive</span></button>
+  <span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
+</div>
 <p class="opt-desc">Conecte sua conta do Google para salvar e restaurar o backup diretamente na nuvem de forma automática.</p>
 <button onclick="restaurarDoGoogleDrive()" class="opt-row"><span>Restaurar backup do Google Drive</span><span class="opt-chev">›</span></button>
 <label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup (Local)</span><span class="opt-chev">›</span></label>
@@ -261,17 +264,31 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 let tokenClient;
 let accessToken = null;
 
+function atualizarStatusGoogleUI() {
+  const badge = $('google-status-badge');
+  if (!badge) return;
+  if (accessToken) {
+    badge.textContent = '✓ Conta conectada';
+    badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 ml-2';
+  } else {
+    badge.textContent = 'Desconectado';
+    badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2';
+  }
+}
+
 function inicializarGoogleDrive() {
   if (!tokenClient) {
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
+      ux_mode: 'popup',
       callback: (response) => {
         if (response.error !== undefined) {
           aviso('Erro na autenticação com o Google.');
           return;
         }
         accessToken = response.access_token;
+        atualizarStatusGoogleUI();
         aviso('Conectado ao Google Drive com sucesso!');
         sincronizarComDrive();
       },
@@ -345,8 +362,8 @@ async function restaurarDoGoogleDrive() {
     const arquivoRes = await fetch(`https://www.googleapis.com/drive/v3/files/${arquivoId}?alt=media`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
-    const dadosNuっている = await arquivoRes.text();
-    importarTexto(dadosNuっている);
+    const dadosNuvem = await arquivoRes.text();
+    importarTexto(dadosNuvem);
     aviso('Biblioteca restaurada do Google Drive!');
   } catch (err) {
     aviso('Erro ao baixar backup do Google Drive.');
@@ -425,7 +442,7 @@ $('bg-glow').style.opacity=k?'0':'.25';
 function toggleModalNovoRegistro(){$('modal-registro').classList.toggle('hidden')}
 function toggleModalOpcoes(){
 const m=$('modal-opcoes');m.classList.toggle('hidden');
-if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;popularSelects()}
+if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;popularSelects();atualizarStatusGoogleUI();}
 }
 let abaLidos='capas',anoStats=null;
 function definirAbaLidos(a){abaLidos=a;renderizarFeed();voltarAoTopo()}
