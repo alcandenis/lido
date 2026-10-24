@@ -136,9 +136,15 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
 </div>
 <div class="flex items-center gap-3 pointer-events-auto">
-  <!-- Ícone de Nuvem no Cabeçalho -->
+  <!-- Ícone de Nuvem no Cabeçalho (Vetorizado sem fundo, com gradiente amarelo/laranja se vinculado ou branco se desvinculado) -->
   <button onclick="toggleModalCloud()" class="h-[1.98rem] md:h-[2.4rem] flex items-center transition-transform hover:scale-105" aria-label="Status do Google Drive" title="Status da Nuvem">
-    <svg id="header-cloud-icon" class="w-7 h-7 text-white transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg id="header-cloud-icon" class="w-7 h-7 transition-colors" viewBox="0 0 24 24" fill="none" stroke="url(#cloudGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <defs>
+        <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop id="cloud-stop-1" offset="0%" stop-color="#ffffff"/>
+          <stop id="cloud-stop-2" offset="100%" stop-color="#ffffff"/>
+        </linearGradient>
+      </defs>
       <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
     </svg>
   </button>
@@ -222,25 +228,16 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <p class="text-gray-200 font-medium pt-1">LIDOLIVROS desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer" class="text-gold-gradient font-bold underline">@alcandenis</a></p></section>
 </div></div>
 
-<!-- Modal / Pop-up de Status de Conexão com a Nuvem (Google Drive) -->
+<!-- Pop-up Minimalista de Status da Nuvem (Google Drive) -->
 <div id="modal-cloud" class="frosted-modal-container fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden" onclick="if(event.target===this)toggleModalCloud()">
-  <div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4 text-center">
-    <div class="flex justify-between items-center border-b border-white/10 pb-3">
-      <h2 class="text-base font-bold text-white font-serif">Sincronização com Nuvem</h2>
-      <button onclick="toggleModalCloud()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button>
+  <div class="frosted-modal w-full max-w-xs p-5 shadow-2xl space-y-3 text-center">
+    <div class="flex items-center justify-between text-xs pb-2 border-b border-white/10">
+      <span class="text-gray-300 font-medium">Status</span>
+      <span id="cloud-modal-badge" class="font-bold px-2.5 py-0.5 rounded-full text-[10px] bg-white/10 text-gray-400">Desconectado</span>
     </div>
-    
-    <div class="py-2 space-y-3">
-      <div id="cloud-modal-status-box" class="p-3 rounded-lg bg-white/5 border border-white/10 flex items-center justify-between">
-        <span class="text-xs text-gray-300">Status da Conta:</span>
-        <span id="cloud-modal-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400">Desconectado</span>
-      </div>
-      <p class="text-xs text-gray-400 leading-relaxed">Mantenha sua biblioteca e histórico salvos com segurança no Google Drive.</p>
-    </div>
-
-    <div class="space-y-2 pt-2">
-      <button id="cloud-action-btn" onclick="conectarGoogleDrive()" class="w-full py-2.5 rounded-lg btn-gold-degrade text-xs uppercase tracking-wider">Conectar Google Drive</button>
-      <button onclick="toggleModalCloud(); abrirSubMenuBackup();" class="w-full py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20 transition-all">Gerenciar Opções de Backup</button>
+    <div class="text-left space-y-1 pt-1">
+      <span class="block text-[10px] text-gray-400 uppercase tracking-widest">Última sincronização</span>
+      <p id="cloud-modal-last-sync" class="text-xs text-white font-medium">Nunca</p>
     </div>
   </div>
 </div>
@@ -341,8 +338,13 @@ let accessToken = lsGet('lido_google_access_token', null);
 function atualizarStatusGoogleUI() {
   const badge = $('google-status-badge');
   const cloudBadge = $('cloud-modal-badge');
-  const cloudIcon = $('header-cloud-icon');
-  const cloudBtn = $('cloud-action-btn');
+  const lastSyncEl = $('cloud-modal-last-sync');
+  const stop1 = $('cloud-stop-1');
+  const stop2 = $('cloud-stop-2');
+
+  if (lastSyncEl) {
+    lastSyncEl.textContent = lsGet('lido_last_sync', 'Nunca');
+  }
 
   if (accessToken) {
     if (badge) {
@@ -353,17 +355,9 @@ function atualizarStatusGoogleUI() {
       cloudBadge.textContent = '✓ Conectado';
       cloudBadge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
     }
-    if (cloudIcon) {
-      cloudIcon.style.color = '#FACC15';
-    }
-    if (cloudBtn) {
-      cloudBtn.textContent = 'Desconectar / Trocar Conta';
-      cloudBtn.onclick = () => {
-        accessToken = null;
-        lsSet('lido_google_access_token', '');
-        atualizarStatusGoogleUI();
-        aviso('Conta desconectada com sucesso.');
-      };
+    if (stop1 && stop2) {
+      stop1.setAttribute('stop-color', '#facc15');
+      stop2.setAttribute('stop-color', '#fb923c');
     }
   } else {
     if (badge) {
@@ -374,12 +368,9 @@ function atualizarStatusGoogleUI() {
       cloudBadge.textContent = 'Desconectado';
       cloudBadge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400';
     }
-    if (cloudIcon) {
-      cloudIcon.style.color = '#FFFFFF';
-    }
-    if (cloudBtn) {
-      cloudBtn.textContent = 'Conectar Google Drive';
-      cloudBtn.onclick = () => { conectarGoogleDrive(); };
+    if (stop1 && stop2) {
+      stop1.setAttribute('stop-color', '#ffffff');
+      stop2.setAttribute('stop-color', '#ffffff');
     }
   }
 }
@@ -487,6 +478,7 @@ async function sincronizarComDrive(silent = false) {
         },
         body: conteudoJson
       });
+      lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
       if (!silent) aviso('Backup atualizado no Google Drive!');
     } else {
       const metadata = { name: nomeArquivo, mimeType: 'application/json' };
@@ -499,8 +491,10 @@ async function sincronizarComDrive(silent = false) {
         headers: { Authorization: `Bearer ${accessToken}` },
         body: form
       });
+      lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
       if (!silent) aviso('Novo arquivo de backup criado no Google Drive!');
     }
+    atualizarStatusGoogleUI();
   } catch (err) {
     if (!silent) aviso('Erro ao sincronizar com o Google Drive.');
     console.error(err);
@@ -531,6 +525,8 @@ async function restaurarDoGoogleDriveAutomatico() {
     } catch(e) {}
 
     importarTexto(dadosNuvem, true, true);
+    lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
+    atualizarStatusGoogleUI();
     aviso('Dados e perfil restaurados automaticamente do Google Drive!');
   } catch (err) {
     console.error(err);
@@ -566,6 +562,8 @@ async function restaurarDoGoogleDrive() {
     } catch(e) {}
 
     importarTexto(dadosNuvem, false, true);
+    lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
+    atualizarStatusGoogleUI();
     aviso('Biblioteca restaurada do Google Drive!');
   } catch (err) {
     aviso('Erro ao baixar backup do Google Drive.');
