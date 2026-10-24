@@ -158,6 +158,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 
 <div id="modal-registro" class="frosted-modal-container fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
 <div id="registro-caixa" class="frosted-modal w-full max-w-md p-4 shadow-2xl space-y-3 max-h-[88vh] overflow-y-auto">
+<div class="flex justify-between items-center border-b border-white/10 pb-2"><h2 id="modal-titulo" class="font-serif text-lg font-bold"><span class="text-gold-gradient">Nova passagem</span></h2></div>
 <div id="tabs-registro" class="grid grid-cols-2 border-b border-white/15"><button type="button" data-tabreg="leitura" onclick="definirAbaRegistro('leitura')" class="tab-reg">LEITURA</button><button type="button" data-tabreg="notas" onclick="definirAbaRegistro('notas')" class="tab-reg">NOTAS</button></div>
 <form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
 <input type="hidden" id="edit_id">
