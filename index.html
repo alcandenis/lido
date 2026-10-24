@@ -84,12 +84,13 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div id="bg-layer-a" class="bg-layer z-0" style="opacity:1"></div>
 <div id="bg-layer-b" class="bg-layer z-0" style="opacity:0"></div>
 <div id="bg-glow" class="fixed inset-0 pointer-events-none z-0 transition-all duration-700" style="opacity:.25;background:radial-gradient(circle at 50% 30%,rgba(250,204,21,.15),transparent 70%)"></div>
+<div id="home-ret" class="fixed left-1/2 z-[5] pointer-events-none" style="top:50%;height:min(60dvh,116vw);aspect-ratio:.5/.727;transform:translate(-50%,-50%);border-radius:14%/9.6%;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);filter:blur(18px) brightness(.63) saturate(.85);opacity:0;transition:opacity .8s ease"></div>
 <div class="fixed inset-0 bg-gradient-to-t from-[#0b0f17]/95 via-[#0b0f17]/30 to-[#0b0f17]/70 z-0 pointer-events-none"></div>
 
 <header id="app-header" class="fixed top-0 left-0 right-0 z-40 pb-10 px-6 flex justify-between items-center bg-gradient-to-b from-[#0b0f17] via-[#0b0f17]/90 to-transparent pointer-events-none" style="padding-top:calc(1.75rem + env(safe-area-inset-top,0px))">
 <div class="pointer-events-auto cursor-pointer" onclick="mudarAba('inicio')" title="Tela inicial">
 <h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
-<p class="text-[9px] text-white font-light tracking-[0.25em] uppercase mt-1 pl-0.5">BETA V0.3.2</p>
+<p class="text-[9px] text-white font-light tracking-[0.25em] uppercase mt-1 pl-0.5">BETA V0.2.0</p>
 </div>
 </header>
 
@@ -177,7 +178,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div id="modal-opcoes" class="frosted-modal-container fixed inset-0 z-50 bg-[#0b0f17] overflow-y-auto hidden">
 <div class="sticky top-0 z-10 bg-[#0b0f17]/30 backdrop-blur-xl border-b border-white/10"><div class="max-w-2xl mx-auto px-5 py-4 flex items-center gap-3">
 <button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-<h2 class="font-serif text-xl font-bold text-white">Opções</h2></div></div>
+</div></div>
 <div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-8">
 <input type="file" id="csv-file-input" onchange="processarCSV(this.files[0])" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
 <section><h3 class="opt-sec">Leitura</h3>
@@ -325,7 +326,7 @@ function definirAnoStats(a){anoStats=a;renderizarFeed()}
 function renderizarAbaLidos(feed){
 const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
 const tabs=[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''}">${r}</button>`).join('');
-addSecao(feed,`<div class="px-1 space-y-3"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white">Lidos <span class="text-xs text-gold-gradient font-sans font-normal">(${lidos.length})</span></h2><div class="grid grid-cols-2 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
+addSecao(feed,`<div class="px-1 space-y-3"><div class="grid grid-cols-2 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
 if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,1);
 else addSecao(feed,htmlStats(lidos),BG_PADRAO,1);
 transicionarFundo(BG_PADRAO);
@@ -569,13 +570,18 @@ function atualizarTitulo(){
  h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
  h.style.fontSize='';h.style.lineHeight='';h.style.letterSpacing='';h.style.width='';h.style.margin='';
 }
+let homeSemCapa=false;
+function capaValida(u){return !!u&&!/placehold\.co/.test(u)}
+function mostrarRetangulo(){const r=$('home-ret');if(r)r.style.opacity=(abaAtual==='inicio'&&homeSemCapa)?'.55':'0'}
 function renderizarFeed(scrollToId=null){
+homeSemCapa=false;
 atualizarTitulo();
 const feed=$('feed-container');
 feed.innerHTML='';
 feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-0 pt-28 pb-28 page-transition'+(modoSel?' modo-sel':'');
 const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
+mostrarRetangulo();
 handleFeedScroll();
 }
 function renderizarAbaInicio(feed){
@@ -588,7 +594,9 @@ if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl"><span
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
 if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl"><button onclick="editarLivro(${lendo.id})" class="flex items-center gap-3 w-full text-left"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo atualmente</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4);
 feed.appendChild(wrap);
-transicionarFundo(l?l.capa:BG_PADRAO);
+homeSemCapa=!l||!capaValida(l.capa);
+transicionarFundo(homeSemCapa?BG_PADRAO:l.capa);
+if(!homeSemCapa){const im=new Image();im.onerror=()=>{if(abaAtual==='inicio'&&biblioteca[0]===l){homeSemCapa=true;transicionarFundo(BG_PADRAO);mostrarRetangulo()}};im.src=l.capa}
 }
 let filtroTodos='tudo';
 let filtroSoTextos='todos';
@@ -615,7 +623,7 @@ if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'n
 if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
 if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
 const tabs=[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''}">${r}</button>`).join('');
-addSecao(feed,`<div class="px-1 space-y-3"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white">Textos <span class="text-xs text-gold-gradient font-sans font-normal">(${itens.length})</span></h2><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
+addSecao(feed,`<div class="px-1 space-y-3"><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
 if(!itens.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nada por aqui ainda.</p></div>`,BG_PADRAO,1);
 itens.forEach((it,i)=>{
 const d=it.d;
@@ -628,7 +636,7 @@ if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scroll
 }
 function renderizarAbaObservacoes(feed){
 const tabs=[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''}">${r}</button>`).join('');
-addSecao(feed,`<div class="px-1 pb-1 space-y-3"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white">SÓ TEXTOS</h2><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
+addSecao(feed,`<div class="px-1 pb-1 space-y-3"><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
 const itens=[
 ...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
