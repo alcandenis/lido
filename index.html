@@ -156,24 +156,8 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 </div></div>
 </nav>
 
-<div id="modal-pergunta-diaria" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-<div class="frosted-modal w-full max-w-md p-6 shadow-2xl space-y-4">
-<div class="flex justify-between items-center border-b border-white/10 pb-3"><h2 class="font-serif text-lg font-bold"><span class="text-gold-gradient">O que você está lendo hoje?</span></h2><button onclick="fecharPerguntaDiaria()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
-<div class="relative">
-<label class="block text-xs font-medium text-gray-300 mb-1">Buscar novo livro</label>
-<input type="text" id="pergunta_titulo" oninput="buscaDebounce(this.value,'diaria')" autocomplete="off" placeholder="Digite para buscar no Google Books..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-<div id="skel-diaria" class="absolute left-0 right-0 mt-1 bg-[#0f141f]/95 border border-white/15 rounded-lg shadow-2xl z-50 hidden p-3"><div class="flex items-center gap-3"><div class="w-8 h-12 rounded skeleton-shimmer"></div><div class="flex-1 space-y-1.5"><div class="h-3 w-3/4 rounded skeleton-shimmer"></div><div class="h-2.5 w-1/2 rounded skeleton-shimmer"></div></div></div></div>
-<div id="res-diaria" class="absolute left-0 right-0 mt-1 bg-[#0f141f]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-48 overflow-y-auto"></div>
-</div>
-<input type="hidden" id="pergunta_autor"><input type="hidden" id="pergunta_capa">
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Ou escolha um livro salvo</label>
-<select id="select-leitura-anterior" class="w-full bg-[#0f141f] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white focus:outline-none focus:border-gold-400"><option value="">Escolher livro salvo</option></select></div>
-<div class="flex gap-2 pt-1"><button onclick="salvarPerguntaDiaria()" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-xs uppercase tracking-wider">Salvar leitura atual</button><button onclick="fecharPerguntaDiaria()" class="px-4 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Agora não</button></div>
-</div></div>
-
 <div id="modal-registro" class="frosted-modal-container fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
 <div id="registro-caixa" class="frosted-modal w-full max-w-md p-4 shadow-2xl space-y-3 max-h-[88vh] overflow-y-auto">
-<div class="flex justify-between items-center border-b border-white/10 pb-2"><h2 id="modal-titulo" class="font-serif text-lg font-bold"><span class="text-gold-gradient">Nova passagem</span></h2></div>
 <div id="tabs-registro" class="grid grid-cols-2 border-b border-white/15"><button type="button" data-tabreg="leitura" onclick="definirAbaRegistro('leitura')" class="tab-reg">LEITURA</button><button type="button" data-tabreg="notas" onclick="definirAbaRegistro('notas')" class="tab-reg">NOTAS</button></div>
 <form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
 <input type="hidden" id="edit_id">
@@ -191,7 +175,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
 <div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
 <div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Citação / Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
 <div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
 </form>
 <div id="form-nota" class="hidden space-y-4"><div><label class="block text-xs font-medium text-gray-300 mb-1">Ouvindo algo?</label><input type="text" id="nota-musica" maxlength="80" placeholder="Música ou artista" autocomplete="off" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><textarea id="nota-texto" rows="7" placeholder="Escreva sua nota..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none font-obs"></textarea><div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="button" onclick="salvarNota()" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div></div>
