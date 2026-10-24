@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b0f17">
+<title>LidoLivros by @alcandenis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config={theme:{extend:{colors:{gold:{400:'#FACC15',500:'#EAB308',600:'#CA8A04'}},fontFamily:{serif:['Inter','sans-serif'],sans:['Inter','sans-serif']}}}}</script>
+<style>
+html{background:#0b0f17}
+body{background:#0b0f17;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hidden;height:100%}
+.font-serif{font-family:'Inter',sans-serif}
+.snap-feed-container{overflow-y:scroll;height:100vh;height:100dvh;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.snap-feed-container::-webkit-scrollbar{display:none}
+.snap-item{margin-bottom:.75rem}
+.snap-item:last-child{margin-bottom:7.5rem}
+.home-wrap>.snap-item{margin-bottom:0!important}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+.stagger-item{animation:fadeUp .4s cubic-bezier(.16,1,.3,1) forwards;opacity:0}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skeleton-shimmer{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+.page-transition{animation:fadeUp .38s cubic-bezier(.16,1,.3,1) forwards}
+.frosted-modal-container.hidden{display:none}
+.frosted-modal-container{background:rgba(0,0,0,.4)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+#modal-opcoes,#tela-lidos{background:rgba(11,15,23,.5)!important;backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2)}
+select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
+.tab-reg{padding:.6rem 0;font-size:.75rem;letter-spacing:.25em;font-weight:600;color:#9ca3af;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.tab-reg.sm{letter-spacing:.06em}
+.tab-reg:hover{color:#e5e7eb}
+.tab-reg.ativo{color:#fff;border-bottom-color:#fff}
+.frosted-modal{background:rgba(15,20,31,.55);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);border-radius:1.25rem;animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards}
+.frosted-card{background:rgba(10,14,22,.58);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:.875rem}
+.frosted-dock{background:rgba(15,20,31,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:9999px}
+.bg-layer{position:fixed;inset:0;background-size:cover;background-position:center;filter:blur(34px) saturate(1.2) brightness(.5);transform:scale(1.3);transition:opacity .9s ease}
+@keyframes bounceSlow{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.animate-bounce-slow{animation:bounceSlow 2s infinite ease-in-out}
+.sel-mark{display:none;position:absolute;top:.75rem;right:.75rem;width:1.75rem;height:1.75rem;border-radius:9999px;border:2px solid rgba(255,255,255,.5);align-items:center;justify-content:center;background:rgba(0,0,0,.4);color:transparent;font-size:.9rem;font-weight:700;z-index:2}
+.modo-sel .sel-mark{display:flex}
+.modo-sel .card-acoes{display:none}
+.modo-sel [data-id]{cursor:pointer}
+.sel-ativo .sel-mark{background:#FACC15;border-color:#FACC15;color:#000}
+.sel-ativo .frosted-card{border-color:#FACC15;box-shadow:0 0 0 2px rgba(250,204,21,.6)}
+.seg-btn{padding:.625rem .5rem;font-size:.75rem;border-radius:.5rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#d1d5db;transition:all .15s}
+.seg-btn.ativo{background:#fff;color:#0b0f17;font-weight:600;border-color:#fff}
+.btn-gold-degrade{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);color:#000;font-weight:700;transition:all .2s}
+.btn-gold-degrade:hover{filter:brightness(1.1);box-shadow:0 0 22px rgba(250,204,21,.45)}
+.text-gold-gradient{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.titulo-novas{font-weight:900;letter-spacing:.12em;font-feature-settings:"kern" 1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:color .3s ease}
+.text-yellow-orange-gradient{background:linear-gradient(90deg,#fef08a 0%,#facc15 42%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.o-filled-yellow-orange{display:inline-block;width:.5em;height:.727em;border-radius:.07em;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);margin:0 .02em 0 -.07em;vertical-align:baseline;flex-shrink:0}
+
+.dock-tab{font-size:.75rem;padding:.25rem .5rem;color:#9ca3af;position:relative;transition:color .2s}
+.dock-tab:hover,.dock-tab.ativo{color:#fff}
+.dock-tab.ativo::after{content:'';position:absolute;left:50%;bottom:-.35rem;width:4px;height:4px;border-radius:9999px;background:#FACC15;transform:translateX(-50%)}
+.dock-add{width:2.25rem;height:2.25rem;border-radius:9999px;border:1px solid rgba(250,204,21,.6);color:#FACC15;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.dock-add:hover,.dock-add:active{background:#FACC15;color:#000}
+.font-obs{font-family:'Inter',sans-serif;font-style:normal;font-weight:400;line-height:1.65}
+.btn-blue-frost{width:2.5rem;height:2.5rem;border-radius:.75rem;display:flex;align-items:center;justify-content:center;color:#bfdbfe;background:rgba(59,130,246,.18);border:1px solid rgba(147,197,253,.3);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:all .2s}
+.btn-blue-frost:hover,.btn-blue-frost:active{background:rgba(59,130,246,.32);color:#fff}
+@keyframes glowWhite{0%,100%{filter:drop-shadow(0 0 8px rgba(255,255,255,.4)) drop-shadow(0 0 22px rgba(255,255,255,.22))}50%{filter:drop-shadow(0 0 12px rgba(255,255,255,.65)) drop-shadow(0 0 32px rgba(255,255,255,.4))}}
+@keyframes glowGold{0%,100%{filter:drop-shadow(0 0 8px rgba(250,204,21,.45)) drop-shadow(0 0 22px rgba(250,204,21,.25))}50%{filter:drop-shadow(0 0 12px rgba(250,204,21,.7)) drop-shadow(0 0 32px rgba(250,204,21,.45))}}
+.glow-white{display:inline-block;animation:glowWhite 4s ease-in-out infinite}
+.glow-gold{display:inline-block;animation:glowGold 4s ease-in-out infinite}
+.opt-sec{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:#FACC15;font-weight:700;margin-bottom:.25rem}
+.opt-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.875rem;color:#e5e7eb;text-align:left;transition:color .15s}
+.opt-row:hover{color:#FACC15}
+.opt-chev{color:#6b7280;font-size:1.1rem}
+.opt-block{padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;gap:.6rem;font-size:.75rem;color:#9ca3af}
+.opt-act{align-self:flex-start;font-size:.75rem;color:#FACC15;border:1px solid rgba(250,204,21,.4);border-radius:.5rem;padding:.5rem .9rem;transition:all .15s}
+.opt-act:hover{background:#FACC15;color:#000}
+.opt-desc{font-size:.7rem;color:#6b7280;padding:.5rem 0 .25rem;line-height:1.4}
+.accordion-content{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.16,1,.3,1),opacity .25s;opacity:0}
+.accordion-content.open{max-height:520px;opacity:1}
+</style>
+</head>
+<body class="h-full relative select-none">
+<div id="bg-layer-a" class="bg-layer z-0" style="opacity:1"></div>
+<div id="bg-layer-b" class="bg-layer z-0" style="opacity:0"></div>
+<div id="bg-glow" class="fixed inset-0 pointer-events-none z-0 transition-all duration-700" style="opacity:.25;background:radial-gradient(circle at 50% 30%,rgba(250,204,21,.15),transparent 70%)"></div>
+<div class="fixed inset-0 bg-gradient-to-t from-[#0b0f17]/95 via-[#0b0f17]/30 to-[#0b0f17]/70 z-0 pointer-events-none"></div>
+
+<header id="app-header" class="fixed top-0 left-0 right-0 z-40 pb-10 px-6 flex justify-between items-center bg-gradient-to-b from-[#0b0f17] via-[#0b0f17]/90 to-transparent pointer-events-none" style="padding-top:calc(1.75rem + env(safe-area-inset-top,0px))">
+<div class="pointer-events-auto cursor-pointer" onclick="mudarAba('inicio')" title="Tela inicial">
+<h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
+<p class="text-[9px] text-white font-light tracking-[0.25em] uppercase mt-1 pl-0.5">BETA V0.2.0</p>
+</div>
+</header>
+
+<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-0 pt-28 pb-28" style="padding-top:calc(7rem + env(safe-area-inset-top,0px))"></main>
+
+<div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-24 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
+<div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-24 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
+
+<div id="sel-bar" class="fixed bottom-0 inset-x-0 z-50 hidden items-center justify-between gap-2 px-4 py-3 bg-[#0b0f17]/95 backdrop-blur-xl border-t border-white/10">
+<span id="sel-count" class="text-xs text-gray-300 font-medium">0 selecionadas</span>
+<div class="flex items-center gap-2">
+<button onclick="selecionarTodas()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg border border-white/10">Todas</button>
+<button onclick="sairSelecao()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg border border-white/10">Cancelar</button>
+<button id="sel-del" onclick="excluirSelecionadas()" disabled class="text-xs bg-red-500 hover:bg-red-600 text-white font-semibold px-3 py-2 rounded-lg opacity-40">Excluir</button>
+</div>
+</div>
+
+<nav id="nav-principal" class="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
+<div class="pointer-events-auto bg-gradient-to-t from-[#0b0f17] via-[#0b0f17]/85 to-transparent pt-10 pb-4 px-6" style="padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px))">
+<div class="max-w-md mx-auto flex items-center justify-between">
+<button onclick="mudarAba('inicio')" id="btn-tab-inicio" class="dock-tab">Início</button>
+<button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab">Textos</button>
+<button onclick="prepararNovoRegistro()" class="dock-add" title="Nova passagem" aria-label="Nova passagem"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v14m7-7H5"/></svg></button>
+<button onclick="mudarAba('lidos')" id="btn-tab-lidos" class="dock-tab">Lidos</button>
+</div></div>
+</nav>
+
+<div id="modal-backup-diario" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4"><h2 class="text-lg font-bold text-white">Proteja sua biblioteca</h2><p class="text-sm text-gray-300">Seus dados não são mantidos na nuvem. Um backup diário é recomendado para evitar perdas.</p><button onclick="habilitarBackupDiario()" class="w-full btn-gold-degrade py-2.5 rounded-lg text-xs">Habilitar backup automático</button><button onclick="realizarBackupDiario()" class="w-full py-2.5 rounded-lg bg-white/10 text-white text-xs">Realizar backup agora</button><button onclick="fecharBackupDiario()" class="w-full py-2.5 rounded-lg text-gray-300 text-xs">Fechar</button></div></div>
+<div id="modal-pergunta-diaria" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+<div class="frosted-modal w-full max-w-md p-6 shadow-2xl space-y-4">
+<div class="flex justify-between items-center border-b border-white/10 pb-3"><h2 class="font-serif text-lg font-bold"><span class="text-gold-gradient">O que você está lendo hoje?</span></h2><button onclick="fecharPerguntaDiaria()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
+<div class="relative">
+<label class="block text-xs font-medium text-gray-300 mb-1">Buscar novo livro</label>
+<input type="text" id="pergunta_titulo" oninput="buscaDebounce(this.value,'diaria')" autocomplete="off" placeholder="Digite para buscar no Google Books..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+<div id="skel-diaria" class="absolute left-0 right-0 mt-1 bg-[#0f141f]/95 border border-white/15 rounded-lg shadow-2xl z-50 hidden p-3"><div class="flex items-center gap-3"><div class="w-8 h-12 rounded skeleton-shimmer"></div><div class="flex-1 space-y-1.5"><div class="h-3 w-3/4 rounded skeleton-shimmer"></div><div class="h-2.5 w-1/2 rounded skeleton-shimmer"></div></div></div></div>
+<div id="res-diaria" class="absolute left-0 right-0 mt-1 bg-[#0f141f]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-48 overflow-y-auto"></div>
+</div>
+<input type="hidden" id="pergunta_autor"><input type="hidden" id="pergunta_capa">
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Ou escolha um livro salvo</label>
+<select id="select-leitura-anterior" class="w-full bg-[#0f141f] border border-white/10 rounded-lg px-3 py-2.5 text-xs text-white focus:outline-none focus:border-gold-400"><option value="">Escolher livro salvo</option></select></div>
+<div class="flex gap-2 pt-1"><button onclick="salvarPerguntaDiaria()" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-xs uppercase tracking-wider">Salvar leitura atual</button><button onclick="fecharPerguntaDiaria()" class="px-4 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Agora não</button></div>
+</div></div>
+
+<div id="modal-aviso-offline" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+<div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4 text-center">
+<h2 class="font-serif text-lg font-bold text-white">Seus dados ficam no aparelho</h2>
+<p class="text-xs text-gray-300 leading-relaxed">Sua biblioteca é guardada só neste dispositivo. Buscas e capas usam a internet (Google Books). Ao salvar uma anotação, o app oferece um backup em CSV na pasta de <strong>downloads</strong>.</p>
+<button onclick="fecharAvisoOffline()" class="w-full py-2.5 rounded-lg btn-gold-degrade text-xs">Entendi</button>
+</div></div>
+
+<div id="modal-nome" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+<div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4">
+<h2 class="font-serif text-lg font-bold"><span class="text-gold-gradient">Qual é o seu nome?</span></h2>
+<p class="text-xs text-gray-300">Ele aparece no card de boas-vindas.</p>
+<input id="nome-input" type="text" maxlength="40" placeholder="Seu nome" autocomplete="off" onkeydown="if(event.key==='Enter')salvarNomeModal()" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+<div class="flex gap-2"><button onclick="fecharNome()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Agora não</button><button onclick="salvarNomeModal()" class="flex-1 py-2.5 rounded-lg btn-gold-degrade text-xs">Salvar</button></div>
+</div></div>
+
+<div id="modal-registro" class="frosted-modal-container fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+<div id="registro-caixa" class="frosted-modal w-full max-w-md p-4 shadow-2xl space-y-3 max-h-[88vh] overflow-y-auto">
+<div class="flex justify-between items-center border-b border-white/10 pb-2"><h2 id="modal-titulo" class="font-serif text-lg font-bold"><span class="text-gold-gradient">Nova passagem</span></h2></div>
+<div id="tabs-registro" class="grid grid-cols-2 border-b border-white/15"><button type="button" data-tabreg="leitura" onclick="definirAbaRegistro('leitura')" class="tab-reg">LEITURA</button><button type="button" data-tabreg="notas" onclick="definirAbaRegistro('notas')" class="tab-reg">NOTAS</button></div>
+<form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
+<input type="hidden" id="edit_id">
+<div class="relative"><label class="block text-xs font-medium text-gray-300 mb-1">Título</label>
+<input type="text" id="titulo" required oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar no Google Books..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+<div id="skel-modal" class="absolute left-0 right-0 mt-1 bg-[#0f141f]/95 border border-white/15 rounded-lg shadow-2xl z-50 hidden p-3"><div class="flex items-center gap-3"><div class="w-8 h-12 rounded skeleton-shimmer"></div><div class="flex-1 space-y-1.5"><div class="h-3 w-3/4 rounded skeleton-shimmer"></div><div class="h-2.5 w-1/2 rounded skeleton-shimmer"></div></div></div></div>
+<div id="res-modal" class="absolute left-0 right-0 mt-1 bg-[#0f141f]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-56 overflow-y-auto"></div></div>
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" required placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div>
+<input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url">
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Tipo de leitura</label>
+<div class="grid grid-cols-3 gap-2"><button type="button" data-formato="Kindle" onclick="definirFormato('Kindle')" class="seg-btn">Kindle</button><button type="button" data-formato="Audiobook" onclick="definirFormato('Audiobook')" class="seg-btn">Áudio</button><button type="button" data-formato="Físico" onclick="definirFormato('Físico')" class="seg-btn">Físico</button></div></div>
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Status</label>
+<div class="grid grid-cols-2 gap-2"><button type="button" data-status="lendo" onclick="definirStatus('lendo')" class="seg-btn">Em leitura</button><button type="button" data-status="lido" onclick="definirStatus('lido')" class="seg-btn">Lido</button><button type="button" data-status="abandonado" onclick="definirStatus('abandonado')" class="seg-btn">Abandonado</button><button type="button" data-status="desejado" onclick="definirStatus('desejado')" class="seg-btn">Desejado</button></div></div>
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Nota <span id="nota-label" class="text-gray-400 font-normal"></span></label><div id="star-picker" class="flex items-center justify-between"></div></div>
+<div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
+<div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
+<div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Citação / Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
+<div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
+</form>
+<div id="form-nota" class="hidden space-y-4"><div><label class="block text-xs font-medium text-gray-300 mb-1">Ouvindo algo?</label><input type="text" id="nota-musica" maxlength="80" placeholder="Música ou artista" autocomplete="off" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><textarea id="nota-texto" rows="7" placeholder="Escreva sua nota..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none font-obs"></textarea><div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="button" onclick="salvarNota()" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div></div>
+</div></div>
+
+<div id="modal-opcoes" class="frosted-modal-container fixed inset-0 z-50 bg-[#0b0f17] overflow-y-auto hidden">
+<div class="sticky top-0 z-10 bg-[#0b0f17]/30 backdrop-blur-xl border-b border-white/10"><div class="max-w-2xl mx-auto px-5 py-4 flex items-center gap-3">
+<button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+<h2 class="font-serif text-xl font-bold text-white">Opções</h2></div></div>
+<div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-8">
+<input type="file" id="csv-file-input" onchange="processarCSV(this.files[0])" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
+<section><h3 class="opt-sec">Leitura</h3>
+<button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Buscar capas ausentes (Google Books)</span><span class="opt-chev">›</span></button>
+<button onclick="abrirKindle()" class="opt-row"><span>Importar Clippings.txt do Kindle</span><span class="opt-chev">›</span></button>
+<div class="opt-block"><label>Trocar leitura atual</label><select id="select-trocar-leitura" class="w-full bg-[#0f141f] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400"><option value="">Escolher da biblioteca</option></select><button onclick="salvarTrocaLeituraAtual()" class="opt-act">Definir como leitura atual</button></div>
+<button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
+<section><h3 class="opt-sec">Perfil</h3>
+<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="Seu nome" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><label>Seu e-mail (usado no envio do backup)</label><input type="email" id="input-usuario-email" placeholder="voce@exemplo.com" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
+<section><h3 class="opt-sec">Dados</h3>
+<label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup</span><span class="opt-chev">›</span></label>
+<div class="opt-block"><label>Se o seletor falhar, cole o conteúdo do backup</label><textarea id="csv-colado" rows="2" placeholder="Cole o texto do CSV ou JSON..." class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-gold-400"></textarea><button onclick="importarColado()" class="opt-act">Importar texto colado</button></div>
+<button onclick="abrirEnviarIA()" class="opt-row"><span>Enviar para IA</span><span class="opt-chev">›</span></button>
+<p class="opt-desc">Copia um texto com seu histórico de livros para você colar no chat de uma IA e receber indicações e estatísticas profundas.</p>
+<button onclick="exportarCSV()" class="opt-row"><span>Exportar biblioteca (CSV)</span><span class="opt-chev">›</span></button>
+<button onclick="exportarJSON()" class="opt-row"><span>Backup completo (JSON)</span><span class="opt-chev">›</span></button>
+<button onclick="enviarBackupPorEmail()" class="opt-row"><span>Enviar backup para meu e-mail</span><span class="opt-chev">›</span></button>
+<p class="opt-desc">Abre o compartilhamento com o backup anexado. Assunto: "Backup do Lidos".</p>
+<label class="opt-row cursor-pointer"><span>Backup automático ao adicionar anotação</span><input type="checkbox" id="chk-autobackup" onchange="alternarAutoBackup(this.checked)" class="accent-yellow-400 w-4 h-4"></label>
+<p class="opt-desc">O app oferece salvar um CSV no celular. Você confirma o salvamento.</p></section>
+<section><h3 class="opt-sec">Exibição</h3>
+<button onclick="alternarTelaCheia()" class="opt-row"><span>Tela cheia (ligar/desligar)</span><span class="opt-chev">›</span></button></section>
+<section><h3 class="opt-sec">Créditos</h3>
+<div class="opt-block text-[11px] leading-snug"><p>Capas e dados dos livros: Google Books API.</p><p>Capas provisórias: placehold.co.</p><p>Imagem de fundo inicial: wallpaper.forfun.com.</p><p>Fonte: Inter (Google Fonts). Estilo: Tailwind CSS.</p>
+<p class="text-gray-200 font-medium pt-1">LIDOLIVROS desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer" class="text-gold-gradient font-bold underline">@alcandenis</a></p></div></section>
+</div></div>
+
+<div id="modal-passagem" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharPassagem()"><div id="passagem-conteudo" class="frosted-modal w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"></div></div>
+
+<div id="modal-amazon" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharAmazon()">
+<div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4 text-center"><h2 class="font-serif text-lg font-bold text-white">Procurar na Amazon?</h2><p id="amazon-titulo" class="text-sm text-gold-400 font-serif"></p>
+<div class="flex gap-2"><button onclick="fecharAmazon()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Agora não</button><button onclick="confirmarAmazon()" class="flex-1 py-2.5 rounded-lg btn-gold-degrade text-xs">Procurar</button></div></div></div>
+
+<div id="modal-kindle" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharKindle()"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4 text-center"><h2 class="text-lg font-bold text-white">Importar do Kindle</h2><p class="text-sm text-gray-200 leading-relaxed">Conecte seu Kindle via Cabo USB e selecione o arquivo no armazenamento do e-reader.</p><p class="text-xs text-gray-400">Procure por My Clippings.txt, na pasta documents.</p><div class="flex gap-2"><button onclick="fecharKindle()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Cancelar</button><label for="kindle-file-input" class="flex-1 py-2.5 rounded-lg bg-white text-[#0b0f17] text-xs font-semibold text-center cursor-pointer hover:bg-gray-200">Selecionar arquivo</label></div></div></div>
+
+<div id="modal-ia" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharEnviarIA()"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4"><h2 class="text-lg font-bold text-white">Enviar para IA</h2><p class="text-sm text-gray-200 leading-relaxed">Copie o prompt e cole a mensagem no chat do seu agente de IA. Ele vai analisar o seu histórico de livros.</p><div class="flex gap-2"><button onclick="fecharEnviarIA()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Fechar</button><button onclick="copiarPromptIA()" class="flex-1 py-2.5 rounded-lg bg-white text-[#0b0f17] text-xs font-semibold hover:bg-gray-200">Copiar prompt</button></div></div></div>
+
+<div id="insta-modal" class="frosted-modal-container fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+<div class="flex flex-col items-center max-w-sm w-full">
+<canvas id="story-canvas" width="1080" height="1920" class="shadow-2xl border border-white/20" style="width:280px;height:498px;background:#0d1117"></canvas>
+<div class="flex gap-3 mt-5 w-full"><button onclick="fecharInstaModal()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Fechar</button><button onclick="baixarImagemStory()" class="flex-1 py-2.5 rounded-lg btn-gold-degrade text-xs">Baixar pra postar</button></div>
+</div></div>
+
+<input type="file" id="kindle-file-input" onchange="processarKindleClippings(this.files[0])" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
+
+<script>
+function lsGet(k,d=''){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:[]}catch(e){return[]}}
+let biblioteca=lerJSON('minha_biblioteca'),notasKindle=lerJSON('notas_kindle'),notas=lerJSON('lido_notas'),usuarioNome=lsGet('lido_usuario_nome');
+let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirmandoDel=false,storyBlob=null,dlCap=null,toastTimer=null;
+const selecionados=new Set(),timers={};
+const BG_PADRAO="https://wallpaper.forfun.com/fetch/d1/d11b37523005f6dfe77d151ee2872b7c.jpeg";
+const STAR_PATH='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z';
+const $=id=>document.getElementById(id);
+
+function salvarLocal(){lsSet('minha_biblioteca',JSON.stringify(biblioteca));lsSet('notas_kindle',JSON.stringify(notasKindle));lsSet('lido_notas',JSON.stringify(notas))}
+function aviso(msg){
+let el=$('toast');
+if(!el){el=document.createElement('div');el.id='toast';el.className='fixed left-1/2 -translate-x-1/2 bottom-24 z-[70] max-w-xs w-[90%] text-center text-xs text-white bg-[#0f141f]/95 border border-white/15 rounded-xl px-4 py-3 shadow-2xl';document.body.appendChild(el)}
+el.textContent=msg;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.display='none'},3500);
+}
+function doisToques(btn,fn){
+if(btn&&btn.dataset.conf!=='1'){btn.dataset.conf='1';btn.dataset.t=btn.innerText;btn.innerText='Confirmar';setTimeout(()=>{if(btn.isConnected){btn.dataset.conf='';btn.innerText=btn.dataset.t}},3000);return}
+fn();
+}
+
+/* tela cheia */
+function telaCheiaAtiva(){return !!(document.fullscreenElement||document.webkitFullscreenElement)}
+function entrarTelaCheia(){const el=document.documentElement,fn=el.requestFullscreen||el.webkitRequestFullscreen;if(!fn)return;try{const r=fn.call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
+function sairTelaCheia(){const fn=document.exitFullscreen||document.webkitExitFullscreen;if(!fn)return;try{const r=fn.call(document);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
+function alternarTelaCheia(){toggleModalOpcoes();if(telaCheiaAtiva()){lsSet('lido_fs','off');sairTelaCheia()}else{lsSet('lido_fs','on');entrarTelaCheia()}}
+document.addEventListener('click',()=>{if(lsGet('lido_fs','on')!=='off'&&!telaCheiaAtiva())entrarTelaCheia()},{once:true});
+
+/* fluxo inicial: nome, aviso, pergunta diária */
+function proximoPasso(){
+ if(lsGet('lido_nome_perguntado')!=='1'){abrirNome();return}
+ if(lsGet('lido_aviso_offline_v2')!=='1'){$('modal-aviso-offline').classList.remove('hidden');return}
+ verificarBackupDiario();
+ atualizarCapasFaltantes();
+}
+function abrirConfiguracaoRapida(){proximoPasso()}
+function verificarBackupDiario(){
+ const hoje=new Date().toISOString().slice(0,10);
+ if(lsGet('lido_backup_pergunta_data')!==hoje&&lsGet('lido_autobackup')!=='on')$('modal-backup-diario').classList.remove('hidden');
+}
+function fecharBackupDiario(){lsSet('lido_backup_pergunta_data',new Date().toISOString().slice(0,10));$('modal-backup-diario').classList.add('hidden');if(biblioteca.length>0)verificarPerguntaDiaria()}
+function habilitarBackupDiario(){alternarAutoBackup(true);$('chk-autobackup').checked=true;fecharBackupDiario();aviso('Backup automático habilitado.')}
+function realizarBackupDiario(){fecharBackupDiario();exportarCSV()}
+
+function abrirNome(){$('nome-input').value=usuarioNome;$('modal-nome').classList.remove('hidden')}
+function salvarNomeModal(){usuarioNome=$('nome-input').value.trim();lsSet('lido_usuario_nome',usuarioNome);fecharNome()}
+function fecharNome(){lsSet('lido_nome_perguntado','1');$('modal-nome').classList.add('hidden');renderizarFeed();proximoPasso()}
+function salvarNomeUsuario(){usuarioNome=$('input-usuario-nome').value.trim();lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_usuario_email',$('input-usuario-email').value.trim());aviso('Perfil salvo.');renderizarFeed()}
+function fecharAvisoOffline(){lsSet('lido_aviso_offline_v2','1');$('modal-aviso-offline').classList.add('hidden');proximoPasso()}
+function verificarPerguntaDiaria(){
+if(lsGet('lido_ultima_pergunta_data')!==new Date().toISOString().slice(0,10)){$('modal-pergunta-diaria').classList.remove('hidden');popularSelects()}
+}
+function fecharPerguntaDiaria(){lsSet('lido_ultima_pergunta_data',new Date().toISOString().slice(0,10));$('modal-pergunta-diaria').classList.add('hidden')}
+function popularSelects(){
+const ph=['Escolher livro salvo','Escolher da biblioteca'];
+['select-leitura-anterior','select-trocar-leitura'].forEach((id,i)=>{$(id).innerHTML=`<option value="">${ph[i]}</option>`+biblioteca.map(l=>`<option value="${l.id}">${esc(l.titulo)} - ${esc(l.autor)}</option>`).join('')});
+}
+function tornarLeituraAtual(id){
+const l=biblioteca.find(x=>String(x.id)===String(id));if(!l)return false;
+biblioteca=biblioteca.filter(x=>x!==l);
+Object.assign(l,{lido:false,abandonado:false,desejado:false,data_fim:'',nota:0});
+biblioteca.unshift(l);return true;
+}
+function salvarPerguntaDiaria(){
+const sel=$('select-leitura-anterior').value,t=$('pergunta_titulo').value.trim();
+if(sel)tornarLeituraAtual(sel);
+else if(t)biblioteca.unshift({id:Date.now(),titulo:t,autor:$('pergunta_autor').value||'Autor Desconhecido',formato:'Kindle',lido:false,abandonado:false,desejado:false,data_fim:'',nota:0,observacao:'',capa:$('pergunta_capa').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(t)}`});
+salvarLocal();fecharPerguntaDiaria();renderizarFeed();
+}
+function salvarTrocaLeituraAtual(){
+const id=$('select-trocar-leitura').value;
+if(!id)return aviso('Selecione um livro.');
+if(tornarLeituraAtual(id)){salvarLocal();toggleModalOpcoes();renderizarFeed();aviso('Leitura atual atualizada.')}
+}
+/* abas */
+function mudarAba(aba){
+if(modoSel)sairSelecao();
+abaAtual=aba;
+['inicio','todos','lidos'].forEach(a=>{$('btn-tab-'+a).className='dock-tab'+(a===aba?' ativo':'')});
+atualizarFundoAba();
+renderizarFeed();
+voltarAoTopo();
+}
+function atualizarFundoAba(){
+const a=$('bg-layer-a'),b=$('bg-layer-b'),k=abaAtual==='kindle';
+const vis=activeBgLayer==='A'?a:b,oc=activeBgLayer==='A'?b:a;
+vis.style.opacity=k?'0':'1';oc.style.opacity='0';
+$('bg-glow').style.opacity=k?'0':'.25';
+}
+function toggleModalNovoRegistro(){$('modal-registro').classList.toggle('hidden')}
+function toggleModalOpcoes(){
+const m=$('modal-opcoes');m.classList.toggle('hidden');
+if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;$('input-usuario-email').value=lsGet('lido_usuario_email');popularSelects()}
+}
+let abaLidos='capas',anoStats=null;
+function definirAbaLidos(a){abaLidos=a;renderizarFeed();voltarAoTopo()}
+function definirAnoStats(a){anoStats=a;renderizarFeed()}
+function renderizarAbaLidos(feed){
+const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
+const tabs=[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''}">${r}</button>`).join('');
+addSecao(feed,`<div class="px-1 space-y-3"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white">Lidos <span class="text-xs text-gold-gradient font-sans font-normal">(${lidos.length})</span></h2><div class="grid grid-cols-2 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
+if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,1);
+else addSecao(feed,htmlStats(lidos),BG_PADRAO,1);
+transicionarFundo(BG_PADRAO);
+}
+function htmlCapasLidos(l){
+if(!l.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro concluído ainda.</p>';
+return `<div class="grid grid-cols-4 gap-2">${l.map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></button>`).join('')}</div>`;
+}
+function parseData(br){let m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br||''));if(m)return{m:+m[2],a:+m[3]};m=/^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/.exec(String(br||''));return m?{m:+m[2],a:+m[1]}:null}
+function barraStat(rot,n,max){return `<div class="space-y-1"><div class="flex justify-between text-xs"><span class="text-gray-200 truncate pr-2">${esc(rot)}</span><span class="text-white font-semibold">${n}</span></div><div class="h-1.5 rounded-full bg-white/10 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-yellow-500 to-amber-300" style="width:${max?Math.round(n/max*100):0}%"></div></div></div>`}
+function secStat(t,corpo){return `<section class="frosted-card p-5 w-full shadow-2xl space-y-3"><h3 class="text-[11px] uppercase tracking-widest text-gray-400 font-semibold">${t}</h3>${corpo}</section>`}
+function htmlStats(lidos){
+const hoje=new Date(),aCur=hoje.getFullYear(),mCur=hoje.getMonth()+1;
+const dados=lidos.map(l=>({l,p:parseData(l.data_fim)}));
+const anos=[...new Set(dados.filter(x=>x.p).map(x=>x.p.a))];
+if(!anos.includes(aCur))anos.push(aCur);
+anos.sort((a,b)=>b-a);
+if(anoStats===null||!anos.includes(anoStats))anoStats=aCur;
+const doAno=dados.filter(x=>x.p&&x.p.a===anoStats);
+const noMes=dados.filter(x=>x.p&&x.p.a===aCur&&x.p.m===mCur).length;
+const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const porMes=meses.map((_,i)=>doAno.filter(x=>x.p.m===i+1).length),maxM=Math.max(...porMes,1);
+const aut={};lidos.forEach(l=>{const a=l.autor||'Autor desconhecido';aut[a]=(aut[a]||0)+1});
+const topA=Object.entries(aut).sort((a,b)=>b[1]-a[1]).slice(0,8);
+const tipos={Kindle:0,'Áudio':0,'Físico':0};
+lidos.forEach(l=>{const k=l.formato==='Audiobook'?'Áudio':l.formato;if(k in tipos)tipos[k]++});
+const maxT=Math.max(...Object.values(tipos),1);
+const aband=biblioteca.filter(l=>statusDe(l)==='abandonado');
+const tile=(r,n)=>`<div class="flex-1 rounded-xl bg-white/5 border border-white/10 px-3 py-3 text-center"><div class="text-2xl font-bold text-white">${n}</div><div class="text-[10px] uppercase tracking-wider text-gray-400 mt-1">${r}</div></div>`;
+const chips=anos.map(a=>`<button onclick="definirAnoStats(${a})" class="seg-btn${a===anoStats?' ativo':''}">${a}</button>`).join('');
+return `<div class="space-y-3">
+<div class="frosted-card p-4 w-full shadow-2xl flex gap-2">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Total',lidos.length)}</div>
+${secStat('Por mês',`<div class="flex flex-wrap gap-2">${chips}</div><div class="flex items-end gap-1.5" style="height:8.5rem">${porMes.map((n,i)=>`<div class="flex-1 flex flex-col items-center justify-end gap-1"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full rounded-t bg-gradient-to-t from-yellow-500 to-amber-300" style="height:${n?Math.max(6,Math.round(n/maxM*80)):0}px"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div>`)}
+${secStat('Por tipo',`<div class="space-y-3">${Object.entries(tipos).map(([k,n])=>barraStat(k,n,maxT)).join('')}</div>`)}
+${secStat('Livros por autor',topA.length?`<div class="space-y-3">${topA.map(([a,n])=>barraStat(a,n,topA[0][1])).join('')}</div>`:'<p class="text-xs text-gray-500">Sem dados ainda.</p>')}
+${secStat('Abandonados ('+aband.length+')',aband.length?`<ul class="space-y-1.5">${aband.map(l=>`<li class="text-sm text-gray-200">${esc(l.titulo)} <span class="text-gray-500 text-xs">· ${esc(l.autor)}</span></li>`).join('')}</ul>`:'<p class="text-xs text-gray-500">Nenhum livro abandonado.</p>')}
+</div>`;
+}
+function abrirKindle(){toggleModalOpcoes();$('modal-kindle').classList.remove('hidden')}
+function fecharKindle(){$('modal-kindle').classList.add('hidden')}
+
+/* status e seletores */
+function estaLendo(l){
+if(l.desejado||l.abandonado||l.lido===true)return false;
+if(l.lido===false)return true;
+return !(l.data_fim&&l.nota>0);
+}
+function statusDe(l){return l.desejado?'desejado':l.abandonado?'abandonado':estaLendo(l)?'lendo':'lido'}
+function rotuloStatus(l){const s=statusDe(l);return s==='lido'?(l.nota>0?gerarEstrelasStr(l.nota):'Sem nota'):{lendo:'Em leitura',abandonado:'Abandonado',desejado:'Desejado'}[s]}
+function etiquetaStatus(l){
+const m={lendo:['btn-gold-degrade','Lendo'],lido:['bg-emerald-500/80 text-white','Concluído'],abandonado:['bg-red-500/80 text-white','Abandonado'],desejado:['bg-blue-500/80 text-white','Desejado']}[statusDe(l)];
+return `<span class="${m[0]} text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">${m[1]}</span>`;
+}
+function gerarEstrelasStr(n){if(!n)return 'Em leitura';let s='';for(let i=0;i<Math.floor(n);i++)s+='⭐';if(n%1)s+='✨';return s}
+function definirFormato(v){$('formato').value=v;renderSeletores()}
+function definirStatus(v){$('status').value=v;if(v!=='lido')$('nota').value=0;renderSeletores()}
+function definirNota(v){const el=$('nota');if(parseFloat(el.value)===v)v=0;el.value=v;if(v>0)$('status').value='lido';renderSeletores()}
+function renderSeletores(){
+const f=$('formato').value,st=$('status').value,n=parseFloat($('nota').value)||0;
+document.querySelectorAll('[data-formato]').forEach(b=>b.classList.toggle('ativo',b.dataset.formato===f));
+document.querySelectorAll('[data-status]').forEach(b=>b.classList.toggle('ativo',b.dataset.status===st));
+$('nota-label').innerText=n>0?`(${String(n).replace('.',',')} de 5)`:'(toque nas estrelas)';
+const box=$('star-picker');box.innerHTML='';
+for(let i=1;i<=5;i++){
+const fr=Math.max(0,Math.min(1,n-(i-1))),w=document.createElement('div');
+w.className='relative';w.style.cssText='width:2.75rem;height:2.75rem';
+w.innerHTML=`<svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full text-white/20"><path fill="currentColor" d="${STAR_PATH}"/></svg><div class="absolute inset-0 overflow-hidden" style="width:${fr*100}%"><svg viewBox="0 0 24 24" style="width:2.75rem;height:2.75rem" class="text-gold-400"><path fill="currentColor" d="${STAR_PATH}"/></svg></div><button type="button" class="absolute left-0 top-0 w-1/2 h-full" onclick="definirNota(${i-.5})" aria-label="${i-.5} estrelas"></button><button type="button" class="absolute right-0 top-0 w-1/2 h-full" onclick="definirNota(${i})" aria-label="${i} estrelas"></button>`;
+box.appendChild(w);
+}
+}
+function definirAbaRegistro(a,guardar=true){
+document.querySelectorAll('[data-tabreg]').forEach(b=>b.classList.toggle('ativo',b.dataset.tabreg===a));
+$('bookForm').classList.toggle('hidden',a!=='leitura');
+$('form-nota').classList.toggle('hidden',a!=='notas');
+if(guardar)lsSet('lido_aba_registro',a);
+}
+function salvarNota(){
+const t=$('nota-texto').value.trim();
+if(!t)return aviso('Escreva algo na nota.');
+notas.unshift({id:Date.now(),texto:t,musica:$('nota-musica').value.trim(),data:new Date().toLocaleDateString('pt-BR')});
+salvarLocal();toggleModalNovoRegistro();renderizarFeed();
+setTimeout(backupAutomatico,400);
+}
+function deletarNota(id,btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
+function paraBR(v){if(!v)return '';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}
+function paraISO(br){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(br||'');return m?`${m[3]}-${m[2]}-${m[1]}`:''}
+function mostrarPeriodo(show){
+$('periodo-box').classList.toggle('hidden',!show);$('periodo-toggle').classList.toggle('hidden',show);
+if(!show){$('periodo-inicio').value='';$('periodo-fim').value=''}
+}
+function periodoTxt(l){
+const t=l.data_inicio&&l.data_fim?`Lido de ${l.data_inicio} a ${l.data_fim}`:l.data_inicio?`Iniciado em ${l.data_inicio}`:l.data_fim?`Concluído em ${l.data_fim}`:'';
+return t?`<p class="text-xs text-gray-400">${esc(t)}</p>`:'';
+}
+function prepararNovoRegistro(){
+$('bookForm').reset();
+['edit_id','capa_url'].forEach(i=>$(i).value='');
+$('formato').value='Kindle';$('nota').value='0';$('status').value='lendo';
+mostrarPeriodo(false);
+renderSeletores();
+$('modal-titulo').innerHTML='<span class="text-gold-gradient">Nova passagem</span>';
+$('btn-salvar-modal').innerText='Adicionar';
+$('tabs-registro').classList.remove('hidden');$('nota-texto').value='';$('nota-musica').value='';
+definirAbaRegistro('leitura',false);
+toggleModalNovoRegistro();
+}
+function editarLivro(id){
+const l=biblioteca.find(x=>x.id===id);if(!l)return;
+$('edit_id').value=l.id;$('titulo').value=l.titulo;$('autor').value=l.autor;
+$('formato').value=l.formato||'Kindle';$('nota').value=l.nota||0;$('status').value=statusDe(l);
+$('observacao').value=l.observacao||'';$('capa_url').value=l.capa||'';
+mostrarPeriodo(!!l.data_inicio);
+if(l.data_inicio){$('periodo-inicio').value=paraISO(l.data_inicio);$('periodo-fim').value=paraISO(l.data_fim)}
+renderSeletores();
+$('modal-titulo').innerHTML='<span class="text-gold-gradient">Editar leitura</span>';
+$('btn-salvar-modal').innerText='Atualizar';
+$('tabs-registro').classList.add('hidden');definirAbaRegistro('leitura',false);
+toggleModalNovoRegistro();
+}
+
+/* Google Books API */
+const GOOGLE_BOOKS_API_KEY = 'AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
+
+async function buscarGoogleBooks(q,max=5){
+let url=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}`;
+if(GOOGLE_BOOKS_API_KEY){url+=`&key=${GOOGLE_BOOKS_API_KEY}`;}
+const r=await fetch(url);
+if(!r.ok)throw new Error('Google Books indisponível');
+const d=await r.json();
+return (d.items||[]).map(item=>{
+const info=item.volumeInfo||{};
+const title=info.title||'';
+const authors=Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido';
+let cover='';
+if(info.imageLinks&&info.imageLinks.thumbnail){
+cover=info.imageLinks.thumbnail.replace(/^http:\/\//,'https://');
+}
+return {titulo:title,autor:authors,capa:cover};
+}).filter(x=>x.titulo);
+}
+async function capaLivro(titulo,autor){
+const conhecido=autor&&!/desconhecido/i.test(autor);
+let lista=await buscarGoogleBooks(conhecido?`${titulo} ${autor}`:titulo,3);
+let c=(lista.find(x=>x.capa)||{}).capa;
+if(!c&&conhecido){lista=await buscarGoogleBooks(titulo,3);c=(lista.find(x=>x.capa)||{}).capa}
+return c||'';
+}
+
+async function atualizarCapasFaltantes(manual=false){
+let alterado=false;
+const semCapa=biblioteca.filter(l=>!l.capa||l.capa.includes('placehold.co'));
+if(manual&&!semCapa.length)return aviso('Todos os livros já têm capas salvas.');
+if(manual)aviso(`Buscando capas para ${semCapa.length} livros...`);
+for(const l of semCapa){
+ try{
+  const url=await capaLivro(l.titulo,l.autor);
+  if(url){l.capa=url;alterado=true;}
+ }catch(e){}
+}
+if(alterado){
+ salvarLocal();
+ renderizarFeed();
+ if(manual)aviso('Capas atualizadas com sucesso!');
+}
+}
+
+/* busca de livros (modal e pergunta diária) */
+function buscaDebounce(q,tipo){
+clearTimeout(timers[tipo]);
+const skel=$('skel-'+tipo),res=$('res-'+tipo);
+if(!q||q.trim().length<2){skel.classList.add('hidden');res.classList.add('hidden');return}
+skel.classList.remove('hidden');res.classList.add('hidden');
+timers[tipo]=setTimeout(()=>buscarLivros(q,tipo),400);
+}
+function buscarLivros(q,tipo){
+const skel=$('skel-'+tipo),res=$('res-'+tipo);
+const alvo=tipo==='modal'?['titulo','autor','capa_url']:['pergunta_titulo','pergunta_autor','pergunta_capa'];
+buscarGoogleBooks(q,5).then(lista=>{
+skel.classList.add('hidden');
+if(!lista.length){res.classList.add('hidden');return}
+res.innerHTML='';res.classList.remove('hidden');
+lista.forEach(b=>{
+const capa=b.capa||'https://placehold.co/300x450/111/fff?text=Sem+Capa';
+const row=document.createElement('div');
+row.className='flex items-center gap-3 p-2.5 hover:bg-white/10 cursor-pointer border-b border-white/5 text-xs';
+row.innerHTML=`<img src="${esc(capa)}" class="w-8 h-12 object-cover rounded shadow flex-shrink-0" onerror="this.src='https://placehold.co/300x450/111/fff?text=Sem+Capa'"><div class="truncate flex-1"><p class="font-bold text-white truncate">${esc(b.titulo)}</p><p class="text-gray-400 text-[11px] truncate">${esc(b.autor)}</p></div>`;
+row.onclick=()=>{$(alvo[0]).value=b.titulo;$(alvo[1]).value=b.autor;$(alvo[2]).value=b.capa||'';res.classList.add('hidden')};
+res.appendChild(row);
+});
+}).catch(()=>{skel.classList.add('hidden');res.classList.add('hidden');aviso('Não foi possível consultar o Google Books agora.')});
+}
+
+function salvarLivro(e){
+e.preventDefault();
+const editId=$('edit_id').value,st=$('status').value,lido=st==='lido';
+const nota=lido?(parseFloat($('nota').value)||0):0,hoje=new Date().toLocaleDateString('pt-BR');
+const idx=editId?biblioteca.findIndex(l=>l.id==editId):-1;
+let targetId=editId,obsAntiga='',dataAntiga='';
+if(idx!==-1){obsAntiga=biblioteca[idx].observacao||'';dataAntiga=biblioteca[idx].data_fim||''}
+const inicioBR=paraBR($('periodo-inicio').value),fimBR=paraBR($('periodo-fim').value);
+const d={titulo:$('titulo').value,autor:$('autor').value,formato:$('formato').value,lido,abandonado:st==='abandonado',desejado:st==='desejado',data_inicio:inicioBR,data_fim:lido?(fimBR||dataAntiga||hoje):'',nota,observacao:$('observacao').value||'',capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent($('titulo').value)}`};
+
+if(!d.capa||d.capa.includes('placehold.co')){
+ capaLivro(d.titulo,d.autor).then(c=>{
+  if(c){
+   const target=biblioteca.find(x=>x.id==targetId);
+   if(target){target.capa=c;salvarLocal();renderizarFeed();}
+  }
+ });
+}
+
+if(idx!==-1)biblioteca[idx]={...biblioteca[idx],...d};
+else{targetId=Date.now();biblioteca.unshift({id:targetId,...d})}
+salvarLocal();
+const obs=d.observacao.trim();
+if(obs&&obs!==obsAntiga.trim())setTimeout(backupAutomatico,400);
+$('bookForm').reset();['capa_url','edit_id'].forEach(i=>$(i).value='');
+toggleModalNovoRegistro();
+renderizarFeed(targetId);
+}
+
+/* renderização */
+function obterSaudacao(){const h=new Date().getHours();return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite'}
+function criarWrapInferior(feed){const w=document.createElement('div');w.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';feed.appendChild(w);return w}
+function addSecao(pai,html,capa,i=0){const s=document.createElement('section');s.className='snap-item stagger-item';s.style.animationDelay=`${i*.05}s`;s.dataset.capa=capa||BG_PADRAO;s.innerHTML=html;pai.appendChild(s);return s}
+function imgCapa(url,cls,id,tipo){
+const clk=id!=null?` onclick="capaClick(event,${id},'${tipo}')" style="cursor:pointer"`:'';
+return `<img src="${esc(url)}"${clk} class="${cls} object-cover rounded shadow-lg border border-white/10 flex-shrink-0" onerror="this.src='https://placehold.co/400x600/111/fff?text=Sem+Capa'">`;
+}
+function capaClick(ev,id,tipo){
+if(modoSel)return;
+ev.stopPropagation();
+const l=(tipo==='kindle'?notasKindle:biblioteca).find(x=>x.id===id);if(!l)return;
+$('amazon-titulo').textContent=`${l.titulo} · ${l.autor}`;
+$('modal-amazon').classList.remove('hidden');
+}
+function fecharAmazon(){$('modal-amazon').classList.add('hidden')}
+function confirmarAmazon(){fecharAmazon();aviso('Busca na Amazon em breve.')}
+function atualizarTitulo(){
+ const h=$('titulo-app');
+ h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
+ h.style.fontSize='';h.style.lineHeight='';h.style.letterSpacing='';h.style.width='';h.style.margin='';
+}
+function renderizarFeed(scrollToId=null){
+atualizarTitulo();
+const feed=$('feed-container');
+feed.innerHTML='';
+feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-0 pt-28 pb-28 page-transition'+(modoSel?' modo-sel':'');
+const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes}[abaAtual];
+if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
+handleFeedScroll();
+}
+function renderizarAbaInicio(feed){
+const total=biblioteca.length,l=biblioteca[0];
+const wrap=document.createElement('div');
+wrap.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';
+addSecao(wrap,`<div class="frosted-card relative p-6 md:p-8 w-full space-y-4 shadow-2xl"><button onclick="toggleModalOpcoes()" class="absolute top-5 right-5 text-xs text-gray-300 hover:text-gold-400 transition-colors" aria-label="Opções">Opções</button><div class="pr-12"><h2 class="font-serif text-3xl md:text-4xl font-bold text-white leading-tight">${obterSaudacao()}${usuarioNome?', '+esc(usuarioNome):''}!</h2></div><div class="flex items-center gap-2"><button onclick="prepararNovoRegistro()" class="btn-gold-degrade text-xs px-5 py-3 rounded-lg shadow-lg uppercase tracking-wider">Adicionar</button><button onclick="mudarAba('observacoes')" class="bg-white text-[#0b0f17] font-semibold text-xs px-5 py-3 rounded-lg uppercase tracking-wider hover:bg-gray-200 transition-colors">SÓ TEXTOS</button></div></div>`,l?l.capa:BG_PADRAO,1);
+if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última passagem</span><span class="text-[10px] text-gray-400">Toque para abrir</span></div><div class="flex items-start gap-3">${imgCapa(l.capa,'w-14 h-20',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2);
+if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3);
+const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
+if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl"><button onclick="editarLivro(${lendo.id})" class="flex items-center gap-3 w-full text-left"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo atualmente</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4);
+feed.appendChild(wrap);
+transicionarFundo(l?l.capa:BG_PADRAO);
+}
+let filtroTodos='tudo';
+let filtroSoTextos='todos';
+function definirFiltroTodos(f){filtroTodos=f;renderizarFeed();voltarAoTopo()}
+function definirFiltroSoTextos(f){filtroSoTextos=f;renderizarFeed();voltarAoTopo()}
+function htmlLivro(l){
+return `<div class="frosted-card relative p-6 md:p-8 w-full space-y-5 shadow-2xl min-h-[22rem]"><div class="sel-mark">✓</div>
+<div class="flex items-center justify-between pr-9"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><span class="text-[11px] text-gray-400 uppercase tracking-widest">${biblioteca.indexOf(l)+1} de ${biblioteca.length}</span></div>
+<div class="flex items-start gap-5">${imgCapa(l.capa,'w-28 h-40 md:w-32 md:h-48',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm md:text-base font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}</div></div>
+${l.observacao?`<p class="text-gray-100 text-xl md:text-2xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light">${esc(l.observacao)}</p>`:''}
+<div class="flex items-center justify-between pt-3 border-t border-white/10 gap-2 flex-wrap"><div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div>
+<div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
+}
+function htmlNota(n){
+return `<div class="frosted-card p-6 w-full space-y-3 shadow-2xl"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="font-obs text-gray-100 text-xl md:text-2xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+}
+function htmlKindle(k){
+return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl"><p class="text-white text-2xl md:text-3xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+}
+function renderizarAbaTodos(feed,scrollToId){
+const itens=[];
+if(filtroTodos==='tudo'||filtroTodos==='livros')biblioteca.forEach(l=>itens.push({t:'livro',id:l.id,d:l}));
+if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'nota',id:n.id,d:n}));
+if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
+if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
+const tabs=[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''}">${r}</button>`).join('');
+addSecao(feed,`<div class="px-1 space-y-3"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white">Textos <span class="text-xs text-gold-gradient font-sans font-normal">(${itens.length})</span></h2><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
+if(!itens.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nada por aqui ainda.</p></div>`,BG_PADRAO,1);
+itens.forEach((it,i)=>{
+const d=it.d;
+if(it.t==='livro'){const sc=addSecao(feed,htmlLivro(d),d.capa,i+1);sc.id=`card-item-${d.id}`;sc.dataset.id=d.id}
+else if(it.t==='nota')addSecao(feed,htmlNota(d),BG_PADRAO,i+1);
+else addSecao(feed,htmlKindle(d),BG_PADRAO,i+1);
+});
+transicionarFundo(BG_PADRAO);
+if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
+}
+function renderizarAbaObservacoes(feed){
+const tabs=[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''}">${r}</button>`).join('');
+addSecao(feed,`<div class="px-1 pb-1 space-y-3"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white">SÓ TEXTOS</h2><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
+const itens=[
+...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
+...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
+...(filtroSoTextos==='todos'||filtroSoTextos==='kindle'?notasKindle.filter(n=>(n.observacao||'').trim()).map(n=>({tipo:'kindle',obs:n.observacao,rot:`${n.titulo} · ${n.autor}`,capa:n.capa})):[])
+];
+if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,BG_PADRAO,1);return}
+itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl"><p class="text-gray-100 text-xl md:text-2xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,l.capa||BG_PADRAO,i+1));
+transicionarFundo(BG_PADRAO);
+}
+function abrirPassagem(id){
+const l=biblioteca.find(x=>x.id===id);if(!l)return;
+$('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
+<div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
+${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
+<div class="flex items-center justify-end gap-2 pt-3 border-t border-white/10 flex-wrap"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div>`;
+$('modal-passagem').classList.remove('hidden');
+}
+function fecharPassagem(){$('modal-passagem').classList.add('hidden')}
+
+/* kindle */
+function processarKindleClippings(file){
+if(!file)return;
+fecharKindle();
+const r=new FileReader();
+r.onerror=()=>aviso('Não foi possível ler o arquivo.');
+r.onload=e=>{
+const blocos=e.target.result.replace(/^\ufeff/,'').split('==========').map(b=>b.trim()).filter(Boolean);
+const vistos=new Set(notasKindle.map(n=>(n.titulo+'|'+n.observacao).toLowerCase())),novas=[];
+blocos.forEach((b,idx)=>{
+const lin=b.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+if(lin.length<3)return;
+let titulo=lin[0],autor='Autor Desconhecido';
+const m=lin[0].match(/\(([^)]+)\)[^()]*$/);
+if(m){autor=m[1].trim();titulo=lin[0].replace(m[0],'').trim()}
+const cit=lin.slice(2).join(' ').trim(),k=(titulo+'|'+cit).toLowerCase();
+if(!titulo||!cit||vistos.has(k))return;
+vistos.add(k);novas.push({id:Date.now()+idx,titulo,autor,observacao:cit,capa:`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo)}`});
+});
+if(!novas.length)return aviso('Nenhum marcador novo encontrado.');
+const caps={};
+Promise.all([...new Set(novas.map(n=>n.titulo))].map(t=>capaLivro(t,(novas.find(n=>n.titulo===t)||{}).autor).then(c=>{if(c)caps[t]=c}).catch(()=>{}))).then(()=>{
+novas.forEach(n=>{if(caps[n.titulo])n.capa=caps[n.titulo]});
+notasKindle=[...novas,...notasKindle];salvarLocal();renderizarFeed();
+aviso(`${novas.length} marcadores importados.`);$('kindle-file-input').value='';
+});
+};
+r.readAsText(file,'UTF-8');
+}
+function deletarNotaKindle(id,btn){doisToques(btn,()=>{notasKindle=notasKindle.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
+function deletarLivro(id,btn){doisToques(btn,()=>{biblioteca=biblioteca.filter(l=>l.id!==id);salvarLocal();fecharPassagem();renderizarFeed()})}
+
+/* fundo e rolagem */
+function transicionarFundo(url){
+if(abaAtual==='kindle'||currentCapaUrl===url)return;
+currentCapaUrl=url;
+const a=$('bg-layer-a'),b=$('bg-layer-b');
+if(activeBgLayer==='A'){b.style.backgroundImage=`url('${url}')`;b.style.opacity='1';a.style.opacity='0';activeBgLayer='B'}
+else{a.style.backgroundImage=`url('${url}')`;a.style.opacity='1';b.style.opacity='0';activeBgLayer='A'}
+}
+function handleFeedScroll(){
+const feed=$('feed-container'),items=document.querySelectorAll('.snap-item'),pos=feed.scrollTop+feed.clientHeight/2;
+const noFim=feed.scrollTop+feed.clientHeight>=feed.scrollHeight-50,arrow=$('scroll-arrow'),top=$('top-btn');
+arrow.classList.toggle('hidden',items.length<=1||noFim);
+const mostra=items.length>1&&noFim&&feed.scrollTop>200;
+top.classList.toggle('hidden',!mostra);top.classList.toggle('flex',mostra);
+items.forEach(it=>{if(pos>=it.offsetTop&&pos<=it.offsetTop+it.clientHeight&&it.dataset.capa)transicionarFundo(it.dataset.capa)});
+}
+function voltarAoTopo(){$('feed-container').scrollTo({top:0,behavior:'smooth'})}
+function proximoItemFeed(){
+const feed=$('feed-container'),alvo=[...document.querySelectorAll('.snap-item')].find(it=>it.offsetTop-150>feed.scrollTop+10);
+if(alvo)feed.scrollTo({top:alvo.offsetTop-150,behavior:'smooth'});
+}
+
+/* seleção múltipla */
+function iniciarSelecao(){
+toggleModalOpcoes();
+filtroTodos='livros';if(abaAtual!=='todos')mudarAba('todos');else renderizarFeed();
+modoSel=true;selecionados.clear();
+$('feed-container').classList.add('modo-sel');
+$('nav-principal').classList.add('hidden');
+const b=$('sel-bar');b.classList.remove('hidden');b.classList.add('flex');
+atualizarSelBar();
+}
+function sairSelecao(){
+modoSel=false;selecionados.clear();
+$('feed-container').classList.remove('modo-sel');
+document.querySelectorAll('.sel-ativo').forEach(e=>e.classList.remove('sel-ativo'));
+$('nav-principal').classList.remove('hidden');
+const b=$('sel-bar');b.classList.add('hidden');b.classList.remove('flex');
+}
+function alternarSel(id){
+id=String(id);
+if(selecionados.has(id))selecionados.delete(id);else selecionados.add(id);
+const el=$('card-item-'+id);if(el)el.classList.toggle('sel-ativo',selecionados.has(id));
+atualizarSelBar();
+}
+function selecionarTodas(){
+const todos=selecionados.size===biblioteca.length;selecionados.clear();
+document.querySelectorAll('[data-id]').forEach(el=>{if(!todos)selecionados.add(el.dataset.id);el.classList.toggle('sel-ativo',!todos)});
+atualizarSelBar();
+}
+function atualizarSelBar(){
+confirmandoDel=false;const n=selecionados.size,b=$('sel-del');
+$('sel-count').innerText=`${n} selecionada${n===1?'':'s'}`;
+b.innerText='Excluir';b.disabled=n===0;b.classList.toggle('opacity-40',n===0);
+}
+function excluirSelecionadas(){
+if(!selecionados.size)return;
+if(!confirmandoDel){confirmandoDel=true;$('sel-del').innerText=`Confirmar (${selecionados.size})`;return}
+biblioteca=biblioteca.filter(l=>!selecionados.has(String(l.id)));
+salvarLocal();sairSelecao();renderizarFeed();
+}
+
+/* story */
+function carregarImg(url){return new Promise(res=>{if(!url)return res(null);const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=()=>res(null);im.src=url;setTimeout(()=>res(null),6000)})}
+function quebrarTexto(ctx,texto,largura){
+const lin=[];let at='';
+String(texto).split(/\s+/).filter(Boolean).forEach(p=>{const t=at?at+' '+p:p;if(ctx.measureText(t).width>largura&&at){lin.push(at);at=p}else at=t});
+if(at)lin.push(at);return lin;
+}
+function cortarLinha(ctx,u,largura){if(ctx.measureText(u).width<=largura)return u;while(u.length>1&&ctx.measureText(u+'…').width>largura)u=u.slice(0,-1);return u.trim()+'…'}
+function pathEstrela(ctx,cx,cy,r){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?r:r*.45,x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
+async function renderizarStory(l){
+const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
+try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
+const img=await carregarImg(l.capa);
+ctx.clearRect(0,0,W,H);ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H);
+if(img){
+const mini=document.createElement('canvas');mini.width=27;mini.height=48;
+const mc=mini.getContext('2d'),e=Math.max(27/img.width,48/img.height);
+mc.drawImage(img,(27-img.width*e)/2,(48-img.height*e)/2,img.width*e,img.height*e);
+ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=.6;ctx.drawImage(mini,0,0,W,H);ctx.globalAlpha=1;
+}
+const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(0,0,0,.55)');g.addColorStop(.5,'rgba(0,0,0,.5)');g.addColorStop(1,'rgba(0,0,0,.92)');
+ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ctx.textBaseline='alphabetic';ctx.textAlign='left';
+const f9='900 46px "Inter",sans-serif',f6='600 46px "Inter",sans-serif';
+ctx.font=f6;const wI=ctx.measureText('LIDO').width;
+ctx.font=f9;const wV=ctx.measureText('LIVROS').width;
+const x0=(W-(wI+wV))/2;
+ctx.font=f6;ctx.fillStyle='#fff';ctx.fillText('LIDO',x0,120);
+ctx.font=f9;ctx.fillStyle='#FACC15';ctx.fillText('LIVROS',x0+wI,120);
+const cw=540,ch=810,cx=(W-cw)/2,cy=170;
+if(img){
+const cr=cw/ch,ir=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;
+if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
+ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=50;ctx.shadowOffsetY=20;ctx.drawImage(img,sx,sy,sw,sh,cx,cy,cw,ch);
+ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+}else{ctx.fillStyle='#1b2230';ctx.fillRect(cx,cy,cw,ch);ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='400 36px Inter,sans-serif';ctx.textAlign='center';ctx.fillText('Sem capa',W/2,cy+ch/2)}
+ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;ctx.strokeRect(cx,cy,cw,ch);
+ctx.textAlign='center';
+let y=cy+ch+100,tam=64,lin;
+for(;tam>=40;tam-=2){ctx.font=`700 ${tam}px "Inter",sans-serif`;lin=quebrarTexto(ctx,l.titulo,900);if(lin.length<=3)break}
+if(lin.length>3){lin=lin.slice(0,3);lin[2]=cortarLinha(ctx,lin[2]+' …',900)}
+ctx.fillStyle='#fff';lin.forEach(t=>{ctx.fillText(t,W/2,y);y+=tam*1.2});
+y+=4;ctx.font='500 36px Inter,sans-serif';ctx.fillStyle='#FACC15';ctx.fillText(cortarLinha(ctx,'por '+l.autor,900),W/2,y);
+y+=70;
+if(l.nota>0){
+const r=44,gap=104,s0=W/2-gap*2;
+for(let i=0;i<5;i++){
+const sx=s0+i*gap;pathEstrela(ctx,sx,y,r);ctx.fillStyle='rgba(250,204,21,.22)';ctx.fill();
+const fr=Math.max(0,Math.min(1,l.nota-i));
+if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx-r,y-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx,y,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
+}
+}else if(statusDe(l)==='lendo'){ctx.font='500 34px Inter,sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('Em leitura',W/2,y+12)}
+const obs=(l.observacao||'').trim();
+if(obs){
+y+=75;const esp=1820-y;let t=50,ol;
+for(;t>=28;t-=2){ctx.font=`400 ${t}px "Inter",sans-serif`;ol=quebrarTexto(ctx,obs,860);if(ol.length*t*1.3<=esp)break}
+const max=Math.max(1,Math.floor(esp/(t*1.3)));
+if(ol.length>max){ol=ol.slice(0,max);ol[max-1]=cortarLinha(ctx,ol[max-1]+' …',860)}
+ctx.fillStyle='rgba(255,255,255,.92)';ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.3});
+}
+ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1832,600,2);
+ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px Inter,sans-serif';ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1884);
+storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
+}
+async function abrirInstaModal(id){const l=biblioteca.find(x=>x.id===id);if(!l)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStory(l)}
+function fecharInstaModal(){$('insta-modal').classList.add('hidden')}
+async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`story_lido_${Date.now()}.png`,'image/png')}
+
+/* arquivos */
+try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
+async function baixarArquivo(conteudo,nome,tipo){
+if(!dlCap&&window.claude&&claude.use){try{dlCap=await claude.use('downloads')}catch(e){}}
+if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined')return false}}
+const blob=conteudo instanceof Blob?conteudo:new Blob([conteudo],{type:tipo});
+if(tipo==='image/png'&&navigator.canShare){try{const f=new File([blob],nome,{type:tipo});if(navigator.canShare({files:[f]})){await navigator.share({files:[f]});return true}}catch(e){}}
+const url=URL.createObjectURL(blob),a=document.createElement('a');
+a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);return true;
+}
+function nomeBackup(ext){const d=new Date(),p=n=>String(n).padStart(2,'0');return `LidosBackup_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}h${p(d.getMinutes())}.${ext}`}
+function temDados(){return biblioteca.length>0||notas.length>0}
+function exportarJSON(){if(!temDados())return aviso('Sua biblioteca está vazia.');baixarArquivo(JSON.stringify({biblioteca,notas},null,2),nomeBackup('json'),'application/json')}
+function csvCampo(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
+function gerarCSV(){
+const livros=biblioteca.map(l=>[l.titulo,l.autor,l.formato,l.nota,l.data_fim,l.observacao,l.capa,'livro',''].map(csvCampo).join(';'));
+const ns=notas.map(n=>['','','',0,n.data,n.texto,'','nota',n.musica||''].map(csvCampo).join(';'));
+return '\ufeffTitulo;Autor;Formato;Nota;Fim;Observacao;Capa;Registro;Musica\n'+[...livros,...ns].join('\n')+'\n';
+}
+function exportarCSV(){if(!temDados())return aviso('Sua biblioteca está vazia.');baixarArquivo(gerarCSV(),nomeBackup('csv'),'text/csv;charset=utf-8;')}
+function autoBackupAtivo(){return lsGet('lido_autobackup')!=='off'}
+function alternarAutoBackup(on){lsSet('lido_autobackup',on?'on':'off')}
+function backupAutomatico(){if(autoBackupAtivo()&&temDados())baixarArquivo(gerarCSV(),nomeBackup('csv'),'text/csv;charset=utf-8;')}
+async function enviarBackupPorEmail(){
+if(!temDados())return aviso('Nada para enviar ainda.');
+const ag=new Date(),quando=`${ag.toLocaleDateString('pt-BR')} às ${ag.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+const assunto='Backup do Lidos',corpo=`Oi, eu do futuro, esse aqui é o meu backup do LIDOLIVROS da data ${quando}`;
+const nome=nomeBackup('csv'),csv=gerarCSV();
+try{
+const f=new File([csv],nome,{type:'text/csv'});
+if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:assunto,text:corpo});return}
+}catch(e){if(e&&e.name==='AbortError')return}
+await baixarArquivo(csv,nome,'text/csv;charset=utf-8;');
+const para=lsGet('lido_usuario_email');
+window.location.href=`mailto:${encodeURIComponent(para)}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+aviso('Anexe o arquivo salvo ao e-mail.');
+}
+function gerarPromptIA(){
+const onde={Kindle:'no Kindle','Físico':'em livro físico',Audiobook:'em audiobook'};
+let txt='Oi, faça uma análise completa do meu histórico literário com os dados a seguir:\n\n';
+[...biblioteca].reverse().forEach(l=>{
+const s=statusDe(l);
+let p=`${s==='lido'?'Eu li':'Registrei'} o livro intitulado "${l.titulo}", escrito por ${l.autor}, ${onde[l.formato]||'em formato '+l.formato}. `;
+if(l.data_inicio)p+=`Comecei a leitura em ${l.data_inicio}. `;
+p+=s==='lido'?`Eu concluí a leitura${l.data_fim?' em '+l.data_fim:''}${l.nota>0?` e dei nota ${String(l.nota).replace('.',',')} de 5`:''}. `:{lendo:'Eu ainda não concluí a leitura, pois estou lendo no momento. ',abandonado:'Eu abandonei a leitura. ',desejado:'Eu ainda não li, é um livro que desejo ler. '}[s];
+const obs=(l.observacao||'').trim();
+p+=obs?`A minha anotação sobre o livro foi: "${obs}".`:'Não fiz nenhuma anotação sobre o livro.';
+txt+=p+'\n\n';
+});
+return txt.trim();
+}
+function abrirEnviarIA(){
+if(!biblioteca.length)return aviso('Nenhum livro registrado ainda.');
+toggleModalOpcoes();
+$('modal-ia').classList.remove('hidden');
+}
+function fecharEnviarIA(){$('modal-ia').classList.add('hidden')}
+async function copiarPromptIA(){
+const texto=gerarPromptIA();let ok=false;
+try{await navigator.clipboard.writeText(texto);ok=true}catch(e){}
+if(!ok){const el=document.createElement('textarea');el.value=texto;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();try{ok=document.execCommand('copy')}catch(e){}el.remove()}
+if(ok){fecharEnviarIA();aviso('Prompt copiado. Cole no chat da IA.')}else aviso('Não foi possível copiar o prompt. Tente novamente.');
+}
+function parseCSV(texto){
+texto=texto.replace(/^\ufeff/,'');
+const pri=texto.split(/\r?\n/)[0]||'',sep=pri.split(';').length>=pri.split(',').length?';':',';
+const linhas=[];let linha=[],campo='',aspas=false;
+const fecha=()=>{linha.push(campo);campo='';if(linha.some(x=>x.trim()!==''))linhas.push(linha);linha=[]};
+for(let i=0;i<texto.length;i++){
+const c=texto[i];
+if(aspas){if(c==='"'){if(texto[i+1]==='"'){campo+='"';i++}else aspas=false}else campo+=c}
+else if(c==='"')aspas=true;
+else if(c===sep){linha.push(campo);campo=''}
+else if(c==='\n'||c==='\r'){if(c==='\r'&&texto[i+1]==='\n')i++;fecha()}
+else campo+=c;
+}
+fecha();return linhas;
+}
+function normalizarData(v){
+v=String(v||'').trim();if(!v)return '';
+let m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(v);
+if(m)return `${m[3].padStart(2,'0')}/${m[2].padStart(2,'0')}/${m[1]}`;
+m=/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/.exec(v);
+if(m)return `${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')}/${m[3]}`;
+return '';
+}
+function semAcento(t){return String(t||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function normFormato(v){
+const n=semAcento(v);if(!n)return 'Físico';
+if(n.includes('audio'))return 'Audiobook';
+if(n.includes('fisic')||n.includes('papel'))return 'Físico';
+if(n.includes('kindle')||n.includes('ebook')||n.includes('e-book')||n.includes('digital'))return 'Kindle';
+return String(v).trim();
+}
+function statusImport(v){
+const n=semAcento(v);if(!n)return 'lido';
+if(n.startsWith('conclu')||n==='lido'||n.startsWith('finaliz'))return 'lido';
+if(n.includes('abandon'))return 'abandonado';
+if(n.includes('desej')||n.includes('quero'))return 'desejado';
+return 'lendo';
+}
+function lerRegistros(texto){
+texto=texto.replace(/^\ufeff/,'');
+if(/^\s*[\[{]/.test(texto)){
+const j=JSON.parse(texto),arr=Array.isArray(j)?j:(j.biblioteca||[]),nts=Array.isArray(j)?[]:(j.notas||[]);
+return{livros:arr.filter(x=>x&&x.titulo).map(x=>({titulo:String(x.titulo),autor:x.autor||'Autor Desconhecido',formato:x.formato||'Físico',nota:parseFloat(x.nota)||0,data_fim:x.data_fim||'',observacao:x.observacao||'',capa:x.capa||''})),notas:nts.filter(n=>n&&n.texto).map(n=>({texto:String(n.texto),musica:n.musica||'',data:n.data||''}))};
+}
+const linhas=parseCSV(texto);if(linhas.length<2)return{livros:[],notas:[]};
+const cab=linhas[0].map(h=>semAcento(h));
+const ach=(ns,d)=>{for(const n of ns){const k=cab.indexOf(n);if(k>=0)return k}return d};
+const todos=ns=>cab.map((h,i)=>ns.includes(h)?i:-1).filter(i=>i>=0);
+const iT=ach(['titulo','livro','title','nome'],0),iA=ach(['autor','autora','author','escritor'],1),iF=ach(['formato','tipo de leitura','tipo','format'],2),iN=ach(['nota','avaliacao','rating'],3),iO=ach(['observacao','observacoes','anotacao','anotacoes','citacao'],-1),iC=ach(['capa','cover','imagem'],-1),iR=ach(['registro'],-1),iM=ach(['musica'],-1),iS=ach(['status','situacao'],-1);
+const colsFim=todos(['fim','data_fim','data conclusao','data de conclusao','concluido em','data']);
+const colsIni=todos(['inicio','data inicio','data de inicio','iniciado em']);
+const g=(c,i)=>i>=0&&c[i]!=null?c[i].trim():'';
+const dt=(c,cols)=>{for(const i of cols){const v=normalizarData(g(c,i));if(v)return v}return ''};
+const livros=[],ns=[];
+linhas.slice(1).forEach(c=>{
+if(g(c,iR)==='nota'){const t=g(c,iO);if(t)ns.push({texto:t,musica:g(c,iM),data:dt(c,colsFim)});return}
+const r={titulo:g(c,iT),autor:g(c,iA)||'Autor Desconhecido',formato:normFormato(g(c,iF)),nota:parseFloat(g(c,iN).replace(',','.'))||0,data_fim:dt(c,colsFim),data_inicio:dt(c,colsIni),observacao:g(c,iO),capa:g(c,iC),status:statusImport(g(c,iS))};
+if(r.titulo)livros.push(r);
+});
+return{livros,notas:ns};
+}
+function importarTexto(texto){
+let ler;
+try{ler=lerRegistros(texto)}catch(e){return aviso('Arquivo inválido.')}
+const regs=ler.livros;
+if(!regs.length&&!ler.notas.length)return aviso('Nada encontrado no arquivo.');
+const chave=r=>`${r.titulo}|${r.autor}|${r.data_fim||''}`.toLowerCase(),existentes=new Set(biblioteca.map(chave)),hoje=new Date().toLocaleDateString('pt-BR');
+let novos=0,ign=0;const ps=[];
+regs.forEach((r,i)=>{
+const k=chave(r);if(existentes.has(k)){ign++;return}
+existentes.add(k);novos++;
+const ph=`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(r.titulo)}`;
+const st=r.status||'lido',eLido=st==='lido';
+const mk=capa=>({id:Date.now()+i,titulo:r.titulo,autor:r.autor,formato:r.formato,nota:eLido?r.nota:0,lido:eLido,abandonado:st==='abandonado',desejado:st==='desejado',data_inicio:r.data_inicio||'',data_fim:eLido?(r.data_fim||hoje):'',observacao:r.observacao,capa});
+if(r.capa){ps.push(Promise.resolve(mk(r.capa)));return}
+ps.push(capaLivro(r.titulo,r.autor).then(c=>mk(c||ph)).catch(()=>mk(ph)));
+});
+Promise.all(ps).then(livros=>{
+biblioteca=[...livros,...biblioteca];
+const vistas=new Set(notas.map(n=>(n.texto+'|'+n.data).toLowerCase()));let nn=0;
+ler.notas.forEach((n,i)=>{const k=(n.texto+'|'+n.data).toLowerCase();if(vistas.has(k))return;vistas.add(k);nn++;notas.push({id:Date.now()-i-1,texto:n.texto,musica:n.musica||'',data:n.data})});
+notas.sort((a,b)=>b.id-a.id);
+salvarLocal();renderizarFeed();toggleModalOpcoes();
+aviso(`${novos} livros e ${nn} notas restaurados.`+(ign?` ${ign} já existiam.`:''));
+});
+}
+function processarCSV(file){
+if(!file)return;
+const ler=enc=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if(enc==='UTF-8'&&t.includes('\ufffd'))return ler('windows-1252');importarTexto(t);$('csv-file-input').value=''};r.onerror=()=>aviso('Não foi possível ler o arquivo.');r.readAsText(file,enc)};
+ler('UTF-8');
+}
+function importarColado(){const el=$('csv-colado');if(!el.value.trim())return;importarTexto(el.value);el.value=''}
+
+/* início */
+$('chk-autobackup').checked=autoBackupAtivo();
+$('feed-container').addEventListener('click',e=>{if(!modoSel)return;const c=e.target.closest('[data-id]');if(c)alternarSel(c.dataset.id)});
+mudarAba('inicio');
+renderSeletores();
+proximoPasso();
+</script>
+</body>
+</html>
