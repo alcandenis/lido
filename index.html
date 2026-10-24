@@ -57,7 +57,13 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .text-gold-gradient{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .titulo-novas{font-weight:900;letter-spacing:.12em;font-feature-settings:"kern" 1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:color .3s ease}
 .text-yellow-orange-gradient{background:linear-gradient(90deg,#fef08a 0%,#facc15 42%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+@keyframes pulseShimmer {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  50% { opacity: 0.4; filter: brightness(0.7); }
+}
 .o-filled-yellow-orange{display:inline-block;width:.5em;height:.727em;border-radius:.07em;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);margin:0 .02em 0 -.07em;vertical-align:baseline;flex-shrink:0}
+.o-filled-yellow-orange.is-loading { animation: pulseShimmer 1s infinite ease-in-out; }
 
 .dock-tab{font-size:.75rem;padding:.25rem .5rem;color:#9ca3af;position:relative;transition:color .2s}
 .dock-tab:hover,.dock-tab.ativo{color:#fff}
@@ -95,7 +101,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   <div class="frosted-card p-8 max-w-md w-full space-y-6 shadow-2xl border border-white/10 my-auto">
     <div class="space-y-1">
       <h1 class="text-4xl font-serif font-extrabold tracking-widest">
-        <span class="text-yellow-orange-gradient">LID<span class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>
+        <span class="text-yellow-orange-gradient">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>
       </h1>
       <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">SEU DIÁRIO DE LEITURA</p>
     </div>
@@ -192,6 +198,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
 <section><h3 class="opt-sec">Leitura</h3>
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
+<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Livros Desejados</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
@@ -268,7 +275,16 @@ const BG_PADRAO="https://wallpaper.forfun.com/fetch/d1/d11b37523005f6dfe77d151ee
 const STAR_PATH='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z';
 const $=id=>document.getElementById(id);
 
+function dispararLoadingHeader() {
+  const o = $('header-logo-o');
+  if (o) {
+    o.classList.add('is-loading');
+    setTimeout(() => o.classList.remove('is-loading'), 1200);
+  }
+}
+
 function salvarLocal(){
+  dispararLoadingHeader();
   lsSet('minha_biblioteca',JSON.stringify(biblioteca));
   lsSet('notas_kindle',JSON.stringify(notasKindle));
   lsSet('lido_notas',JSON.stringify(notas));
@@ -368,7 +384,6 @@ async function sincronizarComDrive(silent = false) {
     if(!silent) aviso('Não conectado ao Google Drive.');
     return;
   }
-  // Garantir inclusão das capas de livros no backup
   const bibliotecaComCapas = biblioteca.map(b => ({
     ...b,
     capa: b.capa || ''
@@ -380,7 +395,7 @@ async function sincronizarComDrive(silent = false) {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
 
-    if (buscaRes.status === 401) { // Token expirado
+    if (buscaRes.status === 401) { 
       accessToken = null;
       lsSet('lido_google_access_token', '');
       atualizarStatusGoogleUI();
@@ -921,7 +936,7 @@ function fecharAmazon(){$('modal-amazon').classList.add('hidden')}
 function confirmarAmazon(){fecharAmazon();aviso('Busca na Amazon em breve.')}
 function atualizarTitulo(){
  const h=$('titulo-app');
- h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
+ h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
  h.style.fontSize='';h.style.lineHeight='';h.style.letterSpacing='';h.style.width='';h.style.margin='';
 }
 let homeSemCapa=false;
@@ -933,13 +948,13 @@ atualizarTitulo();
 const feed=$('feed-container');
 feed.innerHTML='';
 feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-0 pt-28 pb-28 page-transition'+(modoSel?' modo-sel':'');
-const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes}[abaAtual];
+const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
 mostrarRetangulo();
 handleFeedScroll();
 }
 function renderizarAbaInicio(feed){
-const total=biblioteca.length,l=biblioteca[0];
+const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
 wrap.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última passagem</span><span class="text-[10px] text-gray-400">Toque para abrir</span></div><div class="flex items-start gap-3">${imgCapa(l.capa,'w-14 h-20',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2);
@@ -957,7 +972,7 @@ function definirFiltroTodos(f){filtroTodos=f;renderizarFeed();voltarAoTopo()}
 function definirFiltroSoTextos(f){filtroSoTextos=f;renderizarFeed();voltarAoTopo()}
 function htmlLivro(l){
 return `<div class="frosted-card relative p-6 md:p-8 w-full space-y-5 shadow-2xl min-h-[22rem]"><div class="sel-mark">✓</div>
-<div class="flex items-center justify-between pr-9"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><span class="text-[11px] text-gray-400 uppercase tracking-widest">${biblioteca.indexOf(l)+1} de ${biblioteca.length}</span></div>
+<div class="flex items-center justify-between pr-9"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><span class="text-[11px] text-gray-400 uppercase tracking-widest">${biblioteca.filter(x=>statusDe(x)!=='desejado').indexOf(l)+1} de ${biblioteca.filter(x=>statusDe(x)!=='desejado').length}</span></div>
 <div class="flex items-start gap-5">${imgCapa(l.capa,'w-28 h-40 md:w-32 md:h-48',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm md:text-base font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}</div></div>
 ${l.observacao?`<p class="text-gray-100 text-xl md:text-2xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light">${esc(l.observacao)}</p>`:''}
 <div class="flex items-center justify-between pt-3 border-t border-white/10 gap-2 flex-wrap"><div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div>
@@ -971,7 +986,8 @@ return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl"><p clas
 }
 function renderizarAbaTodos(feed,scrollToId){
 const itens=[];
-if(filtroTodos==='tudo'||filtroTodos==='livros')biblioteca.forEach(l=>itens.push({t:'livro',id:l.id,d:l}));
+const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
+if(filtroTodos==='tudo'||filtroTodos==='livros')bibFiltrada.forEach(l=>itens.push({t:'livro',id:l.id,d:l}));
 if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'nota',id:n.id,d:n}));
 if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
 if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
@@ -987,12 +1003,29 @@ else addSecao(feed,htmlKindle(d),BG_PADRAO,i+1);
 transicionarFundo(BG_PADRAO);
 if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
 }
+function renderizarAbaDesejados(feed){
+const desejados=biblioteca.filter(l=>statusDe(l)==='desejado');
+addSecao(feed,`<div class="px-1 space-y-3"><h2 class="text-lg font-bold text-white font-serif mb-2">Livros Desejados</h2></div>`,BG_PADRAO);
+if(!desejados.length){
+  addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro desejado cadastrado.</p></div>`,BG_PADRAO,1);
+  return;
+}
+desejados.forEach((l,i)=>{
+  const html=`<div class="frosted-card relative p-5 w-full space-y-4 shadow-2xl">
+    <div class="flex items-center justify-between"><span class="bg-blue-500/80 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">Desejado</span><span class="text-[11px] text-gray-400 uppercase tracking-widest">${i+1} de ${desejados.length}</span></div>
+    <div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="space-y-1 my-auto"><h2 class="font-serif text-xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p></div></div>
+    <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/15"><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar / Ler</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div>
+  </div>`;
+  addSecao(feed,html,l.capa,i+1);
+});
+transicionarFundo(BG_PADRAO);
+}
 function renderizarAbaObservacoes(feed){
 const tabs=[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''}">${r}</button>`).join('');
 addSecao(feed,`<div class="px-1 pb-1 space-y-3"><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
 const itens=[
 ...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
-...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
+...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>statusDe(l)!=='desejado'&&(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='kindle'?notasKindle.filter(n=>(n.observacao||'').trim()).map(n=>({tipo:'kindle',obs:n.observacao,rot:`${n.titulo} · ${n.autor}`,capa:n.capa})):[])
 ];
 if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,BG_PADRAO,1);return}
@@ -1087,7 +1120,8 @@ const el=$('card-item-'+id);if(el)el.classList.toggle('sel-ativo',selecionados.h
 atualizarSelBar();
 }
 function selecionarTodas(){
-const todos=selecionados.size===biblioteca.length;selecionados.clear();
+const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
+const todos=selecionados.size===bibFiltrada.length;selecionados.clear();
 document.querySelectorAll('[data-id]').forEach(el=>{if(!todos)selecionados.add(el.dataset.id);el.classList.toggle('sel-ativo',!todos)});
 atualizarSelBar();
 }
