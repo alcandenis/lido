@@ -92,6 +92,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
 <p class="text-[9px] text-white font-light tracking-[0.25em] uppercase mt-1 pl-0.5">BETA V0.2.0</p>
 </div>
+<button onclick="toggleModalOpcoes()" class="pointer-events-auto self-start h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Opções" title="Opções"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button>
 </header>
 
 <main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-0 pt-28 pb-28" style="padding-top:calc(7rem + env(safe-area-inset-top,0px))"></main>
@@ -182,12 +183,13 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-8">
 <input type="file" id="csv-file-input" onchange="processarCSV(this.files[0])" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
 <section><h3 class="opt-sec">Leitura</h3>
+<button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Só textos</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Buscar capas ausentes (Google Books)</span><span class="opt-chev">›</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar Clippings.txt do Kindle</span><span class="opt-chev">›</span></button>
 <div class="opt-block"><label>Trocar leitura atual</label><select id="select-trocar-leitura" class="w-full bg-[#0f141f] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400"><option value="">Escolher da biblioteca</option></select><button onclick="salvarTrocaLeituraAtual()" class="opt-act">Definir como leitura atual</button></div>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
 <section><h3 class="opt-sec">Perfil</h3>
-<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="Seu nome" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><label>Seu e-mail (usado no envio do backup)</label><input type="email" id="input-usuario-email" placeholder="voce@exemplo.com" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
+<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="Seu nome" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
 <section><h3 class="opt-sec">Dados</h3>
 <label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup</span><span class="opt-chev">›</span></label>
 <div class="opt-block"><label>Se o seletor falhar, cole o conteúdo do backup</label><textarea id="csv-colado" rows="2" placeholder="Cole o texto do CSV ou JSON..." class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-gold-400"></textarea><button onclick="importarColado()" class="opt-act">Importar texto colado</button></div>
@@ -273,7 +275,7 @@ function realizarBackupDiario(){fecharBackupDiario();exportarCSV()}
 function abrirNome(){$('nome-input').value=usuarioNome;$('modal-nome').classList.remove('hidden')}
 function salvarNomeModal(){usuarioNome=$('nome-input').value.trim();lsSet('lido_usuario_nome',usuarioNome);fecharNome()}
 function fecharNome(){lsSet('lido_nome_perguntado','1');$('modal-nome').classList.add('hidden');renderizarFeed();proximoPasso()}
-function salvarNomeUsuario(){usuarioNome=$('input-usuario-nome').value.trim();lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_usuario_email',$('input-usuario-email').value.trim());aviso('Perfil salvo.');renderizarFeed()}
+function salvarNomeUsuario(){usuarioNome=$('input-usuario-nome').value.trim();lsSet('lido_usuario_nome',usuarioNome);aviso('Perfil salvo.');renderizarFeed()}
 function fecharAvisoOffline(){lsSet('lido_aviso_offline_v2','1');$('modal-aviso-offline').classList.add('hidden');proximoPasso()}
 function verificarPerguntaDiaria(){
 if(lsGet('lido_ultima_pergunta_data')!==new Date().toISOString().slice(0,10)){$('modal-pergunta-diaria').classList.remove('hidden');popularSelects()}
@@ -318,7 +320,7 @@ $('bg-glow').style.opacity=k?'0':'.25';
 function toggleModalNovoRegistro(){$('modal-registro').classList.toggle('hidden')}
 function toggleModalOpcoes(){
 const m=$('modal-opcoes');m.classList.toggle('hidden');
-if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;$('input-usuario-email').value=lsGet('lido_usuario_email');popularSelects()}
+if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;popularSelects()}
 }
 let abaLidos='capas',anoStats=null;
 function definirAbaLidos(a){abaLidos=a;renderizarFeed();voltarAoTopo()}
@@ -588,7 +590,6 @@ function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca[0];
 const wrap=document.createElement('div');
 wrap.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';
-addSecao(wrap,`<div class="frosted-card relative p-6 md:p-8 w-full space-y-4 shadow-2xl"><button onclick="toggleModalOpcoes()" class="absolute top-5 right-5 text-xs text-gray-300 hover:text-gold-400 transition-colors" aria-label="Opções">Opções</button><div class="pr-12"><h2 class="font-serif text-3xl md:text-4xl font-bold text-white leading-tight">${obterSaudacao()}${usuarioNome?', '+esc(usuarioNome):''}!</h2></div><div class="flex items-center gap-2"><button onclick="prepararNovoRegistro()" class="btn-gold-degrade text-xs px-5 py-3 rounded-lg shadow-lg uppercase tracking-wider">Adicionar</button><button onclick="mudarAba('observacoes')" class="bg-white text-[#0b0f17] font-semibold text-xs px-5 py-3 rounded-lg uppercase tracking-wider hover:bg-gray-200 transition-colors">SÓ TEXTOS</button></div></div>`,l?l.capa:BG_PADRAO,1);
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última passagem</span><span class="text-[10px] text-gray-400">Toque para abrir</span></div><div class="flex items-start gap-3">${imgCapa(l.capa,'w-14 h-20',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2);
 if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3);
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
