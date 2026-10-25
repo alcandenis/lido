@@ -224,15 +224,13 @@ body.registro-aberto #top-btn{visibility:hidden!important;pointer-events:none!im
 
 <div id="modal-registro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
 <div id="registro-caixa" class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
-<div class="flex justify-between items-center border-b border-white/10 pb-2"><h2 id="modal-titulo" class="font-serif text-lg font-bold"><span class="text-gold-gradient">Nova passagem</span></h2></div>
-<div id="tabs-registro" class="grid grid-cols-2 border-b border-white/15"><button type="button" data-tabreg="leitura" onclick="definirAbaRegistro('leitura')" class="tab-reg">LEITURA</button><button type="button" data-tabreg="notas" onclick="definirAbaRegistro('notas')" class="tab-reg">NOTAS</button></div>
 <form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
 <input type="hidden" id="edit_id">
 <div class="relative"><label class="block text-xs font-medium text-gray-300 mb-1">Título</label>
-<input type="text" id="titulo" required oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar no Google Books..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+<input type="text" id="titulo" oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar no Google Books..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
 <div id="skel-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg shadow-2xl z-50 hidden p-3"><div class="flex items-center gap-3"><div class="w-8 h-12 rounded skeleton-shimmer"></div><div class="flex-1 space-y-1.5"><div class="h-3 w-3/4 rounded skeleton-shimmer"></div><div class="h-2.5 w-1/2 rounded skeleton-shimmer"></div></div></div></div>
 <div id="res-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-56 overflow-y-auto"></div></div>
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" required placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div>
+<div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div>
 <input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url">
 <button type="button" id="registro-detalhes-toggle" aria-expanded="false" aria-controls="registro-detalhes" onclick="toggleDetalhesRegistro()" class="w-full flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs text-gray-300 transition-colors hover:bg-white/[0.06]"><span>Detalhes da leitura</span><span id="registro-detalhes-chevron" aria-hidden="true" class="text-gold-400 transition-transform">⌄</span></button>
 <div id="registro-detalhes" class="hidden space-y-3 rounded-lg border border-white/10 bg-black/10 p-3">
@@ -248,7 +246,6 @@ body.registro-aberto #top-btn{visibility:hidden!important;pointer-events:none!im
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
 <div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
 </form>
-<div id="form-nota" class="hidden space-y-4"><div><label class="block text-xs font-medium text-gray-300 mb-1">Ouvindo algo?</label><input type="text" id="nota-musica" maxlength="80" placeholder="Música ou artista" autocomplete="off" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><textarea id="nota-texto" rows="7" placeholder="Escreva sua nota..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none font-obs"></textarea><div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="button" onclick="salvarNota()" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div></div>
 </div></div>
 
 <!-- Modal Principal de Opções -->
@@ -866,18 +863,6 @@ w.innerHTML=`<svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full text
 box.appendChild(w);
 }
 }
-function definirAbaRegistro(a,guardar=true){
-document.querySelectorAll('[data-tabreg]').forEach(b=>b.classList.toggle('ativo',b.dataset.tabreg===a));
-$('bookForm').classList.toggle('hidden',a!=='leitura');
-$('form-nota').classList.toggle('hidden',a!=='notas');
-if(guardar)lsSet('lido_aba_registro',a);
-}
-function salvarNota(){
-const t=$('nota-texto').value.trim();
-if(!t)return aviso('Escreva algo na nota.');
-notas.unshift({id:Date.now(),texto:t,musica:$('nota-musica').value.trim(),data:new Date().toLocaleDateString('pt-BR')});
-salvarLocal();toggleModalNovoRegistro();renderizarFeed();
-}
 function deletarNota(id,btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
 function paraBR(v){if(!v)return '';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}
 function paraISO(br){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(br||'');return m?`${m[3]}-${m[2]}-${m[1]}`:''}
@@ -896,10 +881,7 @@ $('bookForm').reset();
 $('formato').value='Kindle';$('nota').value='0';$('status').value='lendo';
 mostrarPeriodo(false);
 renderSeletores();
-$('modal-titulo').innerHTML='<span class="text-gold-gradient">Nova passagem</span>';
 $('btn-salvar-modal').innerText='Adicionar';
-$('tabs-registro').classList.remove('hidden');$('nota-texto').value='';$('nota-musica').value='';
-definirAbaRegistro('leitura',false);
 toggleModalNovoRegistro();
 }
 function editarLivro(id){
@@ -910,9 +892,7 @@ $('observacao').value=l.observacao||'';$('capa_url').value=l.capa||'';
 mostrarPeriodo(!!l.data_inicio);
 if(l.data_inicio){$('periodo-inicio').value=paraISO(l.data_inicio);$('periodo-fim').value=paraISO(l.data_fim)}
 renderSeletores();
-$('modal-titulo').innerHTML='<span class="text-gold-gradient">Editar leitura</span>';
 $('btn-salvar-modal').innerText='Atualizar';
-$('tabs-registro').classList.add('hidden');definirAbaRegistro('leitura',false);
 toggleModalNovoRegistro();
 }
 
@@ -997,31 +977,35 @@ aviso(e&&e.status?`Google Books recusou a busca (erro ${e.status}).`:'Sem conex�
 
 function salvarLivro(e){
 e.preventDefault();
-const editId=$('edit_id').value,st=$('status').value,lido=st==='lido';
+const editId=$('edit_id').value;
+const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim();
+// Sem título/autor de livro, a observação é salva como uma nota independente.
+if(!editId&&!titulo&&!autor){
+ if(!observacao)return aviso('Escreva uma observação ou informe o título de um livro.');
+ notas.unshift({id:Date.now(),texto:observacao,musica:'',data:new Date().toLocaleDateString('pt-BR')});
+ salvarLocal();
+ $('bookForm').reset();['capa_url','edit_id'].forEach(i=>$(i).value='');
+ toggleModalNovoRegistro();renderizarFeed();return;
+}
+if(!titulo&&!observacao)return aviso('Informe ao menos o título do livro ou escreva uma observação.');
+const st=$('status').value,lido=st==='lido';
 const nota=lido?(parseFloat($('nota').value)||0):0,hoje=new Date().toLocaleDateString('pt-BR');
 const idx=editId?biblioteca.findIndex(l=>l.id==editId):-1;
 let targetId=editId,obsAntiga='',dataAntiga='';
 if(idx!==-1){obsAntiga=biblioteca[idx].observacao||'';dataAntiga=biblioteca[idx].data_fim||''}
 const inicioBR=paraBR($('periodo-inicio').value),fimBR=paraBR($('periodo-fim').value);
-const d={titulo:$('titulo').value,autor:$('autor').value,formato:$('formato').value,lido,abandonado:st==='abandonado',desejado:st==='desejado',data_inicio:inicioBR,data_fim:lido?(fimBR||dataAntiga||hoje):'',nota,observacao:$('observacao').value||'',capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent($('titulo').value)}`};
-
-if(!d.capa||d.capa.includes('placehold.co')){
+const d={titulo,autor:autor||'Autor Desconhecido',formato:$('formato').value,lido,abandonado:st==='abandonado',desejado:st==='desejado',data_inicio:inicioBR,data_fim:lido?(fimBR||dataAntiga||hoje):'',nota,observacao,capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo||'Nota')}`};
+if(titulo&&(!d.capa||d.capa.includes('placehold.co'))){
  capaLivro(d.titulo,d.autor).then(c=>{
-  if(c){
-   const target=biblioteca.find(x=>x.id==targetId);
-   if(target){target.capa=c;salvarLocal();renderizarFeed();}
-  }
+  if(c){const target=biblioteca.find(x=>x.id==targetId);if(target){target.capa=c;salvarLocal();renderizarFeed();}}
  });
 }
-
 if(idx!==-1)biblioteca[idx]={...biblioteca[idx],...d};
 else{targetId=Date.now();biblioteca.unshift({id:targetId,...d})}
 salvarLocal();
 $('bookForm').reset();['capa_url','edit_id'].forEach(i=>$(i).value='');
-toggleModalNovoRegistro();
-renderizarFeed(targetId);
+toggleModalNovoRegistro();renderizarFeed(targetId);
 }
-
 /* renderização */
 function obterSaudacao(){const h=new Date().getHours();return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite'}
 function criarWrapInferior(feed){const w=document.createElement('div');w.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';feed.appendChild(w);return w}
