@@ -100,8 +100,9 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 
 /* Nova passagem em formato de card, substituindo visualmente o feed */
 #modal-registro.registro-card-view{
-  align-items:flex-start!important;
-  justify-content:center!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
   padding:calc(7rem + env(safe-area-inset-top,0px)) 1rem calc(6.5rem + env(safe-area-inset-bottom,0px))!important;
   overflow-y:auto;
   background:transparent!important;
@@ -109,18 +110,19 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   backdrop-filter:none!important;
 }
 #modal-registro.registro-card-view #registro-caixa{
+  display:block;
   width:100%;
   max-width:42rem;
   max-height:none!important;
   overflow:visible!important;
-  margin:0 auto;
-  padding:1.25rem;
-  background:rgba(12,12,12,.78)!important;
+  margin:auto auto 0;
+  padding:1.5rem;
+  background:rgba(12,12,12,.65)!important;
   -webkit-backdrop-filter:blur(20px)!important;
   backdrop-filter:blur(20px)!important;
-  border:1px solid rgba(255,255,255,.11);
+  border:1px solid rgba(255,255,255,.09);
   border-radius:.875rem;
-  box-shadow:0 20px 60px rgba(0,0,0,.28);
+  box-shadow:0 25px 50px -12px rgba(0,0,0,.25);
   animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards;
 }
 body.registro-aberto #feed-container,
@@ -128,7 +130,7 @@ body.registro-aberto #scroll-arrow,
 body.registro-aberto #top-btn{visibility:hidden!important;pointer-events:none!important}
 @media(max-height:700px){
   #modal-registro.registro-card-view{padding-top:calc(6rem + env(safe-area-inset-top,0px))!important;padding-bottom:5.5rem!important}
-  #modal-registro.registro-card-view #registro-caixa{padding:1rem}
+  #modal-registro.registro-card-view #registro-caixa{padding:1.25rem}
 }
 
 </style>
@@ -221,7 +223,7 @@ body.registro-aberto #top-btn{visibility:hidden!important;pointer-events:none!im
 </nav>
 
 <div id="modal-registro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-<div id="registro-caixa" class="frosted-modal w-full max-w-md p-4 shadow-2xl space-y-3 max-h-[88vh] overflow-y-auto">
+<div id="registro-caixa" class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
 <div class="flex justify-between items-center border-b border-white/10 pb-2"><h2 id="modal-titulo" class="font-serif text-lg font-bold"><span class="text-gold-gradient">Nova passagem</span></h2></div>
 <div id="tabs-registro" class="grid grid-cols-2 border-b border-white/15"><button type="button" data-tabreg="leitura" onclick="definirAbaRegistro('leitura')" class="tab-reg">LEITURA</button><button type="button" data-tabreg="notas" onclick="definirAbaRegistro('notas')" class="tab-reg">NOTAS</button></div>
 <form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
@@ -888,6 +890,7 @@ const t=l.data_inicio&&l.data_fim?`Lido de ${l.data_inicio} a ${l.data_fim}`:l.d
 return t?`<p class="text-xs text-gray-400">${esc(t)}</p>`:'';
 }
 function prepararNovoRegistro(){
+const detalhes=$('registro-detalhes'),detalhesBtn=$('registro-detalhes-toggle'),detalhesChevron=$('registro-detalhes-chevron');if(detalhes)detalhes.classList.add('hidden');if(detalhesBtn)detalhesBtn.setAttribute('aria-expanded','false');if(detalhesChevron)detalhesChevron.style.transform='rotate(0deg)';
 $('bookForm').reset();
 ['edit_id','capa_url'].forEach(i=>$(i).value='');
 $('formato').value='Kindle';$('nota').value='0';$('status').value='lendo';
