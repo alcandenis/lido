@@ -293,6 +293,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
 <button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Livros Desejados</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
+<button onclick="recarregarBancoGoogleBooks(true)" class="opt-row"><span>Recarregar banco de dados do Google Books</span><span class="opt-chev">›</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
 
@@ -945,7 +946,7 @@ const GOOGLE_BOOKS_API_KEY = 'AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
 
 const seqBusca={};
 async function buscarGoogleBooks(q,max=5){
-const base=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books&fields=items(volumeInfo(title,authors,imageLinks))`;
+const base=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books&fields=items(volumeInfo(title,authors,imageLinks,pageCount))`;
 let r=null;
 if(GOOGLE_BOOKS_API_KEY){try{r=await fetch(`${base}&key=${GOOGLE_BOOKS_API_KEY}`)}catch(e){r=null}}
 if(!r||!r.ok){
@@ -957,7 +958,7 @@ return (d.items||[]).map(item=>{
 const info=item.volumeInfo||{};
 const links=info.imageLinks||{};
 const cover=(links.thumbnail||links.smallThumbnail||'').replace(/^http:\/\//,'https://').replace('&edge=curl','');
-return {titulo:info.title||'',autor:Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido',capa:cover};
+return {titulo:info.title||'',autor:Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido',capa:cover,paginas:info.pageCount||0};
 }).filter(x=>x.titulo);
 }
 async function capaLivro(titulo,autor){
@@ -986,6 +987,30 @@ if(alterado){
 }
 }
 
+async function recarregarBancoGoogleBooks(manual=true){
+let alterado=false;
+const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co'));
+if(manual&&!alvos.length)return aviso('Todos os livros já possuem capas e páginas atualizadas.');
+if(manual)aviso(`Atualizando dados para ${alvos.length} livros...`);
+for(const l of alvos){
+ try{
+  const lista=await buscarGoogleBooks(`${l.titulo} ${l.autor}`,3);
+  const b=lista.find(x=>x.titulo.toLowerCase().includes(l.titulo.toLowerCase())||l.titulo.toLowerCase().includes(x.titulo.toLowerCase()))||lista[0];
+  if(b){
+   if(b.capa&&(!l.capa||l.capa.includes('placehold.co'))){l.capa=b.capa;alterado=true;}
+   if(b.paginas&&(!l.paginas||l.paginas<=0)){l.paginas=b.paginas;alterado=true;}
+  }
+ }catch(e){}
+}
+if(alterado){
+ salvarLocal();
+ renderizarFeed();
+ if(manual)aviso('Banco de dados atualizado com sucesso!');
+}else if(manual){
+ aviso('Nenhuma nova alteração encontrada no Google Books.');
+}
+}
+
 /* busca de livros (modal e pergunta diária) */
 function buscaDebounce(q,tipo){
 clearTimeout(timers[tipo]);
@@ -997,7 +1022,7 @@ timers[tipo]=setTimeout(()=>buscarLivros(q.trim(),tipo),350);
 }
 function buscarLivros(q,tipo){
 const skel=$('skel-'+tipo),res=$('res-'+tipo),meu=seqBusca[tipo];
-const alvo=tipo==='modal'?['titulo','autor','capa_url']:['pergunta_titulo','pergunta_autor','pergunta_capa'];
+const alvo=tipo==='modal'?['titulo','autor','capa_url','paginas']:['pergunta_titulo','pergunta_autor','pergunta_capa'];
 buscarGoogleBooks(q,6).then(lista=>{
 if(meu!==seqBusca[tipo])return;
 skel.classList.add('hidden');
@@ -1008,7 +1033,7 @@ const capa=b.capa||'https://placehold.co/300x450/111/fff?text=Sem+Capa';
 const row=document.createElement('div');
 row.className='flex items-center gap-3 p-2.5 hover:bg-white/10 cursor-pointer border-b border-white/5 text-xs';
 row.innerHTML=`<img src="${esc(capa)}" class="w-8 h-12 object-cover rounded shadow flex-shrink-0" onerror="this.src='https://placehold.co/300x450/111/fff?text=Sem+Capa'"><div class="truncate flex-1"><p class="font-bold text-white truncate">${esc(b.titulo)}</p><p class="text-gray-400 text-[11px] truncate">${esc(b.autor)}</p></div>`;
-row.onclick=()=>{$(alvo[0]).value=b.titulo;$(alvo[1]).value=b.autor;$(alvo[2]).value=b.capa||'';res.classList.add('hidden')};
+row.onclick=()=>{$(alvo[0]).value=b.titulo;$(alvo[1]).value=b.autor;$(alvo[2]).value=b.capa||'';if(alvo[3]&&$(alvo[3])){$('paginas').value=b.paginas>0?b.paginas:''};res.classList.add('hidden')};
 res.appendChild(row);
 });
 }).catch(e=>{
