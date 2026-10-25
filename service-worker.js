@@ -3,7 +3,6 @@ const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/style.css', // Se criares o ficheiro de estilos que vimos antes
   'https://cdn.tailwindcss.com/3.4.17',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap'
   // Podes adicionar aqui outros recursos estáticos importantes da tua aplicação
