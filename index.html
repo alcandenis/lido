@@ -219,7 +219,10 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 </div></div>
 <div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-8">
 <section><h3 class="opt-sec">Perfil</h3>
-<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></section>
+<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div>
+<button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="w-full mt-3 flex items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-3.5 text-left text-sm font-extrabold text-[#211707] shadow-lg shadow-amber-500/20 transition-transform active:scale-[0.99]">
+<span class="flex items-center gap-3"><span class="flex h-9 w-9 items-center justify-center rounded-lg bg-black/10"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
+</button></section>
 <section><h3 class="opt-sec">Leitura</h3>
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
 <button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Livros Desejados</span><span class="opt-chev">›</span></button>
@@ -1377,6 +1380,54 @@ window.addEventListener('DOMContentLoaded', () => {
     manterHistoricoInterno();
   }
 })();
+
+
+/* Instalação do PWA LiLi — adição isolada */
+let eventoInstalacaoLiLi = null;
+function appLiLiJaInstalado(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function atualizarBotaoInstalarLiLi(){
+  const botao = document.getElementById('btn-instalar-lili');
+  if (botao) botao.classList.toggle('hidden', appLiLiJaInstalado());
+}
+window.addEventListener('beforeinstallprompt', function(evento){
+  evento.preventDefault();
+  eventoInstalacaoLiLi = evento;
+  atualizarBotaoInstalarLiLi();
+});
+window.addEventListener('appinstalled', function(){
+  eventoInstalacaoLiLi = null;
+  atualizarBotaoInstalarLiLi();
+  if (typeof aviso === 'function') aviso('LiLi instalado com sucesso.');
+});
+async function instalarAppLiLi(){
+  if (appLiLiJaInstalado()) {
+    atualizarBotaoInstalarLiLi();
+    return;
+  }
+  if (eventoInstalacaoLiLi) {
+    eventoInstalacaoLiLi.prompt();
+    const escolha = await eventoInstalacaoLiLi.userChoice;
+    if (escolha && escolha.outcome === 'accepted') {
+      eventoInstalacaoLiLi = null;
+      atualizarBotaoInstalarLiLi();
+    }
+    return;
+  }
+  const agente = navigator.userAgent || '';
+  const eIOS = /iphone|ipad|ipod/i.test(agente);
+  if (eIOS) {
+    alert('Para instalar o LiLi no iPhone ou iPad:\n1. Abra esta página no Safari.\n2. Toque em Compartilhar.\n3. Escolha “Adicionar à Tela de Início”.\n4. Toque em Adicionar.');
+  } else {
+    alert('A instalação ainda não está disponível neste momento. No menu do navegador, procure “Instalar app” ou “Adicionar à tela inicial”. Se essa opção não aparecer, abra o LiLi no Chrome e tente novamente.');
+  }
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', atualizarBotaoInstalarLiLi, { once: true });
+} else {
+  atualizarBotaoInstalarLiLi();
+}
 
 </script>
 </body>
