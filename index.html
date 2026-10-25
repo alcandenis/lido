@@ -1327,6 +1327,57 @@ window.addEventListener('DOMContentLoaded', () => {
   renderizarFeed();
   iniciarVigiaSync();
 });
+
+/* navegação pelo botão Voltar do Android/PWA — adição isolada */
+(function configurarBotaoVoltarPWA(){
+  const estadoVoltar = { lidoVoltarPWA: true };
+
+  function modalVisivel(id){
+    const el = document.getElementById(id);
+    return !!el && !el.classList.contains('hidden');
+  }
+
+  function voltarDentroDoApp(){
+    // Fecha primeiro a camada/modal que estiver aberta, sem alterar seus dados.
+    if (modalVisivel('insta-modal')) { fecharInstaModal(); return true; }
+    if (modalVisivel('modal-ia')) { fecharEnviarIA(); return true; }
+    if (modalVisivel('modal-amazon')) { fecharAmazon(); return true; }
+    if (modalVisivel('modal-passagem')) { fecharPassagem(); return true; }
+    if (modalVisivel('modal-kindle')) { fecharKindle(); return true; }
+    if (modalVisivel('modal-sub-backup')) { fecharSubMenuBackup(); return true; }
+    if (modalVisivel('modal-cloud')) { toggleModalCloud(); return true; }
+    if (modalVisivel('modal-registro')) { toggleModalNovoRegistro(); return true; }
+    if (modalVisivel('modal-opcoes')) { toggleModalOpcoes(); return true; }
+
+    if (modoSel) { sairSelecao(); return true; }
+
+    // Se estiver em uma aba interna, retorna à tela inicial.
+    if (typeof abaAtual !== 'undefined' && abaAtual !== 'inicio') {
+      mudarAba('inicio');
+      return true;
+    }
+
+    // Na tela inicial, mantém o histórico interno para evitar sair do PWA.
+    return true;
+  }
+
+  function manterHistoricoInterno(){
+    try { history.pushState(estadoVoltar, '', location.href); } catch(e) {}
+  }
+
+  window.addEventListener('popstate', function(){
+    voltarDentroDoApp();
+    manterHistoricoInterno();
+  });
+
+  // Cria a primeira entrada interna para o botão Voltar ser tratado pelo app.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', manterHistoricoInterno, { once: true });
+  } else {
+    manterHistoricoInterno();
+  }
+})();
+
 </script>
 </body>
 </html>
