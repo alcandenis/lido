@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#000000">
-<title>(lili) LIDOLIVROS</title>
+<title>LIDOLIVROS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@ body{background:#000000;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hi
 .page-transition{animation:fadeUp .38s cubic-bezier(.16,1,.3,1) forwards}
 .frosted-modal-container.hidden{display:none}
 .frosted-modal-container{background:rgba(0,0,0,.6)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-#modal-opcoes,#tela-os{background:rgba(0,0,0,.85)!important;backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2)}
+#modal-opcoes,#tela-lidos{background:rgba(0,0,0,.85)!important;backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2)}
 select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .tab-reg{padding:.6rem 0;font-size:.75rem;letter-spacing:.25em;font-weight:600;color:#9ca3af;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
 .tab-reg.sm{letter-spacing:.06em}
@@ -72,7 +72,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   0%, 100% { opacity: 1; filter: brightness(1); }
   50% { opacity: 0.4; filter: brightness(0.7); }
 }
-.o-filled-yellow-orange{display:inline-block;width:.6em;height:.850em;border-radius:.07em;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);margin:0 .02em 0 -.07em;vertical-align:mediun;flex-shrink:0}
+.o-filled-yellow-orange{display:inline-block;width:.5em;height:.727em;border-radius:.07em;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);margin:0 .02em 0 -.07em;vertical-align:baseline;flex-shrink:0}
 .o-filled-yellow-orange.is-loading { animation: pulseShimmer 1s infinite ease-in-out; }
 
 .dock-tab{font-size:.75rem;padding:.25rem .5rem;color:#9ca3af;position:relative;transition:color .2s}
@@ -97,6 +97,40 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .opt-desc{font-size:.7rem;color:#6b7280;padding:.5rem 0 .25rem;line-height:1.4}
 .accordion-content{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.16,1,.3,1),opacity .25s;opacity:0}
 .accordion-content.open{max-height:520px;opacity:1}
+
+/* Nova passagem em formato de card, substituindo visualmente o feed */
+#modal-registro.registro-card-view{
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding:calc(7rem + env(safe-area-inset-top,0px)) 1rem calc(6.5rem + env(safe-area-inset-bottom,0px))!important;
+  overflow-y:auto;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+#modal-registro.registro-card-view #registro-caixa{
+  width:100%;
+  max-width:42rem;
+  max-height:none!important;
+  overflow:visible!important;
+  margin:0 auto;
+  padding:1.25rem;
+  background:rgba(12,12,12,.78)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  backdrop-filter:blur(20px)!important;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:.875rem;
+  box-shadow:0 20px 60px rgba(0,0,0,.28);
+  animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards;
+}
+body.registro-aberto #feed-container,
+body.registro-aberto #scroll-arrow,
+body.registro-aberto #top-btn{visibility:hidden!important;pointer-events:none!important}
+@media(max-height:700px){
+  #modal-registro.registro-card-view{padding-top:calc(6rem + env(safe-area-inset-top,0px))!important;padding-bottom:5.5rem!important}
+  #modal-registro.registro-card-view #registro-caixa{padding:1rem}
+}
+
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -111,7 +145,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   <div class="frosted-card p-8 max-w-md w-full space-y-6 shadow-2xl border border-white/10 my-auto">
     <div class="space-y-1">
       <h1 class="text-4xl font-serif font-extrabold tracking-widest">
-        <span class="text-yellow-orange-gradient"><span id="login-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">lili</span>
+        <span class="text-yellow-orange-gradient">LID<span id="login-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>
       </h1>
       <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">SEU DIÁRIO DE LEITURA</p>
     </div>
@@ -186,7 +220,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 </div></div>
 </nav>
 
-<div id="modal-registro" class="frosted-modal-container fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+<div id="modal-registro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
 <div id="registro-caixa" class="frosted-modal w-full max-w-md p-4 shadow-2xl space-y-3 max-h-[88vh] overflow-y-auto">
 <div class="flex justify-between items-center border-b border-white/10 pb-2"><h2 id="modal-titulo" class="font-serif text-lg font-bold"><span class="text-gold-gradient">Nova passagem</span></h2></div>
 <div id="tabs-registro" class="grid grid-cols-2 border-b border-white/15"><button type="button" data-tabreg="leitura" onclick="definirAbaRegistro('leitura')" class="tab-reg">LEITURA</button><button type="button" data-tabreg="notas" onclick="definirAbaRegistro('notas')" class="tab-reg">NOTAS</button></div>
@@ -205,7 +239,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Nota <span id="nota-label" class="text-gray-400 font-normal"></span></label><div id="star-picker" class="flex items-center justify-between"></div></div>
 <div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
 <div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
-<div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim ( lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
+<div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
 <div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
 </form>
@@ -225,7 +259,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 </button></section>
 <section><h3 class="opt-sec">Leitura</h3>
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
-<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span> Desejados</span><span class="opt-chev">›</span></button>
+<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Livros Desejados</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
@@ -744,7 +778,7 @@ const vis=activeBgLayer==='A'?a:b,oc=activeBgLayer==='A'?b:a;
 vis.style.opacity=k?'0':'1';oc.style.opacity='0';
 $('bg-glow').style.opacity=k?'0':'.25';
 }
-function toggleModalNovoRegistro(){$('modal-registro').classList.toggle('hidden')}
+function toggleModalNovoRegistro(){const modal=$('modal-registro');modal.classList.toggle('hidden');document.body.classList.toggle('registro-aberto',!modal.classList.contains('hidden'))}
 function toggleModalOpcoes(){
 const m=$('modal-opcoes');m.classList.toggle('hidden');
 if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();}
@@ -1000,7 +1034,7 @@ function fecharAmazon(){$('modal-amazon').classList.add('hidden')}
 function confirmarAmazon(){fecharAmazon();aviso('Busca na Amazon em breve.')}
 function atualizarTitulo(){
  const h=$('titulo-app');
- h.innerHTML=`<span class="text-yellow-orange-gradient"><span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">lili</span>`;
+ h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
  h.style.fontSize='';h.style.lineHeight='';h.style.letterSpacing='';h.style.width='';h.style.margin='';
 }
 let homeSemCapa=false;
