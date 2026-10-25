@@ -702,8 +702,6 @@ function telaCheiaAtiva(){return !!(document.fullscreenElement||document.webkitF
 function entrarTelaCheia(){const el=document.documentElement,fn=el.requestFullscreen||el.webkitRequestFullscreen;if(!fn)return;try{const r=fn.call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
 function sairTelaCheia(){const fn=document.exitFullscreen||document.webkitExitFullscreen;if(!fn)return;try{const r=fn.call(document);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
 function alternarTelaCheia(){toggleModalOpcoes();if(telaCheiaAtiva()){lsSet('lido_fs','off');sairTelaCheia()}else{lsSet('lido_fs','on');entrarTelaCheia()}}
-document.addEventListener('click',()=>{if(lsGet('lido_fs','on')!=='off'&&!telaCheiaAtiva())entrarTelaCheia()},{once:true});
-
 /* Verificação Inicial */
 function verificarEstadoInicial() {
   if (usuarioNome) {
