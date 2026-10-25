@@ -101,7 +101,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   <div class="frosted-card p-8 max-w-md w-full space-y-6 shadow-2xl border border-white/10 my-auto">
     <div class="space-y-1">
       <h1 class="text-4xl font-serif font-extrabold tracking-widest">
-        <span class="text-yellow-orange-gradient">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>
+        <span class="text-yellow-orange-gradient">LID<span id="login-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>
       </h1>
       <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">SEU DIÁRIO DE LEITURA</p>
     </div>
@@ -236,9 +236,11 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
       <span id="cloud-modal-badge" class="font-bold px-2.5 py-0.5 rounded-full text-[10px] bg-white/10 text-gray-400">Desconectado</span>
     </div>
     <div class="text-left space-y-1 pt-1">
-      <span class="block text-[10px] text-gray-400 uppercase tracking-widest">Última sincronização</span>
+      <span class="block text-[10px] text-gray-400 uppercase tracking-widest">Última verificação</span>
       <p id="cloud-modal-last-sync" class="text-xs text-white font-medium">Nunca</p>
+      <p class="text-[10px] text-gray-500">O app confere a nuvem a cada minuto e ao voltar para ele.</p>
     </div>
+    <div class="flex gap-2 pt-1"><button id="cloud-sync-agora" onclick="sincronizarNuvem(true)" class="hidden flex-1 py-2 rounded-lg bg-white text-black text-xs font-semibold">Sincronizar agora</button><button id="cloud-reconectar" onclick="conectarGoogleDrive()" class="hidden flex-1 py-2 rounded-lg btn-gold-degrade text-xs">Reconectar</button></div>
   </div>
 </div>
 
@@ -299,11 +301,14 @@ function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array
 let biblioteca=lerJSON('minha_biblioteca'),notasKindle=lerJSON('notas_kindle'),notas=lerJSON('lido_notas'),usuarioNome=lsGet('lido_usuario_nome');
 let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirmandoDel=false,storyBlob=null,dlCap=null,toastTimer=null;
 const selecionados=new Set(),timers={};
+let removidos={};try{removidos=JSON.parse(lsGet('lido_removidos','{}'))||{}}catch(e){removidos={}}
+let estadoNuvem='',sincronizando=false,sincPendente=false,tSync=null,renovandoResolve=null,fecharTelaPendente=false;
 const BG_PADRAO="https://wallpaper.forfun.com/fetch/d1/d11b37523005f6dfe77d151ee2872b7c.jpeg";
 const STAR_PATH='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z';
 const $=id=>document.getElementById(id);
 
 function dispararLoadingHeader() {
+  if(!$('header-logo-o'))return;
   const o = $('header-logo-o');
   if (o) {
     o.classList.add('is-loading');
@@ -311,12 +316,38 @@ function dispararLoadingHeader() {
   }
 }
 
+function hashItem(it){const r={...it};delete r.atualizadoEm;return JSON.stringify(r)}
+function lerSnapshot(){try{return JSON.parse(localStorage.getItem('lido_snapshot'))}catch(e){return null}}
+function gravarSnapshot(){
+const sn={l:{},n:{},k:{}};
+biblioteca.forEach(i=>sn.l[i.id]=hashItem(i));notas.forEach(i=>sn.n[i.id]=hashItem(i));notasKindle.forEach(i=>sn.k[i.id]=hashItem(i));
+lsSet('lido_snapshot',JSON.stringify(sn));
+}
+function marcarAlteracoes(){
+const sn=lerSnapshot();
+if(sn){
+const agora=Date.now();
+[['l',biblioteca],['n',notas],['k',notasKindle]].forEach(([c,arr])=>{
+const atual=new Set();
+arr.forEach(it=>{atual.add(String(it.id));if(sn[c]&&sn[c][it.id]!==hashItem(it))it.atualizadoEm=agora});
+Object.keys(sn[c]||{}).forEach(id=>{if(!atual.has(id))removidos[c+id]=agora});
+});
+lsSet('lido_removidos',JSON.stringify(removidos));
+}
+gravarSnapshot();
+}
+function persistirSemMarcar(){
+lsSet('minha_biblioteca',JSON.stringify(biblioteca));lsSet('notas_kindle',JSON.stringify(notasKindle));lsSet('lido_notas',JSON.stringify(notas));
+lsSet('lido_removidos',JSON.stringify(removidos));gravarSnapshot();
+}
 function salvarLocal(){
-  dispararLoadingHeader();
-  lsSet('minha_biblioteca',JSON.stringify(biblioteca));
-  lsSet('notas_kindle',JSON.stringify(notasKindle));
-  lsSet('lido_notas',JSON.stringify(notas));
-  sincronizarComDriveAutomatico();
+dispararLoadingHeader();
+marcarAlteracoes();
+lsSet('minha_biblioteca',JSON.stringify(biblioteca));
+lsSet('notas_kindle',JSON.stringify(notasKindle));
+lsSet('lido_notas',JSON.stringify(notas));
+lsSet('lido_sujo','1');
+agendarSync();
 }
 
 function aviso(msg){
@@ -335,44 +366,25 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 let tokenClient;
 let accessToken = lsGet('lido_google_access_token', null);
 
-function atualizarStatusGoogleUI() {
-  const badge = $('google-status-badge');
-  const cloudBadge = $('cloud-modal-badge');
-  const lastSyncEl = $('cloud-modal-last-sync');
-  const stop1 = $('cloud-stop-1');
-  const stop2 = $('cloud-stop-2');
-
-  if (lastSyncEl) {
-    lastSyncEl.textContent = lsGet('lido_last_sync', 'Nunca');
-  }
-
-  if (accessToken) {
-    if (badge) {
-      badge.textContent = '✓ Conta conectada';
-      badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 ml-2';
-    }
-    if (cloudBadge) {
-      cloudBadge.textContent = '✓ Conectado';
-      cloudBadge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-    }
-    if (stop1 && stop2) {
-      stop1.setAttribute('stop-color', '#facc15');
-      stop2.setAttribute('stop-color', '#fb923c');
-    }
-  } else {
-    if (badge) {
-      badge.textContent = 'Desconectado';
-      badge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2';
-    }
-    if (cloudBadge) {
-      cloudBadge.textContent = 'Desconectado';
-      cloudBadge.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400';
-    }
-    if (stop1 && stop2) {
-      stop1.setAttribute('stop-color', '#ffffff');
-      stop2.setAttribute('stop-color', '#ffffff');
-    }
-  }
+function estadoEfetivo(){
+if(!accessToken)return lsGet('lido_google_conectado')==='1'?'reconectar':'desconectado';
+return estadoNuvem||'ok';
+}
+function definirEstadoNuvem(e){estadoNuvem=e;atualizarStatusGoogleUI()}
+function atualizarStatusGoogleUI(){
+const e=estadoEfetivo();
+const rot={desconectado:'Desconectado',ok:'✓ Sincronizado',sincronizando:'Sincronizando…',reconectar:'Reconectar',erro:'Erro de sincronização'}[e];
+const cls={desconectado:'bg-white/10 text-gray-400',ok:'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',sincronizando:'bg-amber-500/20 text-amber-300 border border-amber-500/30',reconectar:'bg-orange-500/20 text-orange-300 border border-orange-500/30',erro:'bg-red-500/20 text-red-300 border border-red-500/30'}[e];
+const b1=$('google-status-badge'),b2=$('cloud-modal-badge');
+if(b1){b1.textContent=rot;b1.className='text-[10px] font-bold px-2.5 py-1 rounded-full ml-2 '+cls}
+if(b2){b2.textContent=rot;b2.className='text-[10px] font-bold px-2.5 py-1 rounded-full '+cls}
+const ls=$('cloud-modal-last-sync');if(ls)ls.textContent=lsGet('lido_last_sync','Nunca');
+const cores={desconectado:['#ffffff','#ffffff'],ok:['#facc15','#fb923c'],sincronizando:['#facc15','#fb923c'],reconectar:['#fb923c','#ef4444'],erro:['#fb923c','#ef4444']}[e];
+const s1=$('cloud-stop-1'),s2=$('cloud-stop-2'),ic=$('header-cloud-icon');
+if(s1&&s2){s1.setAttribute('stop-color',cores[0]);s2.setAttribute('stop-color',cores[1])}
+if(ic)ic.classList.toggle('animate-pulse',e==='sincronizando');
+const rb=$('cloud-reconectar');if(rb)rb.classList.toggle('hidden',!(e==='reconectar'||e==='erro'));
+const sb=$('cloud-sync-agora');if(sb)sb.classList.toggle('hidden',e==='desconectado'||e==='reconectar');
 }
 
 function toggleModalCloud() {
@@ -383,48 +395,45 @@ function toggleModalCloud() {
   }
 }
 
-function inicializarGoogleDrive(fecharTelaOnSuccess = false) {
-  if (!tokenClient && window.google && window.google.accounts && window.google.accounts.oauth2) {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: SCOPES,
-      ux_mode: 'popup',
-      callback: async (response) => {
-        if (response.error !== undefined) {
-          aviso('Erro na autenticação com o Google.');
-          return;
-        }
-        accessToken = response.access_token;
-        lsSet('lido_google_access_token', accessToken);
-        atualizarStatusGoogleUI();
-        
-        const inputNome = $('login-usuario-nome');
-        if (inputNome && inputNome.value.trim()) {
-          usuarioNome = inputNome.value.trim();
-          lsSet('lido_usuario_nome', usuarioNome);
-        }
-        
-        aviso('Conectado ao Google Drive com sucesso!');
-        if (fecharTelaOnSuccess) {
-          $('tela-login-inicial').classList.add('hidden');
-          lsSet('lido_login_concluido', '1');
-        }
-        await restaurarDoGoogleDriveAutomatico();
-      },
-    });
-  }
+function inicializarGoogleDrive(){
+if(!tokenClient&&window.google&&window.google.accounts&&window.google.accounts.oauth2){
+tokenClient=google.accounts.oauth2.initTokenClient({
+client_id:CLIENT_ID,scope:SCOPES,ux_mode:'popup',
+error_callback:()=>{if(renovandoResolve){const r=renovandoResolve;renovandoResolve=null;r(false)}},
+callback:async response=>{
+const resolver=renovandoResolve;renovandoResolve=null;
+if(response.error!==undefined){if(resolver)resolver(false);else aviso('Erro na autenticação com o Google.');return}
+accessToken=response.access_token;
+lsSet('lido_google_access_token',accessToken);
+lsSet('lido_token_exp',String(Date.now()+(parseInt(response.expires_in||3600)*1000)-120000));
+lsSet('lido_google_conectado','1');
+if(resolver){resolver(true);return}
+const inputNome=$('login-usuario-nome');
+if(inputNome&&inputNome.value.trim()){usuarioNome=inputNome.value.trim();lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_perfil_ts',String(Date.now()))}
+aviso('Conectado ao Google Drive com sucesso!');
+if(fecharTelaPendente){$('tela-login-inicial').classList.add('hidden');lsSet('lido_login_concluido','1');fecharTelaPendente=false}
+definirEstadoNuvem('ok');
+await sincronizarNuvem(true);
 }
-
-function conectarGoogleDrive(fromInitialScreen = false) {
-  inicializarGoogleDrive(fromInitialScreen);
-  if (tokenClient) {
-    tokenClient.requestAccessToken({ prompt: 'consent' });
-  } else {
-    setTimeout(() => {
-      inicializarGoogleDrive(fromInitialScreen);
-      if(tokenClient) tokenClient.requestAccessToken({ prompt: 'consent' });
-    }, 500);
-  }
+});
+}
+}
+function conectarGoogleDrive(fromInitialScreen=false){
+fecharTelaPendente=!!fromInitialScreen;
+const pedir=()=>tokenClient.requestAccessToken({prompt:lsGet('lido_google_conectado')==='1'?'':'consent'});
+inicializarGoogleDrive();
+if(tokenClient)pedir();
+else setTimeout(()=>{inicializarGoogleDrive();if(tokenClient)pedir();else aviso('Google ainda carregando. Tente de novo.')},600);
+}
+function tokenExpirado(){const e=parseInt(lsGet('lido_token_exp','0'));return !!e&&Date.now()>e}
+function renovarTokenSilencioso(){
+return new Promise(res=>{
+inicializarGoogleDrive();
+if(!tokenClient){res(false);return}
+const t=setTimeout(()=>{if(renovandoResolve){renovandoResolve=null;res(false)}},8000);
+renovandoResolve=ok=>{clearTimeout(t);res(ok)};
+try{tokenClient.requestAccessToken({prompt:''})}catch(e){renovandoResolve=null;clearTimeout(t);res(false)}
+});
 }
 
 function continuarSemSalvar() {
@@ -436,139 +445,117 @@ function continuarSemSalvar() {
   $('tela-login-inicial').classList.add('hidden');
   lsSet('lido_login_concluido', '1');
   renderizarFeed();
+  if(usuarioNome)lsSet('lido_perfil_ts',String(Date.now()));
 }
 
-async function sincronizarComDriveAutomatico() {
-  if (!accessToken) return;
-  await sincronizarComDrive(true);
+const DRIVE_NOME='LidosBackup_Nuvem.json';
+function agendarSync(){clearTimeout(tSync);tSync=setTimeout(()=>sincronizarNuvem(false),2000)}
+function sincronizarComDriveAutomatico(){agendarSync()}
+const tsItem=x=>x.atualizadoEm||x.id||0;
+function ordenarPorId(a){return [...a].sort((x,y)=>(Number(y.id)||0)-(Number(x.id)||0))}
+function mesclarLista(local,remoto,c,rem,dedupeLivros){
+const mapa=new Map(),idsLocais=new Set(local.map(x=>String(x.id)));
+const chavesLocais=new Set(dedupeLivros?local.map(chaveLivro):[]);
+local.forEach(it=>{if(it&&it.id!=null)mapa.set(String(it.id),it)});
+(remoto||[]).forEach(it=>{
+if(!it||it.id==null)return;
+const k=String(it.id),a=mapa.get(k);
+if(!a){if(dedupeLivros&&!idsLocais.has(k)&&chavesLocais.has(chaveLivro(it)))return;mapa.set(k,it)}
+else if(tsItem(it)>tsItem(a))mapa.set(k,it);
+});
+const out=[];
+mapa.forEach((it,k)=>{const t=rem[c+k];if(t&&t>=tsItem(it))return;out.push(it)});
+return ordenarPorId(out);
 }
-
-async function sincronizarComDrive(silent = false) {
-  if (!accessToken) {
-    if(!silent) aviso('Não conectado ao Google Drive.');
-    return;
-  }
-  const bibliotecaComCapas = biblioteca.map(b => ({
-    ...b,
-    capa: b.capa || ''
-  }));
-  const conteudoJson = JSON.stringify({ userProfile: { name: usuarioNome }, biblioteca: bibliotecaComCapas, notas, notasKindle }, null, 2);
-  const nomeArquivo = 'LidosBackup_Nuvem.json';
-  try {
-    const buscaRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${nomeArquivo}'%20and%20trashed%3Dfalse`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-
-    if (buscaRes.status === 401) { 
-      accessToken = null;
-      lsSet('lido_google_access_token', '');
-      atualizarStatusGoogleUI();
-      return;
-    }
-
-    const buscaDados = await buscaRes.json();
-    let arquivoId = buscaDados.files && buscaDados.files.length > 0 ? buscaDados.files[0].id : null;
-
-    if (arquivoId) {
-      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${arquivoId}?uploadType=media`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: conteudoJson
-      });
-      lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
-      if (!silent) aviso('Backup atualizado no Google Drive!');
-    } else {
-      const metadata = { name: nomeArquivo, mimeType: 'application/json' };
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', new Blob([conteudoJson], { type: 'application/json' }));
-
-      await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
-        body: form
-      });
-      lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
-      if (!silent) aviso('Novo arquivo de backup criado no Google Drive!');
-    }
-    atualizarStatusGoogleUI();
-  } catch (err) {
-    if (!silent) aviso('Erro ao sincronizar com o Google Drive.');
-    console.error(err);
-  }
+function mesclarDados(rem){
+const tombs={...removidos};
+Object.entries(rem.removidos||{}).forEach(([k,v])=>{if(!tombs[k]||v>tombs[k])tombs[k]=v});
+const limite=Date.now()-90*86400000;
+Object.keys(tombs).forEach(k=>{if(tombs[k]<limite)delete tombs[k]});
+const B=mesclarLista(biblioteca,rem.biblioteca,'l',tombs,true),N=mesclarLista(notas,rem.notas,'n',tombs,false),K=mesclarLista(notasKindle,rem.notasKindle,'k',tombs,false);
+const antes=JSON.stringify([ordenarPorId(biblioteca),ordenarPorId(notas),ordenarPorId(notasKindle)]);
+const depois=JSON.stringify([B,N,K]);
+const remNorm=JSON.stringify([ordenarPorId(rem.biblioteca||[]),ordenarPorId(rem.notas||[]),ordenarPorId(rem.notasKindle||[])]);
+let perfilMudou=false;
+if(rem.userProfile&&rem.userProfile.name){
+const rt=rem.perfilTs||0,lt=parseInt(lsGet('lido_perfil_ts','0'));
+if(!usuarioNome||rt>lt){if(usuarioNome!==rem.userProfile.name)perfilMudou=true;usuarioNome=rem.userProfile.name;lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_perfil_ts',String(rt))}
 }
-
-async function restaurarDoGoogleDriveAutomatico() {
-  if (!accessToken) return;
-  const nomeArquivo = 'LidosBackup_Nuvem.json';
-  try {
-    const buscaRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${nomeArquivo}'%20and%20trashed%3Dfalse`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-    const buscaDados = await buscaRes.json();
-    if (!buscaDados.files || buscaDados.files.length === 0) return;
-    const arquivoId = buscaDados.files[0].id;
-    const arquivoRes = await fetch(`https://www.googleapis.com/drive/v3/files/${arquivoId}?alt=media`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-    const dadosNuvem = await arquivoRes.text();
-    
-    try {
-      const parsed = JSON.parse(dadosNuvem);
-      if (parsed && parsed.userProfile && parsed.userProfile.name) {
-        usuarioNome = parsed.userProfile.name;
-        lsSet('lido_usuario_nome', usuarioNome);
-      }
-    } catch(e) {}
-
-    importarTexto(dadosNuvem, true, true);
-    lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
-    atualizarStatusGoogleUI();
-    aviso('Dados e perfil restaurados automaticamente do Google Drive!');
-  } catch (err) {
-    console.error(err);
-  }
+const difRemoto=depois!==remNorm||Object.keys(tombs).length!==Object.keys(rem.removidos||{}).length||(usuarioNome&&(!rem.userProfile||rem.userProfile.name!==usuarioNome));
+biblioteca=B;notas=N;notasKindle=K;removidos=tombs;
+return{mudouLocal:antes!==depois||perfilMudou,difRemoto};
 }
-
-async function restaurarDoGoogleDrive() {
-  if (!accessToken) {
-    conectarGoogleDrive();
-    return aviso('Faça login primeiro para restaurar.');
-  }
-  const nomeArquivo = 'LidosBackup_Nuvem.json';
-  try {
-    const buscaRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=name%3D'${nomeArquivo}'%20and%20trashed%3Dfalse`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-    const buscaDados = await buscaRes.json();
-    if (!buscaDados.files || buscaDados.files.length === 0) {
-      return aviso('Nenhum backup encontrado no Google Drive.');
-    }
-    const arquivoId = buscaDados.files[0].id;
-    const arquivoRes = await fetch(`https://www.googleapis.com/drive/v3/files/${arquivoId}?alt=media`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-    const dadosNuvem = await arquivoRes.text();
-    
-    try {
-      const parsed = JSON.parse(dadosNuvem);
-      if (parsed && parsed.userProfile && parsed.userProfile.name) {
-        usuarioNome = parsed.userProfile.name;
-        lsSet('lido_usuario_nome', usuarioNome);
-      }
-    } catch(e) {}
-
-    importarTexto(dadosNuvem, false, true);
-    lsSet('lido_last_sync', new Date().toLocaleString('pt-BR'));
-    atualizarStatusGoogleUI();
-    aviso('Biblioteca restaurada do Google Drive!');
-  } catch (err) {
-    aviso('Erro ao baixar backup do Google Drive.');
-    console.error(err);
-  }
+async function driveReq(url,opts={}){
+const r=await fetch(url,{...opts,headers:{...(opts.headers||{}),Authorization:`Bearer ${accessToken}`}});
+if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;throw e}
+return r;
+}
+async function enviarParaDrive(id){
+const corpo=JSON.stringify({versao:2,userProfile:{name:usuarioNome},perfilTs:parseInt(lsGet('lido_perfil_ts','0')),biblioteca,notas,notasKindle,removidos});
+let r;
+if(id){
+r=await driveReq(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media&fields=id,modifiedTime`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:corpo});
+}else{
+const form=new FormData();
+form.append('metadata',new Blob([JSON.stringify({name:DRIVE_NOME,mimeType:'application/json'})],{type:'application/json'}));
+form.append('file',new Blob([corpo],{type:'application/json'}));
+r=await driveReq('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,modifiedTime',{method:'POST',body:form});
+}
+const d=await r.json();
+return d.modifiedTime||'';
+}
+async function sincronizarNuvem(manual=false){
+if(!accessToken&&lsGet('lido_google_conectado')!=='1'){if(manual)aviso('Conecte ao Google Drive primeiro.');return}
+if(sincronizando){sincPendente=true;return}
+sincronizando=true;
+try{
+if(!accessToken||tokenExpirado()){
+definirEstadoNuvem('sincronizando');
+const ok=await renovarTokenSilencioso();
+if(!ok){accessToken=null;definirEstadoNuvem('reconectar');if(manual)aviso('Sessão do Google expirou. Toque em Reconectar.');return}
+}
+definirEstadoNuvem('sincronizando');
+const q=encodeURIComponent(`name='${DRIVE_NOME}' and trashed=false`);
+const lista=await (await driveReq(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,modifiedTime)&spaces=drive`)).json();
+const arq=(lista.files||[])[0];
+const sujo=lsGet('lido_sujo')==='1';
+let remoto=null,mudouLocal=false,difRemoto=false;
+if(arq&&(manual||sujo||arq.modifiedTime!==lsGet('lido_drive_mod'))){
+const txt=await (await driveReq(`https://www.googleapis.com/drive/v3/files/${arq.id}?alt=media`)).text();
+try{remoto=JSON.parse(txt)}catch(e){remoto=null}
+}
+if(remoto&&typeof remoto==='object'){
+const m=mesclarDados(remoto);mudouLocal=m.mudouLocal;difRemoto=m.difRemoto;
+if(mudouLocal){persistirSemMarcar();if(!modoSel)renderizarFeed()}
+}
+let mod=arq?arq.modifiedTime:'';
+if(!arq||sujo||difRemoto)mod=await enviarParaDrive(arq?arq.id:null);
+if(mod)lsSet('lido_drive_mod',mod);
+lsSet('lido_sujo','0');
+lsSet('lido_last_sync',new Date().toLocaleString('pt-BR'));
+definirEstadoNuvem('ok');
+if(manual)aviso(mudouLocal?'Dados atualizados da nuvem.':'Tudo sincronizado.');
+else if(mudouLocal)aviso('Biblioteca atualizada com dados de outro aparelho.');
+}catch(err){
+console.error('Sync Drive:',err);
+if(err&&err.status===401){accessToken=null;lsSet('lido_google_access_token','');definirEstadoNuvem('reconectar')}
+else definirEstadoNuvem('erro');
+if(manual)aviso(err&&err.status===401?'Sessão do Google expirou. Toque em Reconectar.':'Não foi possível sincronizar agora.');
+}finally{
+sincronizando=false;
+if(sincPendente){sincPendente=false;setTimeout(()=>sincronizarNuvem(false),600)}
+}
+}
+function restaurarDoGoogleDriveAutomatico(){return sincronizarNuvem(true)}
+function restaurarDoGoogleDrive(){
+if(!accessToken&&lsGet('lido_google_conectado')!=='1'){conectarGoogleDrive();return aviso('Faça login primeiro para restaurar.')}
+return sincronizarNuvem(true);
+}
+function iniciarVigiaSync(){
+setInterval(()=>{if(!document.hidden)sincronizarNuvem(false)},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sincronizarNuvem(false)});
+window.addEventListener('online',()=>sincronizarNuvem(false));
+if(accessToken||lsGet('lido_google_conectado')==='1')setTimeout(()=>sincronizarNuvem(false),1200);
 }
 
 /* Sub-Menu Backup UI Functions */
@@ -679,25 +666,12 @@ function importarColado() {
   $('csv-colado').value = '';
 }
 
-function exportarJSON() {
-  const jsonStr = JSON.stringify({ userProfile: { name: usuarioNome }, biblioteca, notas, notasKindle }, null, 2);
-  const blob = new Blob([jsonStr], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `LidosBackup_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-}
+function exportarJSON(){baixarArquivo(jsonBackup(),nomeBackup('json'),'application/json')}
 
-function exportarCSV() {
-  let csv = 'Titulo;Autor;Formato;Status;Nota;Capa;Observacao;DataInicio;DataFim\n';
-  biblioteca.forEach(l => {
-    csv += `"${(l.titulo||'').replace(/"/g,'""')}";"${(l.autor||'').replace(/"/g,'""')}";"${l.formato||''}";"${statusDe(l)}";"${l.nota||0}";"${l.capa||''}";"${(l.observacao||'').replace(/"/g,'""')}";"${l.data_inicio||''}";"${l.data_fim||''}"\n`;
-  });
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `LidosBiblioteca_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
+function exportarCSV(){
+let csv='\ufeffTitulo;Autor;Formato;Status;Nota;Capa;Observacao;DataInicio;DataFim\n';
+biblioteca.forEach(l=>{csv+=`"${(l.titulo||'').replace(/"/g,'""')}";"${(l.autor||'').replace(/"/g,'""')}";"${l.formato||''}";"${statusDe(l)}";"${l.nota||0}";"${l.capa||''}";"${(l.observacao||'').replace(/"/g,'""')}";"${l.data_inicio||''}";"${l.data_fim||''}"\n`});
+baixarArquivo(csv,nomeBackup('csv'),'text/csv;charset=utf-8;');
 }
 
 function processarCSV(file){
@@ -738,6 +712,7 @@ function verificarEstadoInicial() {
 function salvarNomeUsuario(){
   usuarioNome=$('input-usuario-nome').value.trim();
   lsSet('lido_usuario_nome',usuarioNome);
+  lsSet('lido_perfil_ts',String(Date.now()));
   aviso('Perfil salvo.');
   renderizarFeed();
   sincronizarComDriveAutomatico();
@@ -892,21 +867,21 @@ toggleModalNovoRegistro();
 /* Google Books API */
 const GOOGLE_BOOKS_API_KEY = 'AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
 
+const seqBusca={};
 async function buscarGoogleBooks(q,max=5){
-let url=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}`;
-if(GOOGLE_BOOKS_API_KEY){url+=`&key=${GOOGLE_BOOKS_API_KEY}`;}
-const r=await fetch(url);
-if(!r.ok)throw new Error('Google Books indisponível');
+const base=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books&fields=items(volumeInfo(title,authors,imageLinks))`;
+let r=null;
+if(GOOGLE_BOOKS_API_KEY){try{r=await fetch(`${base}&key=${GOOGLE_BOOKS_API_KEY}`)}catch(e){r=null}}
+if(!r||!r.ok){
+r=await fetch(base);
+if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;throw e}
+}
 const d=await r.json();
 return (d.items||[]).map(item=>{
 const info=item.volumeInfo||{};
-const title=info.title||'';
-const authors=Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido';
-let cover='';
-if(info.imageLinks&&info.imageLinks.thumbnail){
-cover=info.imageLinks.thumbnail.replace(/^http:\/\//,'https://');
-}
-return {titulo:title,autor:authors,capa:cover};
+const links=info.imageLinks||{};
+const cover=(links.thumbnail||links.smallThumbnail||'').replace(/^http:\/\//,'https://').replace('&edge=curl','');
+return {titulo:info.title||'',autor:Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido',capa:cover};
 }).filter(x=>x.titulo);
 }
 async function capaLivro(titulo,autor){
@@ -938,18 +913,20 @@ if(alterado){
 /* busca de livros (modal e pergunta diária) */
 function buscaDebounce(q,tipo){
 clearTimeout(timers[tipo]);
+seqBusca[tipo]=(seqBusca[tipo]||0)+1;
 const skel=$('skel-'+tipo),res=$('res-'+tipo);
 if(!q||q.trim().length<2){skel.classList.add('hidden');res.classList.add('hidden');return}
 skel.classList.remove('hidden');res.classList.add('hidden');
-timers[tipo]=setTimeout(()=>buscarLivros(q,tipo),400);
+timers[tipo]=setTimeout(()=>buscarLivros(q.trim(),tipo),350);
 }
 function buscarLivros(q,tipo){
-const skel=$('skel-'+tipo),res=$('res-'+tipo);
+const skel=$('skel-'+tipo),res=$('res-'+tipo),meu=seqBusca[tipo];
 const alvo=tipo==='modal'?['titulo','autor','capa_url']:['pergunta_titulo','pergunta_autor','pergunta_capa'];
-buscarGoogleBooks(q,5).then(lista=>{
+buscarGoogleBooks(q,6).then(lista=>{
+if(meu!==seqBusca[tipo])return;
 skel.classList.add('hidden');
-if(!lista.length){res.classList.add('hidden');return}
 res.innerHTML='';res.classList.remove('hidden');
+if(!lista.length){res.innerHTML='<div class="p-3 text-xs text-gray-400">Nenhum livro encontrado.</div>';return}
 lista.forEach(b=>{
 const capa=b.capa||'https://placehold.co/300x450/111/fff?text=Sem+Capa';
 const row=document.createElement('div');
@@ -958,7 +935,12 @@ row.innerHTML=`<img src="${esc(capa)}" class="w-8 h-12 object-cover rounded shad
 row.onclick=()=>{$(alvo[0]).value=b.titulo;$(alvo[1]).value=b.autor;$(alvo[2]).value=b.capa||'';res.classList.add('hidden')};
 res.appendChild(row);
 });
-}).catch(()=>{skel.classList.add('hidden');res.classList.add('hidden');aviso('Não foi possível consultar o Google Books agora.')});
+}).catch(e=>{
+if(meu!==seqBusca[tipo])return;
+skel.classList.add('hidden');res.classList.add('hidden');
+console.error('Google Books:',e);
+aviso(e&&e.status?`Google Books recusou a busca (erro ${e.status}).`:'Sem conexão com o Google Books.');
+});
 }
 
 function salvarLivro(e){
@@ -1211,9 +1193,131 @@ salvarLocal();sairSelecao();renderizarFeed();
 /* story */
 function carregarImg(url){return new Promise(res=>{if(!url)return res(null);const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=()=>res(null);im.src=url;setTimeout(()=>res(null),6000)})}
 
+function quebrarTexto(ctx,texto,largura){
+const lin=[];let at='';
+String(texto).split(/\s+/).filter(Boolean).forEach(p=>{const t=at?at+' '+p:p;if(ctx.measureText(t).width>largura&&at){lin.push(at);at=p}else at=t});
+if(at)lin.push(at);return lin;
+}
+function cortarLinha(ctx,u,largura){if(ctx.measureText(u).width<=largura)return u;while(u.length>1&&ctx.measureText(u+'…').width>largura)u=u.slice(0,-1);return u.trim()+'…'}
+function pathEstrela(ctx,cx,cy,r){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?r:r*.45,x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
+async function renderizarStory(l){
+const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
+try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
+const img=await carregarImg(l.capa);
+ctx.clearRect(0,0,W,H);ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H);
+if(img){
+const mini=document.createElement('canvas');mini.width=27;mini.height=48;
+const mc=mini.getContext('2d'),e=Math.max(27/img.width,48/img.height);
+mc.drawImage(img,(27-img.width*e)/2,(48-img.height*e)/2,img.width*e,img.height*e);
+ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=.6;ctx.drawImage(mini,0,0,W,H);ctx.globalAlpha=1;
+}
+const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(0,0,0,.55)');g.addColorStop(.5,'rgba(0,0,0,.5)');g.addColorStop(1,'rgba(0,0,0,.92)');
+ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ctx.textBaseline='alphabetic';ctx.textAlign='left';
+const f9='900 46px "Inter",sans-serif',f6='600 46px "Inter",sans-serif';
+ctx.font=f6;const wI=ctx.measureText('LIDO').width;
+ctx.font=f9;const wV=ctx.measureText('LIVROS').width;
+const x0=(W-(wI+wV))/2;
+ctx.font=f6;ctx.fillStyle='#fff';ctx.fillText('LIDO',x0,120);
+ctx.font=f9;ctx.fillStyle='#FACC15';ctx.fillText('LIVROS',x0+wI,120);
+const cw=540,ch=810,cx=(W-cw)/2,cy=170;
+if(img){
+const cr=cw/ch,ir=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;
+if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
+ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=50;ctx.shadowOffsetY=20;ctx.drawImage(img,sx,sy,sw,sh,cx,cy,cw,ch);
+ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+}else{ctx.fillStyle='#1b2230';ctx.fillRect(cx,cy,cw,ch);ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='400 36px Inter,sans-serif';ctx.textAlign='center';ctx.fillText('Sem capa',W/2,cy+ch/2)}
+ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;ctx.strokeRect(cx,cy,cw,ch);
+ctx.textAlign='center';
+let y=cy+ch+100,tam=64,lin;
+for(;tam>=40;tam-=2){ctx.font=`700 ${tam}px "Inter",sans-serif`;lin=quebrarTexto(ctx,l.titulo,900);if(lin.length<=3)break}
+if(lin.length>3){lin=lin.slice(0,3);lin[2]=cortarLinha(ctx,lin[2]+' …',900)}
+ctx.fillStyle='#fff';lin.forEach(t=>{ctx.fillText(t,W/2,y);y+=tam*1.2});
+y+=4;ctx.font='500 36px Inter,sans-serif';ctx.fillStyle='#FACC15';ctx.fillText(cortarLinha(ctx,'por '+l.autor,900),W/2,y);
+y+=70;
+if(l.nota>0){
+const r=44,gap=104,s0=W/2-gap*2;
+for(let i=0;i<5;i++){
+const sx=s0+i*gap;pathEstrela(ctx,sx,y,r);ctx.fillStyle='rgba(250,204,21,.22)';ctx.fill();
+const fr=Math.max(0,Math.min(1,l.nota-i));
+if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx-r,y-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx,y,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
+}
+}else if(statusDe(l)==='lendo'){ctx.font='500 34px Inter,sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('Em leitura',W/2,y+12)}
+const obs=(l.observacao||'').trim();
+if(obs){
+y+=75;const esp=1820-y;let t=50,ol;
+for(;t>=28;t-=2){ctx.font=`400 ${t}px "Inter",sans-serif`;ol=quebrarTexto(ctx,obs,860);if(ol.length*t*1.3<=esp)break}
+const max=Math.max(1,Math.floor(esp/(t*1.3)));
+if(ol.length>max){ol=ol.slice(0,max);ol[max-1]=cortarLinha(ctx,ol[max-1]+' …',860)}
+ctx.fillStyle='rgba(255,255,255,.92)';ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.3});
+}
+ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1832,600,2);
+ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px Inter,sans-serif';ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1884);
+storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
+}
+async function abrirInstaModal(id){const l=biblioteca.find(x=>x.id===id);if(!l)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStory(l)}
+function fecharInstaModal(){$('insta-modal').classList.add('hidden')}
+async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`story_lido_${Date.now()}.png`,'image/png')}
+
+/* arquivos */
+try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
+async function baixarArquivo(conteudo,nome,tipo){
+if(!dlCap&&window.claude&&claude.use){try{dlCap=await claude.use('downloads')}catch(e){}}
+if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined')return false}}
+const blob=conteudo instanceof Blob?conteudo:new Blob([conteudo],{type:tipo});
+if(tipo==='image/png'&&navigator.canShare){try{const f=new File([blob],nome,{type:tipo});if(navigator.canShare({files:[f]})){await navigator.share({files:[f]});return true}}catch(e){}}
+const url=URL.createObjectURL(blob),a=document.createElement('a');
+a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);return true;
+}
+
+function nomeBackup(ext){const d=new Date(),p=n=>String(n).padStart(2,'0');return `LidosBackup_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}h${p(d.getMinutes())}.${ext}`}
+function jsonBackup(){return JSON.stringify({userProfile:{name:usuarioNome},biblioteca,notas,notasKindle},null,2)}
+async function enviarBackupPorEmail(){
+if(!biblioteca.length&&!notas.length)return aviso('Nada para enviar ainda.');
+const ag=new Date(),quando=`${ag.toLocaleDateString('pt-BR')} às ${ag.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+const assunto='Backup do Lidos',corpo=`Oi, eu do futuro, esse aqui é o meu backup do LIDOLIVROS da data ${quando}`;
+const nome=nomeBackup('json'),conteudo=jsonBackup();
+try{
+const f=new File([conteudo],nome,{type:'application/json'});
+if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:assunto,text:corpo});return}
+}catch(e){if(e&&e.name==='AbortError')return}
+await baixarArquivo(conteudo,nome,'application/json');
+window.location.href=`mailto:?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+aviso('Anexe o arquivo salvo ao e-mail.');
+}
+
+function gerarPromptIA(){
+const onde={Kindle:'no Kindle','Físico':'em livro físico',Audiobook:'em audiobook'};
+let txt='Oi, faça uma análise completa do meu histórico literário com os dados a seguir:\n\n';
+[...biblioteca].reverse().forEach(l=>{
+const s=statusDe(l);
+let p=`${s==='lido'?'Eu li':'Registrei'} o livro intitulado "${l.titulo}", escrito por ${l.autor}, ${onde[l.formato]||'em formato '+l.formato}. `;
+if(l.data_inicio)p+=`Comecei a leitura em ${l.data_inicio}. `;
+p+=s==='lido'?`Eu concluí a leitura${l.data_fim?' em '+l.data_fim:''}${l.nota>0?` e dei nota ${String(l.nota).replace('.',',')} de 5`:''}. `:{lendo:'Eu ainda não concluí a leitura, pois estou lendo no momento. ',abandonado:'Eu abandonei a leitura. ',desejado:'Eu ainda não li, é um livro que desejo ler. '}[s];
+const obs=(l.observacao||'').trim();
+p+=obs?`A minha anotação sobre o livro foi: "${obs}".`:'Não fiz nenhuma anotação sobre o livro.';
+txt+=p+'\n\n';
+});
+return txt.trim();
+}
+function abrirEnviarIA(){
+if(!biblioteca.length)return aviso('Nenhum livro registrado ainda.');
+toggleModalOpcoes();
+$('modal-ia').classList.remove('hidden');
+}
+function fecharEnviarIA(){$('modal-ia').classList.add('hidden')}
+async function copiarPromptIA(){
+const texto=gerarPromptIA();let ok=false;
+try{await navigator.clipboard.writeText(texto);ok=true}catch(e){}
+if(!ok){const el=document.createElement('textarea');el.value=texto;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();try{ok=document.execCommand('copy')}catch(e){}el.remove()}
+if(ok){fecharEnviarIA();aviso('Prompt copiado. Cole no chat da IA.')}else aviso('Não foi possível copiar o prompt. Tente novamente.');
+}
+
+
 window.addEventListener('DOMContentLoaded', () => {
   verificarEstadoInicial();
   renderizarFeed();
+  iniciarVigiaSync();
 });
 </script>
 </body>
