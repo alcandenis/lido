@@ -205,7 +205,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Nota <span id="nota-label" class="text-gray-400 font-normal"></span></label><div id="star-picker" class="flex items-center justify-between"></div></div>
 <div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
 <div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
-<div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
+<div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim ( lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
 <div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
 </form>
@@ -225,7 +225,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 </button></section>
 <section><h3 class="opt-sec">Leitura</h3>
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
-<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Livros Desejados</span><span class="opt-chev">›</span></button>
+<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span> Desejados</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
@@ -1000,7 +1000,7 @@ function fecharAmazon(){$('modal-amazon').classList.add('hidden')}
 function confirmarAmazon(){fecharAmazon();aviso('Busca na Amazon em breve.')}
 function atualizarTitulo(){
  const h=$('titulo-app');
- h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
+ h.innerHTML=`<span class="text-yellow-orange-gradient"><span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">lili</span>`;
  h.style.fontSize='';h.style.lineHeight='';h.style.letterSpacing='';h.style.width='';h.style.margin='';
 }
 let homeSemCapa=false;
