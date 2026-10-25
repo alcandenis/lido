@@ -992,16 +992,30 @@ let alterado=false;
 const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co'));
 if(manual&&!alvos.length)return aviso('Todos os livros já possuem capas e páginas atualizadas.');
 if(manual)aviso(`Atualizando dados para ${alvos.length} livros...`);
+
 for(const l of alvos){
  try{
-  const lista=await buscarGoogleBooks(`${l.titulo} ${l.autor}`,3);
-  const b=lista.find(x=>x.titulo.toLowerCase().includes(l.titulo.toLowerCase())||l.titulo.toLowerCase().includes(x.titulo.toLowerCase()))||lista[0];
+  const conhecido = l.autor && !/desconhecido/i.test(l.autor);
+  let lista = [];
+  
+  // Tenta buscar com título e autor (se conhecido)
+  if (conhecido) {
+    lista = await buscarGoogleBooks(`${l.titulo} ${l.autor}`, 3);
+  }
+  // Se não encontrou ou o autor for desconhecido, busca apenas pelo título
+  if (!lista.length) {
+    lista = await buscarGoogleBooks(l.titulo, 3);
+  }
+
+  const b = lista.find(x => x.titulo.toLowerCase().includes(l.titulo.toLowerCase()) || l.titulo.toLowerCase().includes(x.titulo.toLowerCase())) || lista[0];
+  
   if(b){
-   if(b.capa&&(!l.capa||l.capa.includes('placehold.co'))){l.capa=b.capa;alterado=true;}
-   if(b.paginas&&(!l.paginas||l.paginas<=0)){l.paginas=b.paginas;alterado=true;}
+   if(b.capa && (!l.capa || l.capa.includes('placehold.co'))){ l.capa = b.capa; alterado = true; }
+   if(b.paginas && b.paginas > 0 && (!l.paginas || l.paginas <= 0)){ l.paginas = b.paginas; alterado = true; }
   }
  }catch(e){}
 }
+
 if(alterado){
  salvarLocal();
  renderizarFeed();
@@ -1400,7 +1414,7 @@ let p=`${s==='lido'?'Eu li':'Registrei'} o livro intitulado "${l.titulo}", escri
 if(l.data_inicio)p+=`Comecei a leitura em ${l.data_inicio}. `;
 p+=s==='lido'?`Eu concluí a leitura${l.data_fim?' em '+l.data_fim:''}${l.nota>0?` e dei nota ${String(l.nota).replace('.',',')} de 5`:''}. `:{lendo:'Eu ainda não concluí a leitura, pois estou lendo no momento. ',abandonado:'Eu abandonei a leitura. ',desejado:'Eu ainda não li, é um livro que desejo ler. '}[s];
 const obs=(l.observacao||'').trim();
-p+=obs?`A minha anotação sobre o livro foi: "${obs}".`:'Não fiz nenhuma anotação sobre o livro.';
+p+=obs?`A minha anotação sobre o livro foi: "${obs}"`:'Não fiz nenhuma anotação sobre o livro.';
 txt+=p+'\n\n';
 });
 return txt.trim();
