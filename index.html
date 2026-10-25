@@ -232,13 +232,13 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 <div id="modal-cloud" class="frosted-modal-container fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden" onclick="if(event.target===this)toggleModalCloud()">
   <div class="frosted-modal w-full max-w-xs p-5 shadow-2xl space-y-3 text-center">
     <div class="flex items-center justify-between text-xs pb-2 border-b border-white/10">
-      <span class="text-gray-300 font-medium">Status</span>
+      <span class="text-gray-300 font-medium">Salvamento Automático</span>
       <span id="cloud-modal-badge" class="font-bold px-2.5 py-0.5 rounded-full text-[10px] bg-white/10 text-gray-400">Desconectado</span>
     </div>
     <div class="text-left space-y-1 pt-1">
       <span class="block text-[10px] text-gray-400 uppercase tracking-widest">Última verificação</span>
       <p id="cloud-modal-last-sync" class="text-xs text-white font-medium">Nunca</p>
-      <p class="text-[10px] text-gray-500">O app confere a nuvem a cada minuto e ao voltar para ele.</p>
+      <p class="text-[10px] text-gray-500">Mantenha-se logado para salvar e acessar os seus dados em outros dispositivos.</p>
     </div>
     <div class="flex gap-2 pt-1"><button id="cloud-sync-agora" onclick="sincronizarNuvem(true)" class="hidden flex-1 py-2 rounded-lg bg-white text-black text-xs font-semibold">Sincronizar agora</button><button id="cloud-reconectar" onclick="conectarGoogleDrive()" class="hidden flex-1 py-2 rounded-lg btn-gold-degrade text-xs">Reconectar</button></div>
   </div>
