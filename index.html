@@ -232,6 +232,8 @@ body.registro-aberto #top-btn{visibility:hidden!important;pointer-events:none!im
 <div id="res-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-56 overflow-y-auto"></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" required placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div>
 <input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url">
+<button type="button" id="registro-detalhes-toggle" aria-expanded="false" aria-controls="registro-detalhes" onclick="toggleDetalhesRegistro()" class="w-full flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs text-gray-300 transition-colors hover:bg-white/[0.06]"><span>Detalhes da leitura</span><span id="registro-detalhes-chevron" aria-hidden="true" class="text-gold-400 transition-transform">⌄</span></button>
+<div id="registro-detalhes" class="hidden space-y-3 rounded-lg border border-white/10 bg-black/10 p-3">
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Tipo de leitura</label>
 <div class="grid grid-cols-3 gap-2"><button type="button" data-formato="Kindle" onclick="definirFormato('Kindle')" class="seg-btn">Kindle</button><button type="button" data-formato="Audiobook" onclick="definirFormato('Audiobook')" class="seg-btn">Áudio</button><button type="button" data-formato="Físico" onclick="definirFormato('Físico')" class="seg-btn">Físico</button></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Status</label>
@@ -240,6 +242,7 @@ body.registro-aberto #top-btn{visibility:hidden!important;pointer-events:none!im
 <div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
 <div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
 <div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
+</div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
 <div class="flex gap-2"><button type="button" onclick="toggleModalNovoRegistro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
 </form>
@@ -779,6 +782,7 @@ vis.style.opacity=k?'0':'1';oc.style.opacity='0';
 $('bg-glow').style.opacity=k?'0':'.25';
 }
 function toggleModalNovoRegistro(){const modal=$('modal-registro');modal.classList.toggle('hidden');document.body.classList.toggle('registro-aberto',!modal.classList.contains('hidden'))}
+function toggleDetalhesRegistro(){const box=$('registro-detalhes'),btn=$('registro-detalhes-toggle'),chevron=$('registro-detalhes-chevron');if(!box||!btn)return;const abrir=box.classList.contains('hidden');box.classList.toggle('hidden',!abrir);btn.setAttribute('aria-expanded',String(abrir));if(chevron)chevron.style.transform=abrir?'rotate(180deg)':'rotate(0deg)'}
 function toggleModalOpcoes(){
 const m=$('modal-opcoes');m.classList.toggle('hidden');
 if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();}
