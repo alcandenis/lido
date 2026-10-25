@@ -34,6 +34,7 @@ body{background:#000000;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hi
 .snap-feed-container::-webkit-scrollbar{display:none}
 .snap-item{margin-bottom:.75rem}
 .snap-item:last-child{margin-bottom:7.5rem}
+@media(min-width:768px){.snap-item{margin-bottom:0!important}}
 .home-wrap>.snap-item{margin-bottom:0!important}
 @keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
 .stagger-item{animation:fadeUp .4s cubic-bezier(.16,1,.3,1) forwards;opacity:0}
@@ -213,7 +214,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 </div>
 </header>
 
-<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-0 pt-28 pb-28" style="padding-top:calc(7rem + env(safe-area-inset-top,0px))"></main>
+<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto px-4 md:px-6 pt-28 pb-28 page-transition md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 lg:gap-6" style="padding-top:calc(7rem + env(safe-area-inset-top,0px))"></main>
 
 <div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-24 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
 <div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-24 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
@@ -840,14 +841,14 @@ function definirAnoStats(a){anoStats=a;renderizarFeed()}
 function renderizarAbaLidos(feed){
 const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
 const tabs=[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''}">${r}</button>`).join('');
-addSecao(feed,`<div class="px-1 space-y-3"><div class="grid grid-cols-2 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
-if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,1);
-else addSecao(feed,htmlStats(lidos),BG_PADRAO,1);
+addSecao(feed,`<div class="px-1 space-y-3"><div class="grid grid-cols-2 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO,0,true);
+if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,1,true);
+else addSecao(feed,htmlStats(lidos),BG_PADRAO,1,true);
 transicionarFundo(BG_PADRAO);
 }
 function htmlCapasLidos(l){
 if(!l.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro concluído ainda.</p>';
-return `<div class="grid grid-cols-4 gap-2">${l.map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></button>`).join('')}</div>`;
+return `<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">${l.map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></button>`).join('')}</div>`;
 }
 function parseData(br){let m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br||''));if(m)return{m:+m[2],a:+m[3]};m=/^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/.exec(String(br||''));return m?{m:+m[2],a:+m[1]}:null}
 function barraStat(rot,n,max){return `<div class="space-y-1"><div class="flex justify-between text-xs"><span class="text-gray-200 truncate pr-2">${esc(rot)}</span><span class="text-white font-semibold">${n}</span></div><div class="h-1.5 rounded-full bg-white/10 overflow-hidden"><div class="h-full rounded-full bg-gradient-to-r from-yellow-500 to-amber-300" style="width:${max?Math.round(n/max*100):0}%"></div></div></div>`}
@@ -1117,8 +1118,15 @@ toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed(target
 
 /* renderização */
 function obterSaudacao(){const h=new Date().getHours();return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite'}
-function criarWrapInferior(feed){const w=document.createElement('div');w.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';feed.appendChild(w);return w}
-function addSecao(pai,html,capa,i=0){const s=document.createElement('section');s.className='snap-item stagger-item';s.style.animationDelay=`${i*.05}s`;s.dataset.capa=capa||BG_PADRAO;s.innerHTML=html;pai.appendChild(s);return s}
+function addSecao(pai,html,capa,i=0,fullWidth=false){
+const s=document.createElement('section');
+s.className='snap-item stagger-item'+(fullWidth?' md:col-span-2 lg:col-span-3':'');
+s.style.animationDelay=`${i*.05}s`;
+s.dataset.capa=capa||BG_PADRAO;
+s.innerHTML=html;
+pai.appendChild(s);
+return s;
+}
 function imgCapa(url,cls,id,tipo){
 const clk=id!=null?` onclick="capaClick(event,${id},'${tipo}')" style="cursor:pointer"`:'';
 return `<img src="${esc(url)}"${clk} class="${cls} object-cover rounded shadow-lg border border-white/10 flex-shrink-0" onerror="this.src='https://placehold.co/400x600/111/fff?text=Sem+Capa'">`;
@@ -1145,7 +1153,7 @@ homeSemCapa=false;
 atualizarTitulo();
 const feed=$('feed-container');
 feed.innerHTML='';
-feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-0 pt-28 pb-28 page-transition'+(modoSel?' modo-sel':'');
+feed.className='snap-feed-container relative z-10 w-full max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto px-4 md:px-6 pt-28 pb-28 page-transition md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 lg:gap-6'+(modoSel?' modo-sel':'');
 const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
 mostrarRetangulo();
@@ -1154,11 +1162,11 @@ handleFeedScroll();
 function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
-wrap.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';
-if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-3">${imgCapa(l.capa,'w-14 h-20',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2);
-if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3);
+wrap.className='home-wrap min-h-[calc(100dvh-14rem)] md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end';
+if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors h-full flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-3">${imgCapa(l.capa,'w-14 h-20',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,true);
+if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl h-full flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
-if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl"><button onclick="editarLivro(${lendo.id})" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4);
+if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl h-full flex items-center"><button onclick="editarLivro(${lendo.id})" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4,false);
 feed.appendChild(wrap);
 homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(homeSemCapa?BG_PADRAO:l.capa);
@@ -1169,18 +1177,18 @@ let filtroSoTextos='todos';
 function definirFiltroTodos(f){filtroTodos=f;renderizarFeed();voltarAoTopo()}
 function definirFiltroSoTextos(f){filtroSoTextos=f;renderizarFeed();voltarAoTopo()}
 function htmlLivro(l){
-return `<div class="frosted-card relative p-6 md:p-8 w-full space-y-5 shadow-2xl min-h-[22rem]"><div class="sel-mark">✓</div>
+return `<div class="frosted-card relative p-6 md:p-8 w-full space-y-5 shadow-2xl h-full flex flex-col justify-between"><div class="sel-mark">✓</div>
 <div class="flex items-center justify-between pr-9"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><span class="text-[11px] text-gray-400 uppercase tracking-widest">${biblioteca.filter(x=>statusDe(x)!=='desejado').indexOf(l)+1} de ${biblioteca.filter(x=>statusDe(x)!=='desejado').length}</span></div>
-<div class="flex items-start gap-5">${imgCapa(l.capa,'w-28 h-40 md:w-32 md:h-48',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl md:text-3xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm md:text-base font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}</div></div>
-${l.observacao?`<p class="text-gray-100 text-xl md:text-2xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light">${esc(l.observacao)}</p>`:''}
-<div class="flex items-center justify-between pt-3 border-t border-white/10 gap-2 flex-wrap"><div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div>
-<div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
+<div class="flex items-start gap-5">${imgCapa(l.capa,'w-24 h-36 md:w-28 md:h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-xl md:text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}</div></div>
+${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light line-clamp-4">${esc(l.observacao)}</p>`:''}
+<div class="flex items-center justify-between pt-3 border-t border-white/10 gap-2 flex-wrap"><div class="text-gold-400 text-base tracking-widest">${rotuloStatus(l)}</div>
+<div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
 }
 function htmlNota(n){
-return `<div class="frosted-card p-6 w-full space-y-3 shadow-2xl"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="font-obs text-gray-100 text-xl md:text-2xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
-return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl"><p class="text-white text-2xl md:text-3xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function renderizarAbaTodos(feed,scrollToId){
 const itens=[];
@@ -1190,44 +1198,44 @@ if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'n
 if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
 if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
 const tabs=[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''}">${r}</button>`).join('');
-addSecao(feed,`<div class="px-1 space-y-3"><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
-if(!itens.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nada por aqui ainda.</p></div>`,BG_PADRAO,1);
+addSecao(feed,`<div class="px-1 space-y-3"><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO,0,true);
+if(!itens.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nada por aqui ainda.</p></div>`,BG_PADRAO,1,true);
 itens.forEach((it,i)=>{
 const d=it.d;
-if(it.t==='livro'){const sc=addSecao(feed,htmlLivro(d),d.capa,i+1);sc.id=`card-item-${d.id}`;sc.dataset.id=d.id}
-else if(it.t==='nota')addSecao(feed,htmlNota(d),BG_PADRAO,i+1);
-else addSecao(feed,htmlKindle(d),BG_PADRAO,i+1);
+if(it.t==='livro'){const sc=addSecao(feed,htmlLivro(d),d.capa,i+1,false);sc.id=`card-item-${d.id}`;sc.dataset.id=d.id}
+else if(it.t==='nota')addSecao(feed,htmlNota(d),BG_PADRAO,i+1,false);
+else addSecao(feed,htmlKindle(d),BG_PADRAO,i+1,false);
 });
 transicionarFundo(BG_PADRAO);
 if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
 }
 function renderizarAbaDesejados(feed){
 const desejados=biblioteca.filter(l=>statusDe(l)==='desejado');
-addSecao(feed,`<div class="px-1 space-y-3"><h2 class="text-lg font-bold text-white font-serif mb-2">Livros Desejados</h2></div>`,BG_PADRAO);
+addSecao(feed,`<div class="px-1 space-y-3"><h2 class="text-lg font-bold text-white font-serif mb-2">Livros Desejados</h2></div>`,BG_PADRAO,0,true);
 if(!desejados.length){
-  addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro desejado cadastrado.</p></div>`,BG_PADRAO,1);
+  addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro desejado cadastrado.</p></div>`,BG_PADRAO,1,true);
   return;
 }
 desejados.forEach((l,i)=>{
-  const html=`<div class="frosted-card relative p-5 w-full space-y-4 shadow-2xl">
+  const html=`<div class="frosted-card relative p-5 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between">
     <div class="flex items-center justify-between"><span class="bg-blue-500/80 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">Desejado</span><span class="text-[11px] text-gray-400 uppercase tracking-widest">${i+1} de ${desejados.length}</span></div>
     <div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="space-y-1 my-auto"><h2 class="font-serif text-xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p></div></div>
     <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/15"><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar / Ler</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div>
   </div>`;
-  addSecao(feed,html,l.capa,i+1);
+  addSecao(feed,html,l.capa,i+1,false);
 });
 transicionarFundo(BG_PADRAO);
 }
 function renderizarAbaObservacoes(feed){
 const tabs=[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''}">${r}</button>`).join('');
-addSecao(feed,`<div class="px-1 pb-1 space-y-3"><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO);
+addSecao(feed,`<div class="px-1 pb-1 space-y-3"><div class="grid grid-cols-4 border-b border-white/15">${tabs}</div></div>`,BG_PADRAO,0,true);
 const itens=[
 ...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>statusDe(l)!=='desejado'&&(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='kindle'?notasKindle.filter(n=>(n.observacao||'').trim()).map(n=>({tipo:'kindle',obs:n.observacao,rot:`${n.titulo} · ${n.autor}`,capa:n.capa})):[])
 ];
-if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,BG_PADRAO,1);return}
-itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl"><p class="text-gray-100 text-xl md:text-2xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,l.capa||BG_PADRAO,i+1));
+if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,BG_PADRAO,1,true);return}
+itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,l.capa||BG_PADRAO,i+1,false));
 transicionarFundo(BG_PADRAO);
 }
 function abrirPassagem(id){
@@ -1378,7 +1386,7 @@ let y=cy+ch+100,tam=64,lin;
 for(;tam>=40;tam-=2){ctx.font=`700 ${tam}px "Inter",sans-serif`;lin=quebrarTexto(ctx,l.titulo,900);if(lin.length<=3)break}
 if(lin.length>3){lin=lin.slice(0,3);lin[2]=cortarLinha(ctx,lin[2]+' …',900)}
 ctx.fillStyle='#fff';lin.forEach(t=>{ctx.fillText(t,W/2,y);y+=tam*1.2});
-y+=4;ctx.font='500 36px Inter,sans-serif';ctx.fillStyle='#FACC15';ctx.fillText(cortarLinha(ctx,'por '+l.autor,900),W/2,y);
+y+=4;ctx.font='500 36px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText(cortarLinha(ctx,'por '+l.autor,900),W/2,y);
 y+=70;
 if(l.nota>0){
 const r=44,gap=104,s0=W/2-gap*2;
@@ -1387,7 +1395,7 @@ const sx=s0+i*gap;pathEstrela(ctx,sx,y,r);ctx.fillStyle='rgba(250,204,21,.22)';c
 const fr=Math.max(0,Math.min(1,l.nota-i));
 if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx-r,y-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx,y,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
 }
-}else if(statusDe(l)==='lendo'){ctx.font='500 34px Inter,sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('Em leitura',W/2,y+12)}
+}else if(statusDe(l)==='lendo'){ctx.font='500 34px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('Em leitura',W/2,y+12)}
 const obs=(l.observacao||'').trim();
 if(obs){
 y+=75;const esp=1820-y;let t=50,ol;
@@ -1397,7 +1405,7 @@ if(ol.length>max){ol=ol.slice(0,max);ol[max-1]=cortarLinha(ctx,ol[max-1]+' …',
 ctx.fillStyle='rgba(255,255,255,.92)';ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.3});
 }
 ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1832,600,2);
-ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px Inter,sans-serif';ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1884);
+ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1884);
 storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
 }
 async function abrirInstaModal(id){const l=biblioteca.find(x=>x.id===id);if(!l)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStory(l)}
