@@ -252,14 +252,18 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Tipo de leitura</label>
 <div class="grid grid-cols-3 gap-2"><button type="button" data-formato="Kindle" onclick="definirFormato('Kindle')" class="seg-btn">Kindle</button><button type="button" data-formato="Audiobook" onclick="definirFormato('Audiobook')" class="seg-btn">Áudio</button><button type="button" data-formato="Físico" onclick="definirFormato('Físico')" class="seg-btn">Físico</button></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Status</label>
-<div class="grid grid-cols-2 gap-2"><button type="button" data-status="lendo" onclick="definirStatus('lendo')" class="seg-btn">Em leitura</button><button type="button" data-status="lido" onclick="definirStatus('lido')" class="seg-btn">Lido</button><button type="button" data-status="abandonado" onclick="definirStatus('abandonado')" class="seg-btn">Abandonado</button><button type="button" data-status="desejado" onclick="definirStatus('desejado')" class="seg-btn">Desejado</button></div></div>
+<div class="grid grid-cols-3 gap-2"><button type="button" data-status="lendo" onclick="definirStatus('lendo')" class="seg-btn">Em leitura</button><button type="button" data-status="lido" onclick="definirStatus('lido')" class="seg-btn">Lido</button><button type="button" data-status="abandonado" onclick="definirStatus('abandonado')" class="seg-btn">Abandonado</button></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Nota <span id="nota-label" class="text-gray-400 font-normal"></span></label><div id="star-picker" class="flex items-center justify-between"></div></div>
 <div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
 <div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
 <div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
 </div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
-<div class="flex gap-2"><button type="button" onclick="cancelarNovaPassagem()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">Cancelar</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
+<div class="flex gap-2">
+  <button type="button" onclick="cancelarNovaPassagem()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">SAIR</button>
+  <button type="button" onclick="salvarLivroDesejado(event)" class="flex-1 py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold">QUERO LER</button>
+  <button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button>
+</div>
 </form>
 </div></div>
 
@@ -865,11 +869,12 @@ const tipos={Kindle:0,'Áudio':0,'Físico':0};
 lidos.forEach(l=>{const k=l.formato==='Audiobook'?'Áudio':l.formato;if(k in tipos)tipos[k]++});
 const maxT=Math.max(...Object.values(tipos),1);
 const totalPaginas=lidos.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
+const paginasDoAno=doAno.reduce((s,x)=>s+Math.max(0,parseInt(x.l.paginas,10)||0),0);
 const aband=biblioteca.filter(l=>statusDe(l)==='abandonado');
 const tile=(r,n)=>`<div class="flex-1 rounded-xl bg-white/5 border border-white/10 px-3 py-3 text-center"><div class="text-2xl font-bold text-white">${n}</div><div class="text-[10px] uppercase tracking-wider text-gray-400 mt-1">${r}</div></div>`;
 const chips=anos.map(a=>`<button onclick="definirAnoStats(${a})" class="seg-btn${a===anoStats?' ativo':''}">${a}</button>`).join('');
 return `<div class="space-y-3">
-<div class="frosted-card p-4 w-full shadow-2xl grid grid-cols-2 sm:grid-cols-4 gap-2">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Total',lidos.length)}${tile('Páginas lidas',totalPaginas.toLocaleString('pt-BR'))}</div>
+<div class="frosted-card p-4 w-full shadow-2xl grid grid-cols-2 sm:grid-cols-4 gap-2">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Total',lidos.length)}</div>
 ${secStat('Por mês',`<div class="flex flex-wrap gap-2">${chips}</div><div class="flex items-end gap-1.5" style="height:8.5rem">${porMes.map((n,i)=>`<div class="flex-1 flex flex-col items-center justify-end gap-1"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full rounded-t bg-gradient-to-t from-yellow-500 to-amber-300" style="height:${n?Math.max(6,Math.round(n/maxM*80)):0}px"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div>`)}
 ${secStat('Por tipo',`<div class="space-y-3">${Object.entries(tipos).map(([k,n])=>barraStat(k,n,maxT)).join('')}</div>`)}
 ${secStat('Livros por autor',topA.length?`<div class="space-y-3">${topA.map(([a,n])=>barraStat(a,n,topA[0][1])).join('')}</div>`:'<p class="text-xs text-gray-500">Sem dados ainda.</p>')}
@@ -1089,6 +1094,27 @@ salvarLocal();
 $('bookForm').reset();['capa_url','edit_id'].forEach(i=>$(i).value='');
 toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed(targetId);
 }
+
+function salvarLivroDesejado(e){
+e.preventDefault();
+const editId=$('edit_id').value;
+const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim();
+if(!titulo&&!autor&&!observacao)return aviso('Informe ao menos o título do livro.');
+const idx=editId?biblioteca.findIndex(l=>l.id==editId):-1;
+let targetId=editId;
+const d={titulo,autor:autor||'Autor Desconhecido',paginas:Math.max(0,parseInt($('paginas').value,10)||0),formato:$('formato').value,lido:false,abandonado:false,desejado:true,data_inicio:'',data_fim:'',nota:0,observacao,capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo||'Desejo')}`};
+if(titulo&&(!d.capa||d.capa.includes('placehold.co'))){
+ capaLivro(d.titulo,d.autor).then(c=>{
+  if(c){const target=biblioteca.find(x=>x.id==targetId);if(target){target.capa=c;salvarLocal();renderizarFeed();}}
+ });
+}
+if(idx!==-1)biblioteca[idx]={...biblioteca[idx],...d};
+else{targetId=Date.now();biblioteca.unshift({id:targetId,...d})}
+salvarLocal();
+$('bookForm').reset();['capa_url','edit_id'].forEach(i=>$(i).value='');
+toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed(targetId);
+}
+
 /* renderização */
 function obterSaudacao(){const h=new Date().getHours();return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite'}
 function criarWrapInferior(feed){const w=document.createElement('div');w.className='home-wrap min-h-[calc(100dvh-14rem)] flex flex-col justify-end space-y-3';feed.appendChild(w);return w}
