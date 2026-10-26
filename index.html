@@ -52,7 +52,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .frosted-card{background:rgba(12,12,12,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);border-radius:.875rem}
 /* Estatísticas: layout mais clean e gráficos com cores variadas */
 .stats-clean .stats-panel{background:rgba(20,20,20,.52);border:1px solid rgba(255,255,255,.075);border-radius:1rem;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.75rem;padding:.65rem .4rem}
+.stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.65rem;padding:.4rem .3rem}
 .stats-clean .stats-heading{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#a3a3a3;font-weight:650}
 .stats-clean .stats-month-bar{border-radius:5px 5px 2px 2px;min-height:0;transition:height .25s ease;}
 .stats-clean .stats-legend-dot{width:.55rem;height:.55rem;border-radius:999px;display:inline-block;flex-shrink:0}
@@ -999,7 +999,7 @@ const maxT=Math.max(...Object.values(tipos),1);
 const totalPaginas=lidos.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
 const paginasDoAno=doAno.reduce((s,x)=>s+Math.max(0,parseInt(x.l.paginas,10)||0),0);
 const aband=biblioteca.filter(l=>statusDe(l)==='abandonado');
-const tile=(r,n)=>`<div class="stats-tile text-center"><div class="text-xl sm:text-2xl font-bold text-white tabular-nums">${n}</div><div class="text-[9px] uppercase tracking-wider text-gray-400 mt-1">${r}</div></div>`;
+const tile=(r,n)=>`<div class="stats-tile text-center"><div class="text-sm sm:text-base font-bold text-white tabular-nums">${n}</div><div class="text-[8px] uppercase tracking-wider text-gray-400 mt-0.5">${r}</div></div>`;
 const chips=anos.map(a=>`<button onclick="definirAnoStats(${a})" class="seg-btn${a===anoStats?' ativo':''}">${a}</button>`).join('');
 const paleta=['linear-gradient(90deg,#FACC15,#F59E0B)','linear-gradient(90deg,#34D399,#10B981)','linear-gradient(90deg,#60A5FA,#818CF8)','linear-gradient(90deg,#F472B6,#E879F9)','linear-gradient(90deg,#FB923C,#F87171)','linear-gradient(90deg,#A78BFA,#818CF8)','linear-gradient(90deg,#2DD4BF,#38BDF8)','linear-gradient(90deg,#FDE68A,#FBBF24)'];
 
@@ -1021,12 +1021,12 @@ if(cumulativePct<100&&totalGenCount>0){
 }
 const conicStyle=totalGenCount>0?`background: conic-gradient(${conicStops.join(', ')});`:'background: rgba(255,255,255,0.1);';
 
-const genreHtml=generosOrdenados.length?`<div class="space-y-4">
-  <div class="flex flex-col sm:flex-row items-center gap-6 justify-center py-2">
-    <div class="relative w-36 h-36 rounded-full shrink-0 shadow-lg border border-white/10 flex items-center justify-center" style="${conicStyle}">
-      <div class="absolute inset-4 rounded-full bg-[#141414] flex flex-col items-center justify-center text-center shadow-inner">
-        <span class="text-base font-bold text-white tabular-nums">${totalGenCount}</span>
-        <span class="text-[9px] text-gray-400 uppercase tracking-widest">Livros</span>
+const genreHtml=generosOrdenados.length?`<details class="group cursor-pointer stats-panel p-4 w-full"><summary class="flex items-center justify-between stats-heading list-none select-none"><span>Distribuição por Gênero (Gráfico de Pizza)</span><span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span></summary><div class="pt-4 space-y-4 border-t border-white/10 mt-3">
+  <div class="flex flex-col sm:flex-row items-center gap-6 justify-center py-1">
+    <div class="relative w-32 h-32 rounded-full shrink-0 shadow-lg border border-white/10 flex items-center justify-center" style="${conicStyle}">
+      <div class="absolute inset-3 rounded-full bg-[#141414] flex flex-col items-center justify-center text-center shadow-inner">
+        <span class="text-sm font-bold text-white tabular-nums">${totalGenCount}</span>
+        <span class="text-[8px] text-gray-400 uppercase tracking-widest">Livros</span>
       </div>
     </div>
     <div class="flex-1 w-full space-y-2">
@@ -1034,13 +1034,13 @@ const genreHtml=generosOrdenados.length?`<div class="space-y-4">
     </div>
   </div>
   ${generosOrdenados.length>6?`<div class="pt-3 border-t border-white/10 space-y-2"><p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Outros Gêneros</p><div class="space-y-1.5">${generosOrdenados.slice(6,12).map(([g,n])=>`<div class="flex justify-between gap-3 text-xs"><span class="text-gray-300 truncate">${esc(g)}</span><span class="text-white font-semibold tabular-nums">${n}</span></div>`).join('')}</div></div>`:''}
-</div>`:'<p class="text-xs text-gray-500">Sem dados de gênero.</p>';
+</div></details>`:'<p class="text-xs text-gray-500">Sem dados de gênero.</p>';
 
 const autorHtml = `<details class="stats-panel p-4 w-full space-y-3 group cursor-pointer"><summary class="flex items-center justify-between stats-heading list-none select-none"><span>Livros por autor</span><span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span></summary><div class="pt-3 space-y-3 border-t border-white/10 mt-3">${topA.length?topA.map(([a,n],i)=>barraStat(a,n,topA[0][1],paleta[i%paleta.length])).join(''):'<p class="text-xs text-gray-500">Sem dados ainda.</p>'}</div></details>`;
 return `<div class="stats-clean space-y-3">
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Total',lidos.length)}</div>
 <section class="stats-panel p-4 w-full space-y-3"><div class="flex items-center justify-between gap-2"><h3 class="stats-heading">Leituras por mês · ${anoStats}</h3><button onclick="abrirInstaModalStats(${anoStats})" class="text-[11px] btn-gold-degrade px-3 py-1.5 rounded-lg flex items-center gap-1.5"><span>Story do ano</span></button></div><div class="flex flex-wrap gap-1.5">${chips}</div><div class="flex items-end gap-1.5 pt-2" style="height:9rem">${porMes.map((n,i)=>`<div class="flex-1 h-full flex flex-col items-center justify-end gap-1 min-w-0"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full stats-month-bar" style="height:${n?Math.max(5,Math.round(n/maxM*100)):0}px;background:${paleta[i%paleta.length]};opacity:${n?1:.15}"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div></section>
-${secStat('Distribuição por Gênero (Gráfico de Pizza)',genreHtml)}
+${genreHtml}
 ${secStat('Por formato',`<div class="space-y-3">${Object.entries(tipos).map(([k,n],i)=>barraStat(k,n,maxT,paleta[i%paleta.length])).join('')}</div>`)}
 ${autorHtml}
 ${secStat('Abandonados ('+aband.length+')',aband.length?`<ul class="space-y-2">${aband.map(l=>`<li class="text-sm text-gray-200">${esc(l.titulo)} <span class="text-gray-500 text-xs">· ${esc(l.autor)}</span></li>`).join('')}</ul>`:'<p class="text-xs text-gray-500">Nenhum livro abandonado.</p>')}
