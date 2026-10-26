@@ -28,7 +28,15 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('Service Worker registrado com sucesso!', reg))
+        .then(reg => {
+          console.log('Service Worker registrado com sucesso!', reg);
+          // Solicitar armazenamento persistente para proteger dados de leitura
+          if (navigator.storage && navigator.storage.persist) {
+            navigator.storage.persist().then(granted => {
+              if (granted) console.log("Armazenamento persistente ativado.");
+            });
+          }
+        })
         .catch(err => console.error('Erro ao registrar o Service Worker:', err));
     });
   }
@@ -320,6 +328,34 @@ textarea{
   backdrop-filter:blur(24px) saturate(.82)!important;
 }
 
+/* Estilo Liquid Glass para o Botão de Instalação no card de Boas-vindas */
+.btn-liquid-glass-install {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1rem;
+  margin-top: 0.5rem;
+  border-radius: 0.75rem;
+  background: rgba(250, 204, 21, 0.15) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(250, 204, 21, 0.4) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  color: #FACC15 !important;
+  font-weight: 700;
+  font-size: clamp(0.75rem, 1.6vh, 0.85rem);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-liquid-glass-install:hover {
+  background: rgba(250, 204, 21, 0.25) !important;
+  border-color: rgba(250, 204, 21, 0.6) !important;
+  transform: scale(1.02);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 6px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -456,6 +492,11 @@ textarea{
       <p>O arquivo de backup é <strong class="text-white">LidosBackup</strong> e ocupa menos de 1 MB.</p>
       <p>Registre livros e notas avulsas, organize marcadores do Kindle, crie uma Lista de Desejo, gere prompts para receber indicações de IA e consulte suas estatísticas na página Lidos.</p>
     </div>
+    <!-- Botão de Instalação com efeito Liquid Glass -->
+    <button type="button" id="btn-instalar-lili-welcome" onclick="instalarAppLiLi()" class="btn-liquid-glass-install">
+      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg>
+      <span>Instalar LidoLivros no Dispositivo</span>
+    </button>
     <button type="button" id="welcome-add-first" onclick="boasVindasAdicionarPassagem()" class="mt-1" style="background:linear-gradient(90deg,#facc15,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;font-size:clamp(.8rem,1.8vh,.95rem)">Adicionar primeira passagem</button>
   </section>
 </div>
@@ -1989,9 +2030,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
 let eventoInstalacaoLiLi = null;
 function appLiLiJaInstalado(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
-function atualizarBotaoInstalarLiLi(){const botao=$('btn-instalar-lili');if(botao)botao.classList.toggle('hidden',appLiLiJaInstalado())}
+function atualizarBotaoInstalarLiLi(){
+  const botaoConfig = $('btn-instalar-lili');
+  const botaoWelcome = $('btn-instalar-lili-welcome');
+  const instalado = appLiLiJaInstalado();
+  if(botaoConfig) botaoConfig.classList.toggle('hidden', instalado);
+  if(botaoWelcome) botaoWelcome.style.display = instalado ? 'none' : 'inline-flex';
+}
 window.addEventListener('beforeinstallprompt',function(evento){evento.preventDefault();eventoInstalacaoLiLi=evento;atualizarBotaoInstalarLiLi()});
-window.addEventListener('appinstalled',function(){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi();if(typeof aviso==='function')aviso('LiLi instalado com sucesso.')});
+window.addEventListener('appinstalled',function(){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi();if(typeof aviso==='function')aviso('LidoLivros instalado com sucesso.');});
 async function instalarAppLiLi(){
   if(appLiLiJaInstalado()){atualizarBotaoInstalarLiLi();return}
   if(eventoInstalacaoLiLi){
@@ -2002,7 +2049,7 @@ async function instalarAppLiLi(){
   }
   const agente=navigator.userAgent||'';
   if(/iphone|ipad|ipod/i.test(agente)){
-    alert('Para instalar o LiLi no iPhone ou iPad:\n1. Abra esta página no Safari.\n2. Toque em Compartilhar.\n3. Escolha “Adicionar à Tela de Início”.\n4. Toque em Adicionar.');
+    alert('Para instalar o LidoLivros no iPhone ou iPad:\n1. Abra esta página no Safari.\n2. Toque em Compartilhar.\n3. Escolha “Adicionar à Tela de Início”.\n4. Toque em Adicionar.');
   }else{
     alert('A instalação ainda não está disponível neste momento. No menu do navegador, procure “Instalar app” ou “Adicionar à tela inicial”.');
   }
