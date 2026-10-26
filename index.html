@@ -1281,30 +1281,54 @@ toggleModalNovoRegistro();
 const GOOGLE_BOOKS_API_KEY = 'AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
 
 const seqBusca={};
-async function buscarGoogleBooks(q,max=5){
-const base=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books&fields=items(volumeInfo(title,authors,imageLinks,pageCount,categories))`;
-let r=null;
-if(GOOGLE_BOOKS_API_KEY){try{r=await fetch(`${base}&key=${GOOGLE_BOOKS_API_KEY}`)}catch(e){r=null}}
-if(!r||!r.ok){
-r=await fetch(base);
-if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;throw e}
-}
-const d=await r.json();
-return (d.items||[]).map(item=>{
-const info=item.volumeInfo||{};
-const links=info.imageLinks||{};
-const cover=(links.thumbnail||links.smallThumbnail||'').replace(/^http:\/\//,'https://').replace('&edge=curl','');
-const cats=info.categories||[];
-const genero=cats.length?cats[0]:'';
-return {titulo:info.title||'',autor:Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido',capa:cover,paginas:info.pageCount||0,genero:genero};
-}).filter(x=>x.titulo);
+async function buscarGoogleBooks(q, max = 5) {
+  let url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books`;
+  if (GOOGLE_BOOKS_API_KEY) {
+    url += `&key=${GOOGLE_BOOKS_API_KEY}`;
+  }
+
+  let r = null;
+  try {
+    r = await fetch(url);
+  } catch (e) {
+    r = null;
+  }
+
+  if (!r || !r.ok) {
+    // Tenta fallback sem chave se falhar
+    let urlSemChave = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books`;
+    r = await fetch(urlSemChave);
+    if (!r.ok) {
+      const e = new Error('HTTP ' + r.status);
+      e.status = r.status;
+      throw e;
+    }
+  }
+
+  const d = await r.json();
+  return (d.items || []).map(item => {
+    const info = item.volumeInfo || {};
+    const links = info.imageLinks || {};
+    let cover = links.thumbnail || links.smallThumbnail || '';
+    cover = cover.replace(/^http:\/\//, 'https://').replace('&edge=curl', '');
+    const cats = info.categories || [];
+    const genero = cats.length ? cats[0] : '';
+    return {
+      titulo: info.title || '',
+      autor: Array.isArray(info.authors) && info.authors.length ? info.authors.join(', ') : 'Autor desconhecido',
+      capa: cover,
+      paginas: info.pageCount || 0,
+      genero: genero
+    };
+  }).filter(x => x.titulo);
 }
 
 async function buscarDetalhesLivro(titulo,autor){
 const conhecido=autor&&!/desconhecido/i.test(autor);
-let lista=await buscarGoogleBooks(conhecido?`${titulo} ${autor}`:titulo,3);
+const query = conhecido ? `intitle:${titulo}+inauthor:${autor}` : titulo;
+let lista=await buscarGoogleBooks(query,3);
 let item=(lista.find(x=>x.capa)||lista[0]);
-if(!item&&conhecido){lista=await buscarGoogleBooks(titulo,3);item=(lista.find(x=>x.capa)||lista[0])}
+if(!item&&concihecido){lista=await buscarGoogleBooks(titulo,3);item=(lista.find(x=>x.capa)||lista[0])}
 return item||{capa:'',paginas:0,genero:''};
 }
 
