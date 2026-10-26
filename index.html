@@ -535,9 +535,13 @@ textarea{
       </div>
       <button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/30 px-3 py-1 rounded-lg transition-colors">Excluir Livro</button>
     </div>
+    <div class="max-w-4xl mx-auto px-5 pb-1 grid grid-cols-2 gap-1">
+      <button type="button" id="aba-escritor-livro" onclick="mudarAbaEscritor('livro')" class="tab-reg sm ativo text-center">Livro</button>
+      <button type="button" id="aba-escritor-notas" onclick="mudarAbaEscritor('notas')" class="tab-reg sm text-center">Notas</button>
+    </div>
   </div>
   <div class="max-w-4xl mx-auto px-5 pt-6 pb-24 space-y-6">
-    <form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-4 frosted-card p-6 md:p-8 shadow-2xl">
+    <form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-4">
       <div>
         <label class="block text-xs font-medium text-gray-300 mb-1">Nome do Livro</label>
         <input type="text" id="escrita_titulo" required placeholder="Título do seu livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
@@ -577,13 +581,12 @@ textarea{
       </div>
     </form>
 
-    <!-- Seção de Notas do Livro Sendo Escrito -->
-    <div class="frosted-card p-6 md:p-8 shadow-2xl space-y-4">
+    <!-- Notas do Bloco do Escritor -->
+    <div id="painel-escritor-notas" class="space-y-4 hidden">
       <h3 class="text-sm font-bold uppercase tracking-wider text-gold-400">Notas do Livro</h3>
-      <div class="space-y-3">
-        <div>
-          <textarea id="escrita_nota_texto" rows="3" placeholder="Escreva uma nota ou lembrete para este livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea>
-        </div>
+      <p id="escritor-notas-aviso" class="text-xs text-gray-400 hidden">Salve o livro na aba Livro para adicionar notas.</p>
+      <div id="escritor-notas-form" class="space-y-3">
+        <textarea id="escrita_nota_texto" rows="3" placeholder="Escreva uma nota ou lembrete para este livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea>
         <button type="button" id="btn-add-nota-escrita" onclick="adicionarNotaLivroEscrito()" class="w-full btn-gold-degrade py-2 rounded-lg text-xs uppercase tracking-wider">Adicionar Nota</button>
         <button type="button" id="btn-cancelar-edicao-nota" onclick="cancelarEdicaoNotaEscrita()" class="hidden w-full py-2 rounded-lg bg-white/10 text-white text-xs">Cancelar edição</button>
       </div>
@@ -1282,7 +1285,20 @@ function capaPlaceholder(titulo){
   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="400" height="600" fill="#111"/><text x="200" y="300" fill="#fff" font-family="sans-serif" font-size="28" text-anchor="middle">'+t+'</text></svg>';
   return 'data:image/svg+xml,'+encodeURIComponent(svg).replace(/'/g,'%27').replace(/\(/g,'%28').replace(/\)/g,'%29');
 }
-function atualizarBotoesEscritor(){const b=$('btn-excluir-livro-escrito');if(b)b.classList.toggle('hidden',!livroEscrito)}
+function atualizarBotoesEscritor(){
+  const b=$('btn-excluir-livro-escrito');if(b)b.classList.toggle('hidden',!livroEscrito);
+  const f=$('escritor-notas-form'),av=$('escritor-notas-aviso');
+  if(f)f.classList.toggle('hidden',!livroEscrito);
+  if(av)av.classList.toggle('hidden',!!livroEscrito);
+}
+function mudarAbaEscritor(aba){
+  if(aba!=='notas')cancelarEdicaoNotaEscrita();
+  $('escritaLivroForm').classList.toggle('hidden',aba!=='livro');
+  $('painel-escritor-notas').classList.toggle('hidden',aba!=='notas');
+  $('aba-escritor-livro').classList.toggle('ativo',aba==='livro');
+  $('aba-escritor-notas').classList.toggle('ativo',aba==='notas');
+  const t=$('tela-escrevendo-livro');if(t)t.scrollTop=0;
+}
 function cancelarEdicaoNotaEscrita(){
   notaEditandoId=null;
   const t=$('escrita_nota_texto');if(t)t.value='';
@@ -1316,6 +1332,7 @@ function abrirModalEscrevendoLivro(){
   }
   renderizarNotasLivroEscrito();
   atualizarBotoesEscritor();
+  mudarAbaEscritor('livro');
   $('tela-escrevendo-livro').classList.remove('hidden');
 }
 function fecharModalEscrevendoLivro(){
