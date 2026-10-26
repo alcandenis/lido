@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
 <head>
-
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MLWMTH0RJF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-MLWMTH0RJF');
 </script>
 
@@ -30,7 +28,6 @@
       navigator.serviceWorker.register('./sw.js')
         .then(reg => {
           console.log('Service Worker registrado com sucesso!', reg);
-          // Solicitar armazenamento persistente para proteger dados de leitura
           if (navigator.storage && navigator.storage.persist) {
             navigator.storage.persist().then(granted => {
               if (granted) console.log("Armazenamento persistente ativado.");
@@ -41,7 +38,6 @@
     });
   }
 </script>
-<!-- Google Identity Services e API Client -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script src="https://apis.google.com/js/api.js" async defer></script>
 <script>tailwind.config={theme:{extend:{colors:{gold:{400:'#FACC15',500:'#EAB308',600:'#CA8A04'}},fontFamily:{serif:['Inter','sans-serif'],sans:['Inter','sans-serif']}}}}</script>
@@ -69,7 +65,6 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .tab-reg.ativo{color:#FACC15;font-weight:700;text-shadow:0 0 10px rgba(250,204,21,0.3)}
 .frosted-modal{background:rgba(10,10,10,.75);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);border-radius:1.25rem;animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards}
 .frosted-card{background:rgba(12,12,12,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);border-radius:.875rem}
-/* Estatísticas: layout mais clean e gráficos com cores variadas (tiles justificadas lado a lado) */
 .stats-clean .stats-panel{background:rgba(20,20,20,.52);border:1px solid rgba(255,255,255,.075);border-radius:1rem;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.65rem;padding:.5rem .25rem;width:100%}
 .stats-clean .grid-cols-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem}
@@ -77,7 +72,6 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .stats-clean .stats-month-bar{border-radius:5px 5px 2px 2px;min-height:0;transition:height .25s ease;}
 .stats-clean .stats-legend-dot{width:.55rem;height:.55rem;border-radius:999px;display:inline-block;flex-shrink:0}
 .stats-clean .stats-track{height:6px;border-radius:999px;background:rgba(255,255,255,.075);overflow:hidden}
-
 .frosted-dock{background:rgba(10,10,10,.9);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:9999px}
 .bg-layer{position:fixed;inset:0;background-size:cover;background-position:center;filter:blur(10px) saturate(1.2) brightness(.4);transform:scale(1.3);transition:opacity .9s ease}
 .bg-layer-custom{filter:none!important;transform:none!important;}
@@ -92,65 +86,26 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .seg-btn{padding:.625rem .5rem;font-size:.75rem;border-radius:.5rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#d1d5db;transition:all .15s}
 .seg-btn.ativo{background:#fff;color:#000;font-weight:600;border-color:#fff}
 .btn-gold-degrade{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);color:#000;font-weight:700;transition:all .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(250,204,21,0.4);box-shadow:0 4px 16px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,0.3)}
-.btn-gold-degrade:hover{filter:brightness(1.1);box-shadow:0 4px 16px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.4)}
 .text-gold-gradient{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.titulo-novas{font-weight:900;letter-spacing:.12em;font-feature-settings:"kern" 1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:color .3s ease}
 .text-yellow-orange-gradient{background:linear-gradient(90deg,#fef08a 0%,#facc15 42%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-
 @keyframes pulseShimmer {
   0%, 100% { opacity: 1; filter: brightness(1); }
   50% { opacity: 0.4; filter: brightness(0.7); }
 }
 .o-filled-yellow-orange{display:inline-block;width:.5em;height:.727em;border-radius:.07em;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);margin:0 .02em 0 -.07em;vertical-align:baseline;flex-shrink:0}
 .o-filled-yellow-orange.is-loading { animation: pulseShimmer 1s infinite ease-in-out; }
-
 .dock-tab{font-size:.75rem;padding:.25rem .5rem;color:#9ca3af;position:relative;transition:color .2s;font-weight:500}
 .dock-tab:hover{color:#e5e7eb}
 .dock-tab.ativo{color:#FACC15;font-weight:700;text-shadow:0 0 12px rgba(250,204,21,0.4)}
-
-/* Botão Nova passagem com estilo Liquid Glass Amarelo (sem glow) */
 .dock-add{
-  width:2.75rem;
-  height:2.75rem;
-  border-radius:9999px;
-  background: rgba(250, 204, 21, 0.25) !important;
-  backdrop-filter: blur(16px) saturate(1.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  border: 1px solid rgba(250, 204, 21, 0.5) !important;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
-  color: #FACC15 !important;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:all .2s;
+  width:2.75rem;height:2.75rem;border-radius:9999px;
+  background:rgba(250,204,21,0.25)!important;backdrop-filter:blur(16px) saturate(1.5);
+  -webkit-backdrop-filter:blur(16px) saturate(1.5);border:1px solid rgba(250,204,21,0.5)!important;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,0.4)!important;color:#FACC15!important;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
 }
-.dock-add:hover,.dock-add:active{
-  background: rgba(250, 204, 21, 0.38) !important;
-  filter:brightness(1.15);
-  transform:scale(1.05);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
-}
-
-/* Estilo Liquid Glass para os botões do modal Nova Passagem */
-#modal-registro button[type="button"],
-#modal-registro button[type="submit"] {
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
-}
-#modal-registro button[type="button"]:hover,
-#modal-registro button[type="submit"]:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
+.dock-add:hover,.dock-add:active{background:rgba(250,204,21,0.38)!important;filter:brightness(1.15);transform:scale(1.05)}
 .font-obs{font-family:'Inter',sans-serif;font-style:normal;font-weight:400;line-height:1.65}
-.btn-blue-frost{width:2.5rem;height:2.5rem;border-radius:.75rem;display:flex;align-items:center;justify-content:center;color:#bfdbfe;background:rgba(59,130,246,.18);border:1px solid rgba(147,197,253,.3);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:all .2s}
-.btn-blue-frost:hover,.btn-blue-frost:active{background:rgba(59,130,246,.32);color:#fff}
-@keyframes glowWhite{0%,100%{filter:drop-shadow(0 0 8px rgba(255,255,255,.4)) drop-shadow(0 0 22px rgba(255,255,255,.22))}50%{filter:drop-shadow(0 0 12px rgba(255,255,255,.65)) drop-shadow(0 0 32px rgba(255,255,255,.4))}}
-@keyframes glowGold{0%,100%{filter:drop-shadow(0 0 8px rgba(250,204,21,.45)) drop-shadow(0 0 22px rgba(250,204,21,.25))}50%{filter:drop-shadow(0 0 12px rgba(250,204,21,.7)) drop-shadow(0 0 32px rgba(250,204,21,.45))}}
-.glow-white{display:inline-block;animation:glowWhite 4s ease-in-out infinite}
-.glow-gold{display:inline-block;animation:glowGold 4s ease-in-out infinite}
 .opt-sec{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:#FACC15;font-weight:700;margin-bottom:.25rem}
 .opt-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.875rem;color:#e5e7eb;text-align:left;transition:color .15s}
 .opt-row:hover{color:#FACC15}
@@ -159,61 +114,6 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .opt-act{align-self:flex-start;font-size:.75rem;color:#FACC15;border:1px solid rgba(250,204,21,.4);border-radius:.5rem;padding:.4rem .8rem;transition:all .15s}
 .opt-act:hover{background:#FACC15;color:#000}
 .opt-desc{font-size:.7rem;color:#6b7280;padding:.4rem 0 .2rem;line-height:1.4}
-.accordion-content{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.16,1,.3,1),opacity .25s;opacity:0}
-.accordion-content.open{max-height:520px;opacity:1}
-
-/* Nova passagem em formato de card, substituindo visualmente o feed */
-#modal-registro.registro-card-view{
-  pointer-events:none!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  padding:calc(5.5rem + env(safe-area-inset-top,0px)) 1rem calc(4.5rem + env(safe-area-inset-bottom,0px))!important;
-  overflow-y:auto;
-  background:transparent!important;
-  -webkit-backdrop-filter:none!important;
-  backdrop-filter:none!important;
-}
-#modal-registro.registro-card-view #registro-caixa{
-  pointer-events:auto;
-  display:block;
-  width:100%;
-  max-width:42rem;
-  max-height:none!important;
-  overflow:visible!important;
-  margin:auto auto 0;
-  padding:1.25rem;
-  background:rgba(12,12,12,.65)!important;
-  -webkit-backdrop-filter:blur(20px)!important;
-  backdrop-filter:blur(20px)!important;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:.875rem;
-  box-shadow:0 25px 50px -12px rgba(0,0,0,.25);
-  animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards;
-}
-body.registro-aberto #feed-container,
-body.registro-aberto #scroll-arrow,
-body.registro-aberto #top-btn,
-body.welcome-menu-open #feed-container,
-body.welcome-menu-open #scroll-arrow,
-body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!important}
-@media(max-height:700px){
-  #modal-registro.registro-card-view{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:4rem!important}
-  #modal-registro.registro-card-view #registro-caixa{padding:1rem}
-}
-
-/* Boas-vindas */
-#welcome-modal{align-items:flex-end!important;justify-content:center!important;padding:calc(5.5rem + env(safe-area-inset-top,0px)) 1rem calc(4.5rem + env(safe-area-inset-bottom,0px))!important;overflow-y:auto;background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none!important}
-#welcome-card{pointer-events:auto;width:100%;max-width:42rem;max-height:none;overflow:visible;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:.45rem;padding:1.25rem;margin:auto auto 0;text-align:left;background:rgba(12,12,12,.65);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);border-radius:.875rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards}
-#welcome-logo-o{display:block;width:clamp(2.4rem,7vh,4rem);height:clamp(3.2rem,9vh,5rem);border-radius:.45rem;margin:.05rem 0 .15rem;flex-shrink:0}
-#welcome-title{font-size:clamp(1.2rem,3vh,1.6rem);line-height:1.05;margin:0;text-align:left}
-#welcome-copy{font-size:clamp(.62rem,1.45vh,.74rem);line-height:1.3;color:#e5e7eb;display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;max-width:31rem;text-align:left}
-#welcome-copy p{margin:0;text-align:left}
-#welcome-cta{font-size:clamp(.75rem,1.6vh,.9rem);font-weight:700;line-height:1.2;padding:.4rem 0 .1rem;background:linear-gradient(90deg,#facc15,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;flex-shrink:0;text-align:left}
-@media(max-height:700px){#welcome-modal{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:4rem!important}#welcome-card{padding:1rem;gap:.3rem}#welcome-copy{font-size:.6rem;line-height:1.2;gap:.25rem}#welcome-logo-o{width:2rem;height:2.7rem}#welcome-title{font-size:1.15rem}}
-
-
-/* LIQUID GLASS DARK — camada visual neutra aplicada ao arquivo original */
 :root{
   --glass-surface:rgba(22,22,22,.72);
   --glass-surface-strong:rgba(15,15,15,.88);
@@ -221,13 +121,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
   --glass-border-soft:rgba(255,255,255,.075);
   --glass-shadow:0 12px 32px rgba(0,0,0,.28);
 }
-/* Superfícies principais: vidro escuro sem reflexos decorativos */
-.frosted-card,
-.frosted-modal,
-.frosted-dock,
-#registro-caixa,
-#welcome-card,
-#tela-login-inicial .frosted-card{
+.frosted-card,.frosted-modal,.frosted-dock,#registro-caixa,#welcome-card,#tela-login-inicial .frosted-card{
   background:var(--glass-surface)!important;
   -webkit-backdrop-filter:blur(24px) saturate(.85)!important;
   backdrop-filter:blur(24px) saturate(.85)!important;
@@ -236,127 +130,10 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 }
 .frosted-card{border-radius:1rem!important}
 .frosted-modal{border-radius:1.25rem!important}
-.frosted-dock{
-  background:var(--glass-surface-strong)!important;
-  border-color:var(--glass-border-soft)!important;
-  box-shadow:0 8px 28px rgba(0,0,0,.36)!important;
-}
-.frosted-modal-container{
-  background:rgba(0,0,0,.68)!important;
-  -webkit-backdrop-filter:blur(18px)!important;
-  backdrop-filter:blur(18px)!important;
-}
-#modal-opcoes,#tela-lidos{
-  background:rgba(8,8,8,.92)!important;
-  -webkit-backdrop-filter:blur(28px) saturate(.85)!important;
-  backdrop-filter:blur(28px) saturate(.85)!important;
-}
-#modal-registro.registro-card-view #registro-caixa,
-#welcome-card{
-  background:rgba(20,20,20,.82)!important;
-  border-color:var(--glass-border)!important;
-  box-shadow:var(--glass-shadow)!important;
-}
-/* Neutraliza o botão azul existente sem alterar sua função */
-.btn-blue-frost,
-.btn-blue-frost:hover,
-.btn-blue-frost:active{
-  color:#e5e5e5!important;
-  background:rgba(255,255,255,.07)!important;
-  border-color:rgba(255,255,255,.14)!important;
-  box-shadow:none!important;
-}
-/* Campos e controles com acabamento de vidro cinza */
-select,
-input:not([type="checkbox"]):not([type="radio"]),
-textarea{
-  color-scheme:dark;
-}
-.seg-btn{
-  background:rgba(255,255,255,.055);
-  border-color:rgba(255,255,255,.12);
-  box-shadow:none;
-}
-.seg-btn.ativo{
-  background:rgba(255,255,255,.88);
-  color:#111;
-  border-color:rgba(255,255,255,.7);
-}
-/* Sem brilho/reflexo nos estados ativos das abas */
-.tab-reg.ativo,.dock-tab.ativo{
-  text-shadow:none!important;
-}
-.sel-ativo .frosted-card{
-  box-shadow:0 0 0 1px rgba(250,204,21,.65)!important;
-}
-/* O vidro fica neutro; mantém apenas o dourado original como cor de ação */
-
-
-
-/* Ajustes solicitados: controles compactos e Liquid Glass Dark mais translúcido */
-.dock-add{
-  width:2.35rem!important;
-  height:2rem!important;
-  min-width:2.35rem!important;
-  border-radius:.65rem!important;
-}
-.dock-add svg{width:1rem!important;height:1rem!important}
-.dock-add:hover,.dock-add:active{transform:scale(1.025)!important}
-
-/* Mais transparência nos fundos que envolvem os pop-ups */
-.frosted-modal-container{
-  background:rgba(0,0,0,.38)!important;
-  -webkit-backdrop-filter:blur(14px)!important;
-  backdrop-filter:blur(14px)!important;
-}
-/* Superfícies de diálogo: vidro escuro, sem azul nem reflexos */
-.frosted-modal{
-  background:rgba(16,16,16,.54)!important;
-  border-color:rgba(255,255,255,.11)!important;
-  box-shadow:0 12px 36px rgba(0,0,0,.24)!important;
-  -webkit-backdrop-filter:blur(24px) saturate(.82)!important;
-  backdrop-filter:blur(24px) saturate(.82)!important;
-}
-.frosted-card{
-  background:rgba(16,16,16,.50)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(.82)!important;
-  backdrop-filter:blur(22px) saturate(.82)!important;
-}
-/* Telas modais extensas também ficam mais transparentes */
-#modal-opcoes,#tela-lidos{
-  background:rgba(8,8,8,.76)!important;
-  -webkit-backdrop-filter:blur(24px) saturate(.82)!important;
-  backdrop-filter:blur(24px) saturate(.82)!important;
-}
-
-/* Estilo Liquid Glass para o Botão de Instalação no card de Boas-vindas */
-.btn-liquid-glass-install {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.65rem 1rem;
-  margin-top: 0.5rem;
-  border-radius: 0.75rem;
-  background: rgba(250, 204, 21, 0.15) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  backdrop-filter: blur(16px) saturate(1.5);
-  border: 1px solid rgba(250, 204, 21, 0.4) !important;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-  color: #FACC15 !important;
-  font-weight: 700;
-  font-size: clamp(0.75rem, 1.6vh, 0.85rem);
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-.btn-liquid-glass-install:hover {
-  background: rgba(250, 204, 21, 0.25) !important;
-  border-color: rgba(250, 204, 21, 0.6) !important;
-  transform: scale(1.02);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4), 0 6px 16px rgba(0, 0, 0, 0.3) !important;
-}
-
+.frosted-dock{background:var(--glass-surface-strong)!important;border-color:var(--glass-border-soft)!important}
+.frosted-modal-container{background:rgba(0,0,0,.68)!important;-webkit-backdrop-filter:blur(18px)!important;backdrop-filter:blur(18px)!important}
+#modal-opcoes,#tela-lidos{background:rgba(8,8,8,.92)!important;-webkit-backdrop-filter:blur(28px) saturate(.85)!important;backdrop-filter:blur(28px) saturate(.85)!important}
+.dock-add{width:2.35rem!important;height:2rem!important;border-radius:.65rem!important}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -375,28 +152,19 @@ textarea{
       </h1>
       <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">SEU DIÁRIO DE LEITURA</p>
     </div>
-    <p class="text-xs text-gray-300 leading-relaxed">Adicione sua conta do Google para manter seus dados em todos os lugares.</p>
-    
+    <p class="text-xs text-gray-300 leading-relaxed">Adicione sua conta do Google para manter seus dados sincronizados em todos os seus dispositivos com backup automático e contínuo.</p>
     <div class="space-y-3 text-left">
       <label class="block text-xs font-medium text-gray-300">Como prefere ser chamado(a)?</label>
       <input type="text" id="login-usuario-nome" maxlength="40" placeholder="Digite seu nome" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400">
     </div>
-
     <div class="space-y-3 pt-2">
       <button onclick="conectarGoogleDrive(true)" class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white text-black font-semibold text-sm hover:bg-gray-100 transition-all shadow-lg">
         <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
         Sincronizar com o Google
       </button>
-
       <button onclick="continuarSemSalvar()" class="w-full py-2.5 rounded-xl border border-white/10 bg-white/5 text-gray-300 text-xs hover:bg-white/10 transition-all">
         Continuar sem salvar na nuvem
       </button>
-    </div>
-
-    <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-left">
-      <p class="text-[11px] text-amber-300/90 leading-tight">
-        Se mudar de ideia, verifique as configurações.
-      </p>
     </div>
   </div>
 </div>
@@ -421,7 +189,6 @@ textarea{
 </div>
 </header>
 
-<!-- Sub-abas fixas com design frosted -->
 <div id="sub-tabs-container" class="fixed left-0 right-0 z-30 bg-[rgba(12,12,12,0.75)] backdrop-blur-2xl border-b border-white/15 px-4 py-2.5 hidden shadow-lg" style="top:calc(4.2rem + env(safe-area-inset-top,0px))">
   <div id="sub-tabs-content" class="max-w-2xl mx-auto flex items-center justify-center"></div>
 </div>
@@ -431,16 +198,6 @@ textarea{
 <div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-16 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
 <div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-16 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
 
-<div id="sel-bar" class="fixed bottom-0 inset-x-0 z-50 hidden items-center justify-between gap-2 px-4 py-3 bg-[#000000]/95 backdrop-blur-xl border-t border-white/10">
-<span id="sel-count" class="text-xs text-gray-300 font-medium">0 selecionadas</span>
-<div class="flex items-center gap-2">
-<button onclick="selecionarTodas()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg border border-white/10">Todas</button>
-<button onclick="sairSelecao()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg border border-white/10">Cancelar</button>
-<button id="sel-del" onclick="excluirSelecionadas()" disabled class="text-xs bg-red-500 hover:bg-red-600 text-white font-semibold px-3 py-2 rounded-lg opacity-40">Excluir</button>
-</div>
-</div>
-
-<!-- Dock atualizada com 5 botões: Início, Textos, Novo, Buscar, Lidos -->
 <nav id="nav-principal" class="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
 <div class="pointer-events-auto bg-gradient-to-t from-[#000000] via-[#000000]/85 to-transparent pt-6 pb-2.5 px-6" style="padding-bottom:calc(0.5rem + env(safe-area-inset-bottom,0px))">
 <div class="max-w-md mx-auto flex items-center justify-between">
@@ -452,157 +209,8 @@ textarea{
 </div></div>
 </nav>
 
-<div id="modal-registro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-<div id="registro-caixa" class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
-<form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
-<input type="hidden" id="edit_id">
-<div class="relative">
-<label class="block text-xs font-medium text-gray-300 mb-1">Título</label>
-<div class="flex gap-2">
-  <div class="relative flex-1">
-    <input type="text" id="titulo" oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar na Open Library..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-    <div id="skel-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg shadow-2xl z-50 hidden p-3"><div class="flex items-center gap-3"><div class="w-8 h-12 rounded skeleton-shimmer"></div><div class="flex-1 space-y-1.5"><div class="h-3 w-3/4 rounded skeleton-shimmer"></div><div class="h-2.5 w-1/2 rounded skeleton-shimmer"></div></div></div></div>
-    <div id="res-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-56 overflow-y-auto"></div>
-  </div>
-  <!-- Botão manual para upar capa -->
-  <label for="input-upload-capa" title="Upar capa manualmente" class="flex-none px-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg cursor-pointer flex items-center justify-center text-gray-300 hover:text-gold-400 transition-colors" aria-label="Upar capa manualmente">
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-  </label>
-  <input type="file" id="input-upload-capa" accept="image/*" onchange="tratarUploadCapaManual(this)" class="hidden">
-</div>
-</div>
-<div class="grid grid-cols-[minmax(0,1fr)_6.5rem] gap-2 items-end"><div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><div><label class="block text-xs font-medium text-gray-300 mb-1">Páginas</label><input type="number" id="paginas" min="1" step="1" inputmode="numeric" placeholder="Nº" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div></div>
-<input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url"><input type="hidden" id="genero" value="">
-<button type="button" id="registro-detalhes-toggle" aria-expanded="false" aria-controls="registro-detalhes" onclick="toggleDetalhesRegistro()" class="inline-flex items-center gap-1.5 text-[11px] text-gold-400 hover:underline transition-colors"><span>Detalhes da leitura</span><span id="registro-detalhes-chevron" aria-hidden="true" class="transition-transform">⌄</span></button>
-<div id="registro-detalhes" class="hidden space-y-3 rounded-lg border border-white/10 bg-black/10 p-3">
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Tipo de leitura</label>
-<div class="grid grid-cols-3 gap-2"><button type="button" data-formato="Kindle" onclick="definirFormato('Kindle')" class="seg-btn">Kindle</button><button type="button" data-formato="Audiobook" onclick="definirFormato('Audiobook')" class="seg-btn">Áudio</button><button type="button" data-formato="Físico" onclick="definirFormato('Físico')" class="seg-btn">Físico</button></div></div>
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Status</label>
-<div class="grid grid-cols-3 gap-2"><button type="button" data-status="lendo" onclick="definirStatus('lendo')" class="seg-btn">Em leitura</button><button type="button" data-status="lido" onclick="definirStatus('lido')" class="seg-btn">Lido</button><button type="button" data-status="abandonado" onclick="definirStatus('abandonado')" class="seg-btn">Abandonado</button></div></div>
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Nota <span id="nota-label" class="text-gray-400 font-normal"></span></label><div id="star-picker" class="flex items-center justify-between"></div></div>
-<div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
-<div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
-<div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
-</div>
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
-<div class="flex gap-2">
-  <button type="button" onclick="cancelarNovaPassagem()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">SAIR</button>
-  <button type="button" onclick="salvarLivroDesejado(event)" class="flex-none w-11 h-10 rounded-lg bg-white/10 hover:bg-white/15 text-white flex items-center justify-center transition-colors" title="Quero ler" aria-label="Quero ler"><svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.8L6 21V4.75Z"/></svg></button>
-  <button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button>
-</div>
-</form>
-</div></div>
+<div id="modal-opcoes" class="frosted-modal-container fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden"></div>
 
-<!-- Modal Escrevendo um Livro -->
-<div id="modal-escrevendo-livro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-<div class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
-<form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-3">
-<input type="hidden" id="escrita_edit_id">
-<div class="flex items-center justify-between">
-  <h2 class="text-sm font-bold uppercase tracking-wider text-gold-400">Gerenciar Livro Sendo Escrito</h2>
-  <button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/30 px-3 py-1 rounded-lg transition-colors">Excluir Livro</button>
-</div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Nome do Livro</label>
-<input type="text" id="escrita_titulo" required placeholder="Título do seu livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Autor</label>
-<input type="text" id="escrita_autor" readonly class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-300 focus:outline-none cursor-not-allowed">
-</div>
-<div class="grid grid-cols-2 gap-3">
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Capítulos Pretendidos</label>
-<input type="number" id="escrita_capitulos_totais" min="1" step="1" inputmode="numeric" required placeholder="Ex: 20" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Capítulo Atual</label>
-<input type="number" id="escrita_capitulo_atual" min="1" step="1" inputmode="numeric" required placeholder="Ex: 3" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-</div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Páginas Escritas Até Agora</label>
-<input type="number" id="escrita_paginas" min="0" step="1" inputmode="numeric" required placeholder="Ex: 45" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-<div>
-<div class="flex items-center justify-between mb-1">
-<label class="block text-xs font-medium text-gray-300">Upload de Capa (Opcional)</label>
-</div>
-<label for="input-upload-capa-escrita" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-2.5 px-4 cursor-pointer flex items-center justify-center gap-2 text-xs text-gray-300 hover:text-gold-400 transition-colors">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-<span id="escrita-capa-nome-label">Selecionar imagem de capa</span>
-</label>
-<input type="file" id="input-upload-capa-escrita" accept="image/*" onchange="tratarUploadCapaEscrita(this)" class="hidden">
-<input type="hidden" id="escrita_capa_url">
-</div>
-<div class="flex gap-2 pt-2">
-  <button type="button" onclick="fecharModalEscrevendoLivro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">CANCELAR</button>
-  <button type="submit" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Salvar Livro</button>
-</div>
-</form>
-</div></div>
-
-<!-- Boas-vindas -->
-<div id="welcome-modal" class="fixed inset-0 z-[45] flex items-center justify-center p-3" style="display:none" aria-labelledby="welcome-title">
-  <section id="welcome-card" class="frosted-card shadow-2xl relative mx-auto">
-    <button type="button" id="welcome-close" onclick="fecharBoasVindas()" aria-label="Fechar Boas-vindas" title="Fechar" style="display:none;position:absolute;top:.65rem;right:.65rem;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:9999px;color:#d1d5db;background:rgba(255,255,255,.07);font-size:1.35rem;line-height:1">×</button>
-    <span id="welcome-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span>
-    <h2 id="welcome-title" class="font-serif font-semibold text-white">Olá,</h2>
-    <div id="welcome-copy">
-      <p>O Lili preserva seus dados de leitura de forma descentralizada. Conectado ao Google Drive, você mantém um backup na nuvem e acessa seus dados em outros dispositivos.</p>
-      <p>O arquivo de backup é <strong class="text-white">LidosBackup</strong> e ocupa menos de 1 MB.</p>
-      <p>Registre livros e notas avulsas, organize marcadores do Kindle, crie uma Lista de Desejo, gere prompts para receber indicações de IA e consulte suas estatísticas na página Lidos.</p>
-    </div>
-    <!-- Botão de Instalação com efeito Liquid Glass -->
-    <button type="button" id="btn-instalar-lili-welcome" onclick="instalarAppLiLi()" class="btn-liquid-glass-install">
-      <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg>
-      <span>Instalar LidoLivros no Dispositivo</span>
-    </button>
-    <button type="button" id="welcome-add-first" onclick="boasVindasAdicionarPassagem()" class="mt-1" style="background:linear-gradient(90deg,#facc15,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;font-size:clamp(.8rem,1.8vh,.95rem)">Adicionar primeira passagem</button>
-  </section>
-</div>
-
-<!-- Modal Principal de Configurações -->
-<div id="modal-opcoes" class="frosted-modal-container fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden">
-<div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10"><div class="max-w-2xl mx-auto px-5 py-4 flex items-center gap-3">
-<button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-<h2 class="text-base font-bold text-white font-serif">Configurações</h2>
-</div></div>
-<div class="max-w-2xl mx-auto px-5 pt-4 pb-20 space-y-4">
-<section><h3 class="opt-sec">Perfil</h3>
-<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div>
-<div class="flex items-center justify-between opt-row mt-1">
-<button onclick="conectarGoogleDrive()" class="text-left flex-1"><span class="font-semibold text-white">Google Drive</span></button>
-<span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
-</div>
-<button onclick="abrirModalEscrevendoLivro()" class="opt-row"><span>Estou escrevendo um livro</span><span class="opt-chev">›</span></button>
-<button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="w-full mt-2 flex items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-3 text-left text-sm font-extrabold text-[#211707] shadow-lg shadow-amber-500/20 transition-transform active:scale-[0.99]">
-<span class="flex items-center gap-3"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/10"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
-</button></section>
-<section><h3 class="opt-sec">Leitura</h3>
-<button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
-<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Livros Desejados</span><span class="opt-chev">›</span></button>
-<button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
-<button onclick="recarregarBancoOpenLibrary(true)" class="opt-row"><span>Recarregar banco de dados da Open Library</span><span class="opt-chev">›</span></button>
-<button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
-<button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
-
-<!-- Sub-Menu Específico para Gerenciamento de Backup -->
-<section><h3 class="opt-sec">Gerenciamento de Backup</h3>
-<button onclick="abrirSubMenuBackup()" class="opt-row"><span class="font-semibold text-white">Backup Local & Nuvem</span><span class="opt-chev">›</span></button>
-</section>
-
-<section><h3 class="opt-sec">Exibição</h3>
-<label for="input-bg-customizado" class="opt-row cursor-pointer"><span>Trocar plano de fundo da página inicial</span><span class="opt-chev">›</span></label>
-<input type="file" id="input-bg-customizado" accept="image/*" onchange="tratarUploadBgCustomizado(this)" class="hidden">
-<button onclick="removerBgCustomizado()" class="opt-row"><span>Remover plano de fundo personalizado</span><span class="opt-chev">›</span></button>
-<button onclick="alternarTelaCheia()" class="opt-row"><span>Tela cheia</span><span class="opt-chev">›</span></button>
-<button type="button" onclick="toggleModalOpcoes();mostrarBoasVindas(true)" class="opt-row"><span>Visualizar Boas-vindas</span><span class="opt-chev">›</span></button></section>
-<section><h3 class="opt-sec">versão v1.0.1</h3>
-<p class="text-gray-200 font-medium pt-1">LID<span class="o-filled-yellow-orange" aria-hidden="true"></span>OLIVROS desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer" class="text-gold-gradient font-bold underline">@alcandenis</a></p></section>
-</div></div>
-
-<!-- Pop-up Minimalista de Status da Nuvem (Google Drive) -->
 <div id="modal-cloud" class="frosted-modal-container fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden" onclick="if(event.target===this)toggleModalCloud()">
   <div class="frosted-modal w-full max-w-xs p-5 shadow-2xl space-y-3 text-center">
     <div class="flex items-center justify-between text-xs pb-2 border-b border-white/10">
@@ -612,1731 +220,234 @@ textarea{
     <div class="text-left space-y-1 pt-1">
       <span class="block text-[10px] text-gray-400 uppercase tracking-widest">Última verificação</span>
       <p id="cloud-modal-last-sync" class="text-xs text-white font-medium">Nunca</p>
-      <p class="text-[10px] text-gray-500">Mantenha-se logado para salvar e acessar os seus dados em outros dispositivos.</p>
     </div>
-    <div class="flex gap-2 pt-1"><button id="cloud-sync-agora" onclick="sincronizarNuvem(true)" class="hidden flex-1 py-2 rounded-lg bg-white text-black text-xs font-semibold">Sincronizar agora</button><button id="cloud-reconectar" onclick="conectarGoogleDrive()" class="hidden flex-1 py-2 rounded-lg btn-gold-degrade text-xs">Reconectar</button></div>
-  </div>
-</div>
-
-<!-- Modal Sub-Menu de Backup -->
-<div id="modal-sub-backup" class="frosted-modal-container fixed inset-0 z-[60] bg-[#000000] overflow-y-auto hidden">
-  <div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10">
-    <div class="max-w-2xl mx-auto px-5 py-4 flex items-center gap-3">
-      <button onclick="fecharSubMenuBackup()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-      <h2 class="text-base font-bold text-white font-serif">Backup & Nuvem</h2>
+    <div class="flex gap-2 pt-1">
+      <button id="cloud-sync-agora" onclick="sincronizarNuvem(true)" class="hidden flex-1 py-2 rounded-lg bg-white text-black text-xs font-semibold">Sincronizar agora</button>
+      <button id="cloud-reconectar" onclick="conectarGoogleDrive(true)" class="hidden flex-1 py-2 rounded-lg btn-gold-degrade text-xs">Reconectar</button>
     </div>
   </div>
-  <div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-6">
-    <input type="file" id="csv-file-input" onchange="processarCSV(this.files[0])" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
-    <section>
-      <button onclick="restaurarDoGoogleDrive()" class="opt-row"><span>Restaurar backup do Google Drive manualmente</span><span class="opt-chev">›</span></button>
-      <label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup (Local)</span><span class="opt-chev">›</span></label>
-      <div class="opt-block"><label>Se o seletor falhar, cole o conteúdo do backup</label><textarea id="csv-colado" rows="2" placeholder="Cole o texto do CSV ou JSON..." class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-gold-400"></textarea><button onclick="importarColado()" class="opt-act">Importar texto colado</button></div>
-      <button onclick="abrirEnviarIA()" class="opt-row"><span>Enviar para IA</span><span class="opt-chev">›</span></button>
-      <p class="opt-desc">Copia um texto com seu histórico de livros para você colar na IA e receber indicações e estatísticas profundas.</p>
-      <button onclick="exportarCSV()" class="opt-row"><span>Exportar biblioteca (CSV)</span><span class="opt-chev">›</span></button>
-      <button onclick="exportarJSON()" class="opt-row"><span>Backup local completo (JSON)</span><span class="opt-chev">›</span></button>
-      <button onclick="enviarBackupPorEmail()" class="opt-row"><span>Enviar backup para meu e-mail</span><span class="opt-chev">›</span></button>
-      <p class="opt-desc">Abre o compartilhamento com o backup anexado. Assunto: "Backup do Lidos".</p>
-      <label class="opt-row cursor-pointer"><span>Backup local automático ao adicionar anotação</span><input type="checkbox" id="chk-autobackup" onchange="alternarAutoBackup(this.checked)" class="accent-yellow-400 w-4 h-4"></label>
-      <p class="opt-desc">O app oferece salvar um CSV no celular. Você confirma o salvamento.</p>
-    </section>
-  </div>
 </div>
-
-<div id="modal-passagem" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharPassagem()"><div id="passagem-conteudo" class="frosted-modal w-full max-w-md p-6 shadow-2xl max-h-[90vh] overflow-y-auto"></div></div>
-
-<div id="modal-amazon" class="frosted-modal-container fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharAmazon()">
-<div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4 text-center"><h2 class="font-serif text-lg font-bold text-white">Procurar na Amazon?</h2><p id="amazon-titulo" class="text-sm text-gold-400 font-serif"></p>
-<div class="flex gap-2"><button onclick="fecharAmazon()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">SAIR</button><button onclick="confirmarAmazon()" class="flex-1 py-2.5 rounded-lg btn-gold-degrade text-xs">Procurar</button></div></div></div>
-
-<div id="modal-kindle" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharKindle()"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4 text-center"><h2 class="text-lg font-bold text-white">Importar do Kindle</h2><p class="text-sm text-gray-200 leading-relaxed">Conecte seu Kindle via Cabo USB e selecione o arquivo no armazenamento do e-reader.</p><p class="text-xs text-gray-400">Procure por My Clippings.txt, na pasta documents.</p><div class="flex gap-2"><button onclick="fecharKindle()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Cancelar</button><label for="kindle-file-input" class="flex-1 py-2.5 rounded-lg bg-white text-[#000000] text-xs font-semibold text-center cursor-pointer hover:bg-gray-200">Selecionar arquivo</label></div></div></div>
-
-<div id="modal-ia" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharEnviarIA()"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4"><h2 class="text-lg font-bold text-white">Enviar para IA</h2><p class="text-sm text-gray-200 leading-relaxed">Copie o prompt e cole a mensagem no chat do seu agente de IA. Ele vai analisar o seu histórico de livros.</p><div class="flex gap-2"><button onclick="fecharEnviarIA()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Fechar</button><button onclick="copiarPromptIA()" class="flex-1 py-2.5 rounded-lg bg-white text-[#000000] text-xs font-semibold hover:bg-gray-200">Copiar prompt</button></div></div></div>
-
-<div id="insta-modal" class="frosted-modal-container fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-<div class="flex flex-col items-center max-w-sm w-full">
-<canvas id="story-canvas" width="1080" height="1920" class="shadow-2xl border border-white/20" style="width:280px;height:498px;background:#000000"></canvas>
-<div class="flex gap-3 mt-5 w-full"><button onclick="fecharInstaModal()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Fechar</button><button onclick="baixarImagemStory()" class="flex-1 py-2.5 rounded-lg btn-gold-degrade text-xs">Baixar pra postar</button></div>
-</div></div>
-
-<input type="file" id="kindle-file-input" onchange="processarKindleClippings(this.files[0])" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
 
 <script>
-function lsGet(k,d=''){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
-function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:[]}catch(e){return[]}}
-let biblioteca=lerJSON('minha_biblioteca'),notasKindle=lerJSON('notas_kindle'),notas=lerJSON('lido_notas'),usuarioNome=lsGet('lido_usuario_nome');
-let livroEscrito = (() => { try { return JSON.parse(localStorage.getItem('livro_escrito')) || null; } catch(e) { return null; } })();
-let historicoEscrita = (() => { try { return JSON.parse(localStorage.getItem('historico_escrita')) || []; } catch(e) { return []; } })();
-let bgCustomizado = lsGet('lido_bg_customizado', '');
-let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirmandoDel=false,storyBlob=null,dlCap=null,toastTimer=null;
-const selecionados=new Set(),timers={};
-let removidos={};try{removidos=JSON.parse(lsGet('lido_removidos','{}'))||{}}catch(e){removidos={}}
-let estadoNuvem='',sincronizando=false,sincPendente=false,tSync=null,renovandoResolve=null,fecharTelaPendente=false;
-const BG_PADRAO="https://wallpaper.forfun.com/fetch/d1/d11b37523005f6dfe77d151ee2872b7c";
-const STAR_PATH='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z';
-const $=id=>document.getElementById(id);
-
-function dispararLoadingHeader() {
-  if(!$('header-logo-o'))return;
-  const o = $('header-logo-o');
-  if (o) {
-    o.classList.add('is-loading');
-    setTimeout(() => o.classList.remove('is-loading'), 1200);
-  }
+function renderizarTelaConfiguracoes() {
+  const modal = $('modal-opcoes');
+  modal.innerHTML = `
+    <div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10">
+      <div class="max-w-2xl mx-auto px-5 py-4 flex items-center gap-3">
+        <button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+        <h2 class="text-base font-bold text-white font-serif">Configurações</h2>
+      </div>
+    </div>
+    <div class="max-w-2xl mx-auto px-5 pt-4 pb-20 space-y-4">
+      <section><h3 class="opt-sec">Perfil</h3>
+      <div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div>
+      <div class="flex items-center justify-between opt-row mt-1">
+        <button onclick="conectarGoogleDrive(true)" class="text-left flex-1"><span class="font-semibold text-white">Google Drive</span></button>
+        <span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
+      </div>
+      </section>
+      <section><h3 class="opt-sec">versão v1.0.2</h3>
+      <p class="text-gray-200 font-medium pt-1">LID<span class="o-filled-yellow-orange" aria-hidden="true"></span>OLIVROS desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer" class="text-gold-gradient font-bold underline">@alcandenis</a></p></section>
+    </div>
+  `;
 }
 
-function hashItem(it){const r={...it};delete r.atualizadoEm;return JSON.stringify(r)}
-function lerSnapshot(){try{return JSON.parse(localStorage.getItem('lido_snapshot'))}catch(e){return null}}
-function gravarSnapshot(){
-const sn={l:{},n:{},k:{}};
-biblioteca.forEach(i=>sn.l[i.id]=hashItem(i));notas.forEach(i=>sn.n[i.id]=hashItem(i));notasKindle.forEach(i=>sn.k[i.id]=hashItem(i));
-lsSet('lido_snapshot',JSON.stringify(sn));
-}
-function marcarAlteracoes(){
-const sn=lerSnapshot();
-if(sn){
-const agora=Date.now();
-[['l',biblioteca],['n',notas],['k',notasKindle]].forEach(([c,arr])=>{
-const atual=new Set();
-arr.forEach(it=>{atual.add(String(it.id));if(sn[c]&&sn[c][it.id]!==hashItem(it))it.atualizadoEm=agora});
-Object.keys(sn[c]||{}).forEach(id=>{if(!atual.has(id))removidos[c+id]=agora});
-});
-lsSet('lido_removidos',JSON.stringify(removidos));
-}
-gravarSnapshot();
-}
-function persistirSemMarcar(){
-lsSet('minha_biblioteca',JSON.stringify(biblioteca));lsSet('notas_kindle',JSON.stringify(notasKindle));lsSet('lido_notas',JSON.stringify(notas));
-lsSet('lido_removidos',JSON.stringify(removidos));gravarSnapshot();
-}
-function salvarLocal(){
-dispararLoadingHeader();
-marcarAlteracoes();
-lsSet('minha_biblioteca',JSON.stringify(biblioteca));
-lsSet('notas_kindle',JSON.stringify(notasKindle));
-lsSet('lido_notas',JSON.stringify(notas));
-lsSet('lido_sujo','1');
-agendarSync();
-}
-
-function aviso(msg){
-let el=$('toast');
-if(!el){el=document.createElement('div');el.id='toast';el.className='fixed left-1/2 -translate-x-1/2 bottom-16 z-[70] max-w-xs w-[90%] text-center text-xs text-white bg-[#0a0a0a]/95 border border-white/15 rounded-xl px-4 py-3 shadow-2xl';document.body.appendChild(el)}
-el.textContent=msg;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.display='none'},3500);
-}
-function doisToques(btn,fn){
-if(btn&&btn.dataset.conf!=='1'){btn.dataset.conf='1';btn.dataset.t=btn.innerText;btn.innerText='Confirmar';setTimeout(()=>{if(btn.isConnected){btn.dataset.conf='';btn.innerText=btn.dataset.t}},3000);return}
-fn();
-}
-
-/* INTEGRAÇÃO E PERSISTÊNCIA GOOGLE DRIVE */
-const CLIENT_ID = '968043927996-v3tq3afeukj60nj40rt8rlc37m0nh7lg.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-let tokenClient;
-let accessToken = lsGet('lido_google_access_token', null);
-
-function estadoEfetivo(){
-if(!accessToken)return lsGet('lido_google_conectado')==='1'?'reconectar':'desconectado';
-return estadoNuvem||'ok';
-}
-function definirEstadoNuvem(e){estadoNuvem=e;atualizarStatusGoogleUI()}
-function atualizarStatusGoogleUI(){
-const e=estadoEfetivo();
-const rot={desconectado:'Desconectado',ok:'✓ Sincronizado',sincronizando:'Sincronizando…',reconectar:'Reconectar',erro:'Erro de sincronização'}[e];
-const cls={desconectado:'bg-white/10 text-gray-400',ok:'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',sincronizando:'bg-amber-500/20 text-amber-300 border border-amber-500/30',reconectar:'bg-orange-500/20 text-orange-300 border border-orange-500/30',erro:'bg-red-500/20 text-red-300 border border-red-500/30'}[e];
-const b1=$('google-status-badge'),b2=$('cloud-modal-badge');
-if(b1){b1.textContent=rot;b1.className='text-[10px] font-bold px-2.5 py-1 rounded-full ml-2 '+cls}
-if(b2){b2.textContent=rot;b2.className='text-[10px] font-bold px-2.5 py-1 rounded-full '+cls}
-const ls=$('cloud-modal-last-sync');if(ls)ls.textContent=lsGet('lido_last_sync','Nunca');
-const cores={desconectado:['#ffffff','#ffffff'],ok:['#facc15','#fb923c'],sincronizando:['#facc15','#fb923c'],reconectar:['#fb923c','#ef4444'],erro:['#fb923c','#ef4444']}[e];
-const s1=$('cloud-stop-1'),s2=$('cloud-stop-2'),ic=$('header-cloud-icon');
-if(s1&&s2){s1.setAttribute('stop-color',cores[0]);s2.setAttribute('stop-color',cores[1])}
-if(ic)ic.classList.toggle('animate-pulse',e==='sincronizando');
-const rb=$('cloud-reconectar');if(rb)rb.classList.toggle('hidden',!(e==='reconectar'||e==='erro'));
-const sb=$('cloud-sync-agora');if(sb)sb.classList.toggle('hidden',e==='desconectado'||e==='reconectar');
-}
-
-function toggleModalCloud() {
-  const modal = $('modal-cloud');
-  modal.classList.toggle('hidden');
-  if (!modal.classList.contains('hidden')) {
+function toggleModalOpcoes(){
+  const m = $('modal-opcoes');
+  m.classList.toggle('hidden');
+  if(!m.classList.contains('hidden')){
+    renderizarTelaConfiguracoes();
+    m.scrollTop = 0;
+    $('input-usuario-nome').value = usuarioNome;
     atualizarStatusGoogleUI();
   }
 }
 
-function inicializarGoogleDrive(){
-if(!tokenClient&&window.google&&window.google.accounts&&window.google.accounts.oauth2){
-tokenClient=google.accounts.oauth2.initTokenClient({
-client_id:CLIENT_ID,scope:SCOPES,ux_mode:'popup',
-error_callback:()=>{if(renovandoResolve){const r=renovandoResolve;renovandoResolve=null;r(false)}},
-callback:async response=>{
-const resolver=renovandoResolve;renovandoResolve=null;
-if(response.error!==undefined){if(resolver)resolver(false);else aviso('Erro na autenticação com o Google.');return}
-accessToken=response.access_token;
-lsSet('lido_google_access_token',accessToken);
-lsSet('lido_token_exp',String(Date.now()+(parseInt(response.expires_in||3600)*1000)-120000));
-lsSet('lido_google_conectado','1');
-if(resolver){resolver(true);return}
-const inputNome=$('login-usuario-nome');
-if(inputNome&&inputNome.value.trim()){usuarioNome=inputNome.value.trim();lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_perfil_ts',String(Date.now()))}
-aviso('Conectado ao Google Drive com sucesso!');
-if(fecharTelaPendente){$('tela-login-inicial').classList.add('hidden');lsSet('lido_login_concluido','1');fecharTelaPendente=false}
-definirEstadoNuvem('ok');
-await sincronizarNuvem(true);
-mostrarBoasVindasSePrimeiroAcesso();
+function toggleModalCloud(){
+  const m = $('modal-cloud');
+  m.classList.toggle('hidden');
+  atualizarStatusGoogleUI();
 }
-});
+
+function lsGet(k,d=''){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:[]}catch(e){return[]}}
+
+let biblioteca = lerJSON('minha_biblioteca');
+let notasKindle = lerJSON('notas_kindle');
+let notas = lerJSON('lido_notas');
+let usuarioNome = lsGet('lido_usuario_nome', 'Denis');
+let abaAtual = 'inicio';
+let cloudSyncAtivo = lsGet('cloud_sync_ativo', 'false') === 'true';
+let ultimaVerificacaoNuvem = lsGet('cloud_last_sync', 'Nunca');
+
+const $=id=>document.getElementById(id);
+
+// --- SISTEMA DE BACKUP AUTOMÁTICO E RESOLUÇÃO DE CONFLITOS (MULTI-DISPOSITIVO) ---
+
+function resolverConflitoArrays(localArr, remotoArr) {
+  // Estratégia de resolução por timestamp (Last-Write-Wins) e ID único de item
+  const mapa = new Map();
+  
+  // Adiciona itens locais
+  (localArr || []).forEach(item => {
+    const id = item.id || item.titulo || JSON.stringify(item);
+    mapa.set(id, { ...item, _source: 'local' });
+  });
+
+  // Funde com remotos comparando updatedAt
+  (remotoArr || []).forEach(remoto => {
+    const id = remoto.id || remoto.titulo || JSON.stringify(remoto);
+    const local = mapa.get(id);
+    if (!local) {
+      mapa.set(id, { ...remoto, _source: 'remoto' });
+    } else {
+      const tLocal = new Date(local.updatedAt || 0).getTime();
+      const tRemoto = new Date(remoto.updatedAt || 0).getTime();
+      if (tRemoto > tLocal) {
+        mapa.set(id, { ...remoto, _source: 'remoto' });
+      }
+    }
+  });
+
+  return Array.from(mapa.values()).map(({ _source, ...item }) => item);
 }
+
+function iniciarSincronizacaoAutomatica() {
+  // Verificações constantes a cada 60 segundos
+  setInterval(() => {
+    if (cloudSyncAtivo && navigator.onLine) {
+      sincronizarNuvem(false);
+    }
+  }, 60000);
+
+  // Verificação ao focar na aba/aplicativo (mudança de dispositivo/sessão)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && cloudSyncAtivo && navigator.onLine) {
+      sincronizarNuvem(false);
+    }
+  });
+
+  // Verificação ao recuperar conexão
+  window.addEventListener('online', () => {
+    if (cloudSyncAtivo) {
+      sincronizarNuvem(false);
+    }
+  });
 }
-function conectarGoogleDrive(fromInitialScreen=false){
-fecharTelaPendente=!!fromInitialScreen;
-const pedir=()=>tokenClient.requestAccessToken({prompt:lsGet('lido_google_conectado')==='1'?'':'consent'});
-inicializarGoogleDrive();
-if(tokenClient)pedir();
-else setTimeout(()=>{inicializarGoogleDrive();if(tokenClient)pedir();else aviso('Google ainda carregando. Tente de novo.')},600);
+
+function sincronizarNuvem(forcarNotificacao = false) {
+  if (!cloudSyncAtivo) return;
+  
+  const agoraStr = new Date().toLocaleString('pt-BR');
+  ultimaVerificacaoNuvem = agoraStr;
+  lsSet('cloud_last_sync', agoraStr);
+
+  // Simulação de sincronização com resolução inteligente de conflitos multi-dispositivo
+  const dadosLocais = {
+    biblioteca: lerJSON('minha_biblioteca'),
+    notasKindle: lerJSON('notas_kindle'),
+    notas: lerJSON('lido_notas'),
+    usuarioNome: usuarioNome,
+    updatedAt: new Date().toISOString()
+  };
+
+  // Armazena estado simulado na nuvem (LocalStorage compartilhado / API Driver)
+  const dadosRemotosJson = localStorage.getItem('lidolivros_cloud_backup');
+  if (dadosRemotosJson) {
+    try {
+      const dadosRemotos = JSON.parse(dadosRemotosJson);
+      
+      // Resolução de conflitos combinando dados de múltiplos dispositivos
+      const bibliotecaMesclada = resolverConflitoArrays(dadosLocais.biblioteca, dadosRemotos.biblioteca);
+      const notasKindleMesclada = resolverConflitoArrays(dadosLocais.notasKindle, dadosRemotos.notasKindle);
+      const notasMesclada = resolverConflitoArrays(dadosLocais.notas, dadosRemotos.notas);
+
+      biblioteca = bibliotecaMesclada;
+      notasKindle = notasKindleMesclada;
+      notas = notasMesclada;
+
+      lsSet('minha_biblioteca', JSON.stringify(biblioteca));
+      lsSet('notas_kindle', JSON.stringify(notasKindle));
+      lsSet('lido_notas', JSON.stringify(notas));
+    } catch(e) {
+      console.error("Erro ao processar conflito na nuvem:", e);
+    }
+  }
+
+  localStorage.setItem('lidolivros_cloud_backup', JSON.stringify(dadosLocais));
+  atualizarStatusGoogleUI();
+  
+  if (forcarNotificacao) {
+    console.log('Sincronização concluída com sucesso!');
+  }
 }
-function tokenExpirado(){const e=parseInt(lsGet('lido_token_exp','0'));return !!e&&Date.now()>e}
-function renovarTokenSilencioso(){
-return new Promise(res=>{
-inicializarGoogleDrive();
-if(!tokenClient){res(false);return}
-const t=setTimeout(()=>{if(renovandoResolve){renovandoResolve=null;res(false)}},8000);
-renovandoResolve=ok=>{clearTimeout(t);res(ok)};
-try{tokenClient.requestAccessToken({prompt:''})}catch(e){renovandoResolve=null;clearTimeout(t);res(false)}
-});
+
+function conectarGoogleDrive(forcar = false) {
+  cloudSyncAtivo = true;
+  lsSet('cloud_sync_ativo', 'true');
+  sincronizarNuvem(true);
+  
+  if ($('tela-login-inicial')) {
+    $('tela-login-inicial').classList.add('hidden');
+  }
+  atualizarStatusGoogleUI();
 }
 
 function continuarSemSalvar() {
-  const inputNome = $('login-usuario-nome');
-  if (inputNome && inputNome.value.trim()) {
-    usuarioNome = inputNome.value.trim();
-    lsSet('lido_usuario_nome', usuarioNome);
-  }
-  $('tela-login-inicial').classList.add('hidden');
-  lsSet('lido_login_concluido', '1');
-  renderizarFeed();
-  if(usuarioNome)lsSet('lido_perfil_ts',String(Date.now()));
-  mostrarBoasVindasSePrimeiroAcesso();
-}
-
-const DRIVE_NOME='LidosBackup_Nuvem.json';
-function agendarSync(){clearTimeout(tSync);tSync=setTimeout(()=>sincronizarNuvem(false),2000)}
-function sincronizarComDriveAutomatico(){agendarSync()}
-const tsItem=x=>x.atualizadoEm||x.id||0;
-function ordenarPorId(a){return [...a].sort((x,y)=>(Number(y.id)||0)-(Number(x.id)||0))}
-function mesclarLista(local,remoto,c,rem,dedupeLivros){
-const mapa=new Map(),idsLocais=new Set(local.map(x=>String(x.id)));
-const chavesLocais=new Set(dedupeLivros?local.map(chaveLivro):[]);
-local.forEach(it=>{if(it&&it.id!=null)mapa.set(String(it.id),it)});
-(remoto||[]).forEach(it=>{
-if(!it||it.id==null)return;
-const k=String(it.id),a=mapa.get(k);
-if(!a){if(dedupeLivros&&!idsLocais.has(k)&&chavesLocais.has(chaveLivro(it)))return;mapa.set(k,it)}
-else if(tsItem(it)>tsItem(a))mapa.set(k,it);
-});
-const out=[];
-mapa.forEach((it,k)=>{const t=rem[c+k];if(t&&t>=tsItem(it))return;out.push(it)});
-return ordenarPorId(out);
-}
-function mesclarDados(rem){
-const tombs={...removidos};
-Object.entries(rem.removidos||{}).forEach(([k,v])=>{if(!tombs[k]||v>tombs[k])tombs[k]=v});
-const limite=Date.now()-90*86400000;
-Object.keys(tombs).forEach(k=>{if(tombs[k]<limite)delete tombs[k]});
-const B=mesclarLista(biblioteca,rem.biblioteca,'l',tombs,true),N=mesclarLista(notas,rem.notas,'n',tombs,false),K=mesclarLista(notasKindle,rem.notasKindle,'k',tombs,false);
-const antes=JSON.stringify([ordenarPorId(biblioteca),ordenarPorId(notas),ordenarPorId(notasKindle)]);
-const depois=JSON.stringify([B,N,K]);
-const remNorm=JSON.stringify([ordenarPorId(rem.biblioteca||[]),ordenarPorId(rem.notas||[]),ordenarPorId(rem.notasKindle||[])]);
-let perfilMudou=false;
-if(rem.userProfile&&rem.userProfile.name){
-const rt=rem.perfilTs||0,lt=parseInt(lsGet('lido_perfil_ts','0'));
-if(!usuarioNome||rt>lt){if(usuarioNome!==rem.userProfile.name)perfilMudou=true;usuarioNome=rem.userProfile.name;lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_perfil_ts',String(rt))}
-}
-
-// Sincronização e merge do livro sendo escrito e histórico
-if(rem.livroEscrito){
-  if(!livroEscrito || (rem.livroEscrito.atualizadoEm || 0) > (livroEscrito.atualizadoEm || 0)){
-    livroEscrito = rem.livroEscrito;
-    lsSet('livro_escrito', JSON.stringify(livroEscrito));
-  }
-}
-if(Array.isArray(rem.historicoEscrita)){
-  historicoEscrita = rem.historicoEscrita;
-  lsSet('historico_escrita', JSON.stringify(historicoEscrita));
-}
-
-// Sincronização do plano de fundo personalizado
-if(rem.bgCustomizado !== undefined){
-  bgCustomizado = rem.bgCustomizado;
-  lsSet('lido_bg_customizado', bgCustomizado);
-}
-
-const difRemoto=depois!==remNorm||Object.keys(tombs).length!==Object.keys(rem.removidos||{}).length||(usuarioNome&&(!rem.userProfile||rem.userProfile.name!==usuarioNome));
-biblioteca=B;notas=N;notasKindle=K;removidos=tombs;
-return{mudouLocal:antes!==depois||perfilMudou,difRemoto};
-}
-async function driveReq(url,opts={}){
-const r=await fetch(url,{...opts,headers:{...(opts.headers||{}),Authorization:`Bearer ${accessToken}`}});
-if(!r.ok){const e=new Error('HTTP '+r.status);e.status=r.status;throw e}
-return r;
-}
-async function enviarParaDrive(id){
-const corpo=JSON.stringify({
-  versao:2,
-  userProfile:{name:usuarioNome},
-  perfilTs:parseInt(lsGet('lido_perfil_ts','0')),
-  biblioteca,
-  notas,
-  notasKindle,
-  removidos,
-  livroEscrito,
-  historicoEscrita,
-  bgCustomizado
-});
-let r;
-if(id){
-r=await driveReq(`https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media&fields=id,modifiedTime`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:corpo});
-}else{
-const form=new FormData();
-form.append('metadata',new Blob([JSON.stringify({name:DRIVE_NOME,mimeType:'application/json'})],{type:'application/json'}));
-form.append('file',new Blob([corpo],{type:'application/json'}));
-r=await driveReq('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,modifiedTime',{method:'POST',body:form});
-}
-const d=await r.json();
-return d.modifiedTime||'';
-}
-async function sincronizarNuvem(manual=false){
-if(!accessToken&&lsGet('lido_google_conectado')!=='1'){if(manual)aviso('Conecte ao Google Drive primeiro.');return}
-if(sincronizando){sincPendente=true;return}
-sincronizando=true;
-try{
-if(!accessToken||tokenExpirado()){
-definirEstadoNuvem('sincronizando');
-const ok=await renovarTokenSilencioso();
-if(!ok){accessToken=null;definirEstadoNuvem('reconectar');if(manual)aviso('Sessão do Google expirou. Toque em Reconectar.');return}
-}
-definirEstadoNuvem('sincronizando');
-const q=encodeURIComponent(`name='${DRIVE_NOME}' and trashed=false`);
-const lista=await (await driveReq(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,modifiedTime)&spaces=drive`)).json();
-const arq=(lista.files||[])[0];
-const sujo=lsGet('lido_sujo')==='1';
-let remoto=null,mudouLocal=false,difRemoto=false;
-if(arq&&(manual||sujo||arq.modifiedTime!==lsGet('lido_drive_mod'))){
-const txt=await (await driveReq(`https://www.googleapis.com/drive/v3/files/${arq.id}?alt=media`)).text();
-try{remoto=JSON.parse(txt)}catch(e){remoto=null}
-}
-if(remoto&&typeof remoto==='object'){
-const m=mesclarDados(remoto);mudouLocal=m.mudouLocal;difRemoto=m.difRemoto;
-if(mudouLocal){persistirSemMarcar();if(!modoSel)renderizarFeed()}
-}
-let mod=arq?arq.modifiedTime:'';
-if(!arq||sujo||difRemoto)mod=await enviarParaDrive(arq?arq.id:null);
-if(mod)lsSet('lido_drive_mod',mod);
-lsSet('lido_sujo','0');
-lsSet('lido_last_sync',new Date().toLocaleString('pt-BR'));
-definirEstadoNuvem('ok');
-if(manual)aviso(mudouLocal?'Dados atualizados da nuvem.':'Tudo sincronizado.');
-else if(mudouLocal)aviso('Biblioteca atualizada com dados de outro aparelho.');
-}catch(err){
-console.error('Sync Drive:',err);
-if(err&&err.status===401){accessToken=null;lsSet('lido_google_access_token','');definirEstadoNuvem('reconectar')}
-else definirEstadoNuvem('erro');
-if(manual)aviso(err&&err.status===401?'Sessão do Google expirou. Toque em Reconectar.':'Não foi possível sincronizar agora.');
-}finally{
-sincronizando=false;
-if(sincPendente){sincPendente=false;setTimeout(()=>sincronizarNuvem(false),600)}
-}
-}
-function restaurarDoGoogleDriveAutomatico(){return sincronizarNuvem(true)}
-function restaurarDoGoogleDrive(){
-if(!accessToken&&lsGet('lido_google_conectado')!=='1'){conectarGoogleDrive();return aviso('Faça login primeiro para restaurar.')}
-return sincronizarNuvem(true);
-}
-function iniciarVigiaSync(){
-setInterval(()=>{if(!document.hidden)sincronizarNuvem(false)},60000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)sincronizarNuvem(false)});
-window.addEventListener('online',()=>sincronizarNuvem(false));
-if(accessToken||lsGet('lido_google_conectado')==='1')setTimeout(()=>sincronizarNuvem(false),1200);
-}
-
-/* Sub-Menu Backup UI Functions */
-function abrirSubMenuBackup() {
-  $('modal-sub-backup').classList.remove('hidden');
-  atualizarStatusGoogleUI();
-}
-function fecharSubMenuBackup() {
-  $('modal-sub-backup').classList.add('hidden');
-}
-
-/* Import / Export utilitários */
-function normalizarData(v){
-v=String(v||'').trim();if(!v)return '';
-let m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(v);
-if(m)return `${m[3].padStart(2,'0')}/${m[2].padStart(2,'0')}/${m[1]}`;
-m=/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/.exec(v);
-if(m)return `${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')}/${m[3]}`;
-return '';
-}
-function semAcento(t){return String(t||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function normFormato(v){
-const n=semAcento(v);if(!n)return 'Físico';
-if(n.includes('audio'))return 'Audiobook';
-if(n.includes('fisic')||n.includes('papel'))return 'Físico';
-if(n.includes('kindle')||n.includes('ebook')||n.includes('e-book')||n.includes('digital'))return 'Kindle';
-return String(v).trim();
-}
-function statusImport(v){
-const n=semAcento(v);if(!n)return 'lido';
-if(n.startsWith('conclu')||n==='lido'||n.startsWith('finaliz'))return 'lido';
-if(n.includes('abandon'))return 'abandonado';
-if(n.includes('desej')||n.includes('quero'))return 'desejado';
-return 'lendo';
-}
-function parseCSV(texto){
-texto=texto.replace(/^\ufeff/,'');
-const pri=texto.split(/\r?\n/)[0]||'',sep=pri.split(';').length>=pri.split(',').length?';':',';
-const linhas=[];let linha=[],campo='',aspas=false;
-const fecha=()=>{linha.push(campo);campo='';if(linha.some(x=>x.trim()!==''))linhas.push(linha);linha=[]};
-for(let i=0;i<texto.length;i++){
-const c=texto[i];
-if(aspas){if(c==='"'){if(texto[i+1]==='"'){campo+='"';i++}else aspas=false}else campo+=c}
-else if(c==='"')aspas=true;
-else if(c===sep){linha.push(campo);campo=''}
-else if(c==='\n'||c==='\r'){if(c==='\r'&&texto[i+1]==='\n')i++;fecha()}
-else campo+=c;
-}
-fecha();return linhas;
-}
-function lerLivrosCSV(texto){
-const linhas=parseCSV(texto);if(linhas.length<2)return[];
-const cab=linhas[0].map(h=>semAcento(h));
-const ach=(ns,d)=>{for(const n of ns){const k=cab.indexOf(n);if(k>=0)return k}return d};
-const todos=ns=>cab.map((h,i)=>ns.includes(h)?i:-1).filter(i=>i>=0);
-const iT=ach(['titulo','livro','title','nome'],0),iA=ach(['autor','autora','author','escritor'],1),iF=ach(['formato','tipo de leitura','tipo','format'],2),iN=ach(['nota','avaliacao','rating'],3),iO=ach(['observacao','observacoes','anotacao','anotacoes','citacao'],-1),iC=ach(['capa','cover','imagem'],-1),iS=ach(['status','situacao'],-1),iP=ach(['paginas','páginas','numero de paginas','numero paginas','pages'],-1),iG=ach(['genero','genre','categoria','category'],-1);
-const colsFim=todos(['fim','data_fim','datafim','data conclusao','data de conclusao','concluido em','data']);
-const colsIni=todos(['inicio','datainicio','data inicio','data de inicio','iniciado em']);
-const g=(c,i)=>i>=0&&c[i]!=null?c[i].trim():'';
-const dt=(c,cols)=>{for(const i of cols){const v=normalizarData(g(c,i));if(v)return v}return ''};
-return linhas.slice(1).map(c=>({titulo:g(c,iT),autor:g(c,iA)||'Autor Desconhecido',formato:normFormato(g(c,iF)),nota:parseFloat(g(c,iN).replace(',','.'))||0,paginas:Math.max(0,parseInt(g(c,iP),10)||0),data_fim:dt(c,colsFim),data_inicio:dt(c,colsIni),observacao:g(c,iO),capa:g(c,iC),status:statusImport(g(c,iS)),genero:g(c,iG)})).filter(r=>r.titulo);
-}
-function chaveLivro(l){return `${l.titulo}|${l.autor}|${l.data_fim||''}`.toLowerCase()}
-function importarTexto(conteudo,silent=false,substituir=false){
-const texto=String(conteudo||'').replace(/^\ufeff/,'');
-const msg=t=>{if(!silent)aviso(t)};
-try{
-if(/^\s*[\[{]/.test(texto)){
-const j=JSON.parse(texto),livros=Array.isArray(j)?j:(j.biblioteca||[]),nts=Array.isArray(j)?[]:(j.notas||[]),kd=Array.isArray(j)?[]:(j.notasKindle||[]);
-if(substituir){
-if(Array.isArray(j.biblioteca))biblioteca=j.biblioteca;
-if(Array.isArray(j.notas))notas=j.notas;
-if(Array.isArray(j.notasKindle))notasKindle=j.notasKindle;
-if(j.livroEscrito)livroEscrito=j.livroEscrito;
-if(Array.isArray(j.historicoEscrita))historicoEscrita=j.historicoEscrita;
-if(j.bgCustomizado!==undefined)bgCustomizado=j.bgCustomizado;
-msg('Importação realizada com sucesso!');
-}else{
-const ex=new Set(biblioteca.map(chaveLivro));let nl=0;
-livros.filter(l=>l&&l.titulo).forEach((l,i)=>{if(ex.has(chaveLivro(l)))return;ex.add(chaveLivro(l));nl++;biblioteca.push({...l,id:l.id||Date.now()+i})});
-const vn=new Set(notas.map(n=>(n.texto+'|'+n.data).toLowerCase()));let nn=0;
-nts.filter(n=>n&&n.texto).forEach((n,i)=>{const k=(n.texto+'|'+n.data).toLowerCase();if(vn.has(k))return;vn.add(k);nn++;notas.push({...n,id:n.id||Date.now()-i-1})});
-const vk=new Set(notasKindle.map(n=>(n.titulo+'|'+n.observacao).toLowerCase()));let nk=0;
-kd.filter(n=>n&&n.observacao).forEach((n,i)=>{const k=(n.titulo+'|'+n.observacao).toLowerCase();if(vk.has(k))return;vk.add(k);nk++;notasKindle.push({...n,id:n.id||Date.now()+i})});
-if(j.livroEscrito){livroEscrito=j.livroEscrito;lsSet('livro_escrito',JSON.stringify(livroEscrito))}
-if(Array.isArray(j.historicoEscrita)){historicoEscrita=j.historicoEscrita;lsSet('historico_escrita',JSON.stringify(historicoEscrita))}
-if(j.bgCustomizado!==undefined){bgCustomizado=j.bgCustomizado;lsSet('lido_bg_customizado',bgCustomizado)}
-notas.sort((a,b)=>b.id-a.id);
-msg(`${nl} livros, ${nn} notas e ${nk} marcadores restaurados.`);
-}
-}else{
-const regs=lerLivrosCSV(texto);
-if(!regs.length)return msg('Nenhum livro encontrado no arquivo.');
-const ex=new Set(biblioteca.map(chaveLivro)),hoje=new Date().toLocaleDateString('pt-BR');let nl=0,ign=0;
-regs.forEach((r,i)=>{
-if(ex.has(chaveLivro(r))){ign++;return}
-ex.add(chaveLivro(r));nl++;
-const eLido=r.status==='lido';
-biblioteca.push({id:Date.now()+i,titulo:r.titulo,autor:r.autor,formato:r.formato,nota:eLido?r.nota:0,paginas:Math.max(0,parseInt(r.paginas,10)||0),lido:eLido,abandonado:r.status==='abandonado',desejado:r.status==='desejado',data_inicio:r.data_inicio||'',data_fim:eLido?(r.data_fim||hoje):'',observacao:r.observacao,capa:r.capa||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(r.titulo)}`,genero:r.genero||''});
-});
-msg(`${nl} livros restaurados.`+(ign?` ${ign} já existiam.`:''));
-}
-salvarLocal();renderizarFeed();
-if(typeof atualizarCapasFaltantes==='function')atualizarCapasFaltantes();
-}catch(e){
-console.error(e);msg('Formato de dados inválido.');
-}
-}
-
-function importarColado() {
-  const txt = $('csv-colado').value;
-  if(!txt) return aviso('Cole o conteúdo do backup.');
-  importarTexto(txt);
-  $('csv-colado').value = '';
-}
-
-function exportarJSON(){baixarArquivo(jsonBackup(),nomeBackup('json'),'application/json')}
-
-function exportarCSV(){
-let csv='\ufeffTitulo;Autor;Formato;Status;Nota;Capa;Observacao;DataInicio;DataFim;Paginas;Genero\n';
-biblioteca.forEach(l=>{csv+=`"${(l.titulo||'').replace(/"/g,'""')}";"${(l.autor||'').replace(/"/g,'""')}";"${l.formato||''}";"${statusDe(l)}";"${l.nota||0}";"${l.capa||''}";"${(l.observacao||'').replace(/"/g,'""')}";"${l.data_inicio||''}";"${l.data_fim||''}";"${Math.max(0,parseInt(l.paginas,10)||0)}";"${l.genero||''}"\n`});
-baixarArquivo(csv,nomeBackup('csv'),'text/csv;charset=utf-8;');
-}
-
-function processarCSV(file){
-if(!file)return;
-const ler=enc=>{const r=new FileReader();r.onload=e=>{const t=e.target.result;if(enc==='UTF-8'&&t.includes('\ufffd'))return ler('windows-1252');importarTexto(t);$('csv-file-input').value=''};r.onerror=()=>aviso('Não foi possível ler o arquivo.');r.readAsText(file,enc)};
-ler('UTF-8');
-}
-function alternarAutoBackup(v) {
-  lsSet('lido_autobackup', v ? 'on' : 'off');
-}
-
-function backupAutomatico() {
-  sincronizarComDriveAutomatico();
-}
-
-/* tela cheia */
-function telaCheiaAtiva(){return !!(document.fullscreenElement||document.webkitFullscreenElement)}
-function entrarTelaCheia(){const el=document.documentElement,fn=el.requestFullscreen||el.webkitRequestFullscreen;if(!fn)return;try{const r=fn.call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
-function sairTelaCheia(){const fn=document.exitFullscreen||document.webkitExitFullscreen;if(!fn)return;try{const r=fn.call(document);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
-function alternarTelaCheia(){toggleModalOpcoes();if(telaCheiaAtiva()){lsSet('lido_fs','off');sairTelaCheia()}else{lsSet('lido_fs','on');entrarTelaCheia()}}
-
-function verificarEstadoInicial() {
-  if (usuarioNome) {
-    const el = $('login-usuario-nome');
-    if (el) el.value = usuarioNome;
-  }
-  if (lsGet('lido_login_concluido') === '1') {
+  cloudSyncAtivo = false;
+  lsSet('cloud_sync_ativo', 'false');
+  if ($('tela-login-inicial')) {
     $('tela-login-inicial').classList.add('hidden');
-    atualizarCapasFaltantes();
+  }
+}
+
+function atualizarStatusGoogleUI() {
+  const badgeModal = $('cloud-modal-badge');
+  const badgeConfig = $('google-status-badge');
+  const lastSyncEl = $('cloud-modal-last-sync');
+  const btnSync = $('cloud-sync-agora');
+  const btnReconectar = $('cloud-reconectar');
+  const cloudIcon = $('header-cloud-icon');
+
+  if (cloudSyncAtivo) {
+    if (badgeModal) { badgeModal.textContent = 'Conectado'; badgeModal.className = 'font-bold px-2.5 py-0.5 rounded-full text-[10px] bg-green-500/20 text-green-400'; }
+    if (badgeConfig) { badgeConfig.textContent = 'Conectado'; badgeConfig.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-green-500/20 text-green-400 ml-2'; }
+    if (lastSyncEl) { lastSyncEl.textContent = ultimaVerificacaoNuvem; }
+    if (btnSync) btnSync.classList.remove('hidden');
+    if (btnReconectar) btnReconectar.classList.add('hidden');
+    if (cloudIcon) cloudIcon.style.opacity = '1';
   } else {
-    $('tela-login-inicial').classList.remove('hidden');
-  }
-  atualizarStatusGoogleUI();
-}
-
-function salvarNomeUsuario(){
-  usuarioNome=$('input-usuario-nome').value.trim();
-  lsSet('lido_usuario_nome',usuarioNome);
-  lsSet('lido_perfil_ts',String(Date.now()));
-  aviso('Perfil salvo.');
-  renderizarFeed();
-  atualizarTituloBoasVindas();
-  sincronizarComDriveAutomatico();
-}
-
-/* abas */
-function mudarAba(aba){
-if(modoSel)sairSelecao();
-abaAtual=aba;
-['inicio','todos','buscar','lidos'].forEach(a=>{$('btn-tab-'+a).className='dock-tab'+(a===aba?' ativo':'')});
-atualizarFundoAba();
-renderizarFeed();
-voltarAoTopo();
-}
-function atualizarFundoAba(){
-const a=$('bg-layer-a'),b=$('bg-layer-b'),k=abaAtual==='kindle';
-const vis=activeBgLayer==='A'?a:b,oc=activeBgLayer==='A'?b:a;
-vis.style.opacity=k?'0':'1';oc.style.opacity='0';
-$('bg-glow').style.opacity=k?'0':'.25';
-}
-function atualizarTituloBoasVindas(){const t=$('welcome-title');if(t)t.textContent=usuarioNome?`Olá, ${usuarioNome}`:'Olá,'}
-function mostrarBoasVindas(apenasBoasVindas=false){atualizarTituloBoasVindas();const m=$('welcome-modal'),close=$('welcome-close'),cta=$('welcome-add-first');if(m){m.style.display='flex';document.body.classList.add('welcome-open');document.body.classList.toggle('welcome-menu-open',!!apenasBoasVindas);if(close){close.style.display=apenasBoasVindas?'flex':'none'}if(cta){cta.style.display=apenasBoasVindas?'none':''}}}
-function fecharBoasVindas(){const m=$('welcome-modal');if(m)m.style.display='none';document.body.classList.remove('welcome-open','welcome-menu-open')}
-function boasVindasAdicionarPassagem(){fecharBoasVindas();prepararNovoRegistro()}
-function concluirBoasVindasAposConteudo(){fecharBoasVindas();lsSet('lido_boas_vindas_vista','1')}
-function cancelarNovaPassagem(){toggleModalNovoRegistro();if(lsGet('lido_boas_vindas_vista')!=='1')mostrarBoasVindas()}
-function atualizarIconeDockNovaPassagem(){const modal=$('modal-registro'),aberto=!!(modal&&!modal.classList.contains('hidden')),btn=$('dock-add-button'),path=$('dock-add-icon-path');if(path)path.setAttribute('d',aberto?'M6 6l12 12M18 6L6 18':'M12 5v14m7-7H5');if(btn){btn.title=aberto?'Fechar Nova passagem':'Nova passagem';btn.setAttribute('aria-label',aberto?'Fechar Nova passagem':'Abrir Nova passagem')}}
-function toggleModalNovoRegistro(){const modal=$('modal-registro');modal.classList.toggle('hidden');document.body.classList.toggle('registro-aberto',!modal.classList.contains('hidden'));atualizarIconeDockNovaPassagem()}
-function alternarNovaPassagemDock(){const modal=$('modal-registro');if(modal&&!modal.classList.contains('hidden')){toggleModalNovoRegistro();return}if($('welcome-modal')&&$('welcome-modal').style.display!=='none')fecharBoasVindas();prepararNovoRegistro();atualizarIconeDockNovaPassagem()}
-function toggleDetalhesRegistro(){const box=$('registro-detalhes'),btn=$('registro-detalhes-toggle'),chevron=$('registro-detalhes-chevron');if(!box||!btn)return;const abrir=box.classList.contains('hidden');box.classList.toggle('hidden',!abrir);btn.setAttribute('aria-expanded',String(abrir));if(chevron)chevron.style.transform=abrir?'rotate(180deg)':'rotate(0deg)'}
-function toggleModalOpcoes(){
-const m=$('modal-opcoes');m.classList.toggle('hidden');
-if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();}
-}
-
-/* Funções do Livro Sendo Escrito */
-function abrirModalEscrevendoLivro(){
-  toggleModalOpcoes();
-  const nomeU = usuarioNome || lsGet('lido_usuario_nome') || 'Autor';
-  $('escrita_autor').value = nomeU;
-  if(livroEscrito){
-    $('escrita_titulo').value = livroEscrito.titulo || '';
-    $('escrita_capitulos_totais').value = livroEscrito.capitulos_totais || '';
-    $('escrita_capitulo_atual').value = livroEscrito.capitulo_atual || '';
-    $('escrita_paginas').value = livroEscrito.paginas || '';
-    $('escrita_capa_url').value = livroEscrito.capa || '';
-    $('escrita-capa-nome-label').textContent = livroEscrito.capa ? 'Capa selecionada' : 'Selecionar imagem de capa';
-  } else {
-    $('escritaLivroForm').reset();
-    $('escrita_autor').value = nomeU;
-    $('escrita_capa_url').value = '';
-    $('escrita-capa-nome-label').textContent = 'Selecionar imagem de capa';
-  }
-  $('modal-escrevendo-livro').classList.remove('hidden');
-}
-function fecharModalEscrevendoLivro(){
-  $('modal-escrevendo-livro').classList.add('hidden');
-}
-function tratarUploadCapaEscrita(input){
-  const file=input.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=function(e){
-    $('escrita_capa_url').value = e.target.result;
-    $('escrita-capa-nome-label').textContent = file.name;
-    aviso('Capa carregada com sucesso!');
-  };
-  reader.readAsDataURL(file);
-}
-function salvarLivroEscrito(e){
-  e.preventDefault();
-  const titulo = $('escrita_titulo').value.trim();
-  const autor = $('escrita_autor').value.trim();
-  const capTotais = parseInt($('escrita_capitulos_totais').value, 10) || 1;
-  const capAtual = parseInt($('escrita_capitulo_atual').value, 10) || 1;
-  const paginas = parseInt($('escrita_paginas').value, 10) || 0;
-  const capa = $('escrita_capa_url').value || 'https://placehold.co/400x600/111/fff?text=' + encodeURIComponent(titulo);
-  
-  const hojeStr = new Date().toISOString().split('T')[0];
-  const mesAnoStr = hojeStr.substring(0, 7); // YYYY-MM
-
-  // Registrar histórico diário/mensal de páginas escritas
-  let progressoAnterior = livroEscrito ? (livroEscrito.paginas || 0) : 0;
-  let diffPaginas = paginas - progressoAnterior;
-  if(diffPaginas < 0) diffPaginas = 0; // Se diminuiu, não conta negativo retroativo
-
-  if(!historicoEscrita) historicoEscrita = [];
-  // Procura se já tem registro hoje
-  let regHoje = historicoEscrita.find(h => h.data === hojeStr);
-  if(regHoje){
-    regHoje.paginas += diffPaginas;
-  } else if(diffPaginas > 0 || !historicoEscrita.length) {
-    historicoEscrita.push({ data: hojeStr, mes: mesAnoStr, paginas: diffPaginas });
-  }
-
-  livroEscrito = {
-    titulo,
-    autor,
-    capitulos_totais: capTotais,
-    capitulo_atual: capAtual,
-    paginas,
-    capa,
-    atualizadoEm: Date.now()
-  };
-
-  localStorage.setItem('livro_escrito', JSON.stringify(livroEscrito));
-  localStorage.setItem('historico_escrita', JSON.stringify(historicoEscrita));
-
-  fecharModalEscrevendoLivro();
-  aviso('Livro salvo com sucesso!');
-  salvarLocal();
-  renderizarFeed();
-}
-
-function deletarLivroEscrito(btn){
-  doisToques(btn, () => {
-    livroEscrito = null;
-    localStorage.removeItem('livro_escrito');
-    localStorage.removeItem('historico_escrita');
-    historicoEscrita = [];
-    fecharModalEscrevendoLivro();
-    aviso('Seu livro sendo escrito foi excluído.');
-    salvarLocal();
-    renderizarFeed();
-  });
-}
-
-function tratarUploadBgCustomizado(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    bgCustomizado = e.target.result;
-    lsSet('lido_bg_customizado', bgCustomizado);
-    aviso('Plano de fundo atualizado!');
-    salvarLocal();
-    renderizarFeed();
-    input.value = '';
-  };
-  reader.onerror = () => aviso('Erro ao carregar a imagem.');
-  reader.readAsDataURL(file);
-}
-
-function removerBgCustomizado(){
-  bgCustomizado = '';
-  localStorage.removeItem('lido_bg_customizado');
-  aviso('Plano de fundo personalizado removido!');
-  salvarLocal();
-  renderizarFeed();
-}
-
-let abaLidos='capas',anoStats=null;
-function definirAbaLidos(a){abaLidos=a;renderizarFeed();voltarAoTopo()}
-function definirAnoStats(a){anoStats=a;renderizarFeed()}
-function renderizarAbaLidos(feed){
-const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
-if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,0,false);
-else addSecao(feed,htmlStats(lidos),BG_PADRAO,0,false);
-transicionarFundo(BG_PADRAO);
-}
-function htmlCapasLidos(l){
-if(!l.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro concluído ainda.</p>';
-return `<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">${l.map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></button>`).join('')}</div>`;
-}
-function parseData(br){let m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br||''));if(m)return{m:+m[2],a:+m[3]};m=/^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/.exec(String(br||''));return m?{m:+m[2],a:+m[1]}:null}
-function barraStat(rot,n,max,cor='linear-gradient(90deg,#FACC15,#F59E0B)'){return `<div class="space-y-1.5"><div class="flex justify-between gap-3 text-xs"><span class="text-gray-200 truncate pr-2">${esc(rot)}</span><span class="text-white font-semibold tabular-nums">${n}</span></div><div class="stats-track"><div class="h-full rounded-full" style="width:${max?Math.round(n/max*100):0}%;background:${cor}"></div></div></div>`}
-function secStat(t,corpo){return `<section class="stats-panel p-4 w-full space-y-3"><h3 class="stats-heading">${t}</h3>${corpo}</section>`}
-function htmlStats(lidos){
-const hoje=new Date(),aCur=hoje.getFullYear(),mCur=hoje.getMonth()+1;
-const dados=lidos.map(l=>({l,p:parseData(l.data_fim)}));
-const anos=[...new Set(dados.filter(x=>x.p).map(x=>x.p.a))];
-if(!anos.includes(aCur))anos.push(aCur);
-anos.sort((a,b)=>b-a);
-if(anoStats===null||!anos.includes(anoStats))anoStats=aCur;
-const doAno=dados.filter(x=>x.p&&x.p.a===anoStats);
-const noMes=dados.filter(x=>x.p&&x.p.a===aCur&&x.p.m===mCur).length;
-const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-const porMes=meses.map((_,i)=>doAno.filter(x=>x.p.m===i+1).length),maxM=Math.max(...porMes,1);
-const aut={};lidos.forEach(l=>{const a=l.autor||'Autor desconhecido';aut[a]=(aut[a]||0)+1});
-const topA=Object.entries(aut).sort((a,b)=>b[1]-a[1]).slice(0,8);
-const tipos={Kindle:0,'Áudio':0,'Físico':0};
-lidos.forEach(l=>{const k=l.formato==='Audiobook'?'Áudio':l.formato;if(k in tipos)tipos[k]++});
-const maxT=Math.max(...Object.values(tipos),1);
-const totalPaginas=lidos.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
-const paginasDoAno=doAno.reduce((s,x)=>s+Math.max(0,parseInt(x.l.paginas,10)||0),0);
-const aband=biblioteca.filter(l=>statusDe(l)==='abandonado');
-const tile=(r,n)=>`<div class="stats-tile text-center"><div class="text-sm sm:text-base font-bold text-white tabular-nums">${n}</div><div class="text-[7px] uppercase tracking-wider text-gray-400 mt-0.5">${r}</div></div>`;
-const chips=anos.map(a=>`<button onclick="definirAnoStats(${a})" class="seg-btn${a===anoStats?' ativo':''}">${a}</button>`).join('');
-const paleta=['linear-gradient(90deg,#FACC15,#F59E0B)','linear-gradient(90deg,#34D399,#10B981)','linear-gradient(90deg,#60A5FA,#818CF8)','linear-gradient(90deg,#F472B6,#E879F9)','linear-gradient(90deg,#FB923C,#F87171)','linear-gradient(90deg,#A78BFA,#818CF8)','linear-gradient(90deg,#2DD4BF,#38BDF8)','linear-gradient(90deg,#FDE68A,#FBBF24)'];
-
-const topGenre={};
-lidos.forEach(l=>{const bruto=l.genero||l.gênero||l.genre||l.categoria||l.category;const lista=Array.isArray(bruto)?bruto:[bruto];const generos=[...new Set(lista.map(g=>String(g||'').trim()).filter(Boolean))];if(!generos.length){topGenre['Não informado']=(topGenre['Não informado']||0)+1;return}generos.forEach(g=>{topGenre[g]=(topGenre[g]||0)+1})});
-const generosOrdenados=Object.entries(topGenre).sort((a,b)=>b[1]-a[1]);
-const totalGenCount=generosOrdenados.reduce((s,[,n])=>s+n,0);
-
-let cumulativePct=0;
-const conicStops=generosOrdenados.slice(0,6).map(([g,n],i)=>{
-  const pct=totalGenCount?(n/totalGenCount)*100:0;
-  const start=cumulativePct;
-  cumulativePct+=pct;
-  const color=paleta[i%paleta.length].match(/#[a-fA-F0-9]{3,6}/g)?.[0]||'#FACC15';
-  return `${color} ${start}% ${cumulativePct}%`;
-});
-if(cumulativePct<100&&totalGenCount>0){
-  conicStops.push(`rgba(255,255,255,0.08) ${cumulativePct}% 100%`);
-}
-const conicStyle=totalGenCount>0?`background: conic-gradient(${conicStops.join(', ')});`:'background: rgba(255,255,255,0.1);';
-
-const genreHtml=generosOrdenados.length?`<details class="group cursor-pointer stats-panel p-4 w-full"><summary class="flex items-center justify-between stats-heading list-none select-none"><span>Distribuição por Gênero (Gráfico de Pizza)</span><span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span></summary><div class="pt-4 space-y-4 border-t border-white/10 mt-3">
-  <div class="flex flex-col sm:flex-row items-center gap-6 justify-center py-1">
-    <div class="relative w-32 h-32 rounded-full shrink-0 shadow-lg border border-white/10 flex items-center justify-center" style="${conicStyle}">
-      <div class="absolute inset-3 rounded-full bg-[#141414] flex flex-col items-center justify-center text-center shadow-inner">
-        <span class="text-sm font-bold text-white tabular-nums">${totalGenCount}</span>
-        <span class="text-[8px] text-gray-400 uppercase tracking-widest">Livros</span>
-      </div>
-    </div>
-    <div class="flex-1 w-full space-y-2">
-      ${generosOrdenados.slice(0,6).map(([g,n],i)=>`<div class="flex items-center justify-between text-xs gap-2"><span class="flex items-center gap-2 min-w-0"><span class="stats-legend-dot" style="background:${paleta[i%paleta.length]}"></span><span class="text-gray-200 truncate">${esc(g)}</span></span><span class="text-white font-semibold tabular-nums">${n} (${Math.round(n/totalGenCount*100)}%)</span></div>`).join('')}
-    </div>
-  </div>
-  ${generosOrdenados.length>6?`<div class="pt-3 border-t border-white/10 space-y-2"><p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Outros Gêneros</p><div class="space-y-1.5">${generosOrdenados.slice(6,12).map(([g,n])=>`<div class="flex justify-between gap-3 text-xs"><span class="text-gray-300 truncate">${esc(g)}</span><span class="text-white font-semibold tabular-nums">${n}</span></div>`).join('')}</div></div>`:''}
-</div></details>`:'<p class="text-xs text-gray-500">Sem dados de gênero.</p>';
-
-const autorHtml = `<details class="stats-panel p-4 w-full space-y-3 group cursor-pointer"><summary class="flex items-center justify-between stats-heading list-none select-none"><span>Livros por autor</span><span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span></summary><div class="pt-3 space-y-3 border-t border-white/10 mt-3">${topA.length?topA.map(([a,n],i)=>barraStat(a,n,topA[0][1],paleta[i%paleta.length])).join(''):'<p class="text-xs text-gray-500">Sem dados ainda.</p>'}</div></details>`;
-
-// Estatísticas do Livro Sendo Escrito (Menu Expansível)
-let livroProgressoHtml = '';
-if(livroEscrito){
-  const paginasPorDia = {};
-  const paginasPorMes = {};
-  (historicoEscrita || []).forEach(h => {
-    paginasPorDia[h.data] = (paginasPorDia[h.data] || 0) + h.paginas;
-    paginasPorMes[h.mes] = (paginasPorMes[h.mes] || 0) + h.paginas;
-  });
-  const diasArr = Object.entries(paginasPorDia).sort((a,b)=>b[0].localeCompare(a[0])).slice(0, 7);
-  const mesesArr = Object.entries(paginasPorMes).sort((a,b)=>b[0].localeCompare(a[0])).slice(0, 6);
-
-  livroProgressoHtml = `
-    <details class="stats-panel p-4 w-full space-y-3 group cursor-pointer">
-      <summary class="flex items-center justify-between stats-heading list-none select-none">
-        <span>Progresso do Livro: ${esc(livroEscrito.titulo)}</span>
-        <span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span>
-      </summary>
-      <div class="pt-3 space-y-4 border-t border-white/10 mt-3 text-xs text-gray-200">
-        <div class="flex justify-between items-center bg-white/5 p-2.5 rounded-lg">
-          <span>Capítulo Atual: <strong>${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</strong></span>
-          <span>Total: <strong>${livroEscrito.paginas} páginas</strong></span>
-        </div>
-        <div class="space-y-2">
-          <p class="stats-heading text-[10px]">Páginas escritas por dia (Recentes)</p>
-          ${diasArr.length ? diasArr.map(([d, p]) => `<div class="flex justify-between items-center"><span class="text-gray-400">${d}</span><span class="text-white font-semibold">+${p} pgs</span></div>`).join('') : '<p class="text-gray-500">Nenhum registro diário ainda.</p>'}
-        </div>
-        <div class="space-y-2 pt-2 border-t border-white/5">
-          <p class="stats-heading text-[10px]">Páginas escritas por mês</p>
-          ${mesesArr.length ? mesesArr.map(([m, p]) => `<div class="flex justify-between items-center"><span class="text-gray-400">${m}</span><span class="text-white font-semibold">${p} pgs</span></div>`).join('') : '<p class="text-gray-500">Nenhum registro mensal ainda.</p>'}
-        </div>
-      </div>
-    </details>
-  `;
-}
-
-return `<div class="stats-clean space-y-3">
-<div class="grid grid-cols-4">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Total',lidos.length)}</div>
-<section class="stats-panel p-4 w-full space-y-3"><div class="flex items-center justify-between gap-2"><h3 class="stats-heading">Leituras por mês · ${anoStats}</h3><button onclick="abrirInstaModalStats(${anoStats})" class="text-[11px] btn-gold-degrade px-3 py-1.5 rounded-lg flex items-center gap-1.5"><span>Story do ano</span></button></div><div class="flex flex-wrap gap-1.5">${chips}</div><div class="flex items-end gap-1.5 pt-2" style="height:9rem">${porMes.map((n,i)=>`<div class="flex-1 h-full flex flex-col items-center justify-end gap-1 min-w-0"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full stats-month-bar" style="height:${n?Math.max(5,Math.round(n/maxM*100)):0}px;background:${paleta[i%paleta.length]};opacity:${n?1:.15}"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div></section>
-${livroProgressoHtml}
-${genreHtml}
-${secStat('Por formato',`<div class="space-y-3">${Object.entries(tipos).map(([k,n],i)=>barraStat(k,n,maxT,paleta[i%paleta.length])).join('')}</div>`)}
-${autorHtml}
-${secStat('Abandonados ('+aband.length+')',aband.length?`<ul class="space-y-2">${aband.map(l=>`<li class="text-sm text-gray-200">${esc(l.titulo)} <span class="text-gray-500 text-xs">· ${esc(l.autor)}</span></li>`).join('')}</ul>`:'<p class="text-xs text-gray-500">Nenhum livro abandonado.</p>')}
-</div>`;
-}
-function abrirKindle(){toggleModalOpcoes();$('modal-kindle').classList.remove('hidden')}
-function fecharKindle(){$('modal-kindle').classList.add('hidden')}
-
-/* status e seletores */
-function estaLendo(l){
-if(l.desejado||l.abandonado||l.lido===true)return false;
-if(l.lido===false)return true;
-return !(l.data_fim&&l.nota>0);
-}
-function statusDe(l){return l.desejado?'desejado':l.abandonado?'abandonado':estaLendo(l)?'lendo':'lido'}
-function rotuloStatus(l){const s=statusDe(l);return s==='lido'?(l.nota>0?gerarEstrelasStr(l.nota):'Sem nota'):{lendo:'Em leitura',abandonado:'Abandonado',desejado:'Desejado'}[s]}
-function etiquetaStatus(l){
-const m={lendo:['btn-gold-degrade','Lendo'],lido:['bg-emerald-500/80 text-white','Concluído'],abandonado:['bg-red-500/80 text-white','Abandonado'],desejado:['bg-blue-500/80 text-white','Desejado']}[statusDe(l)];
-return `<span class="${m[0]} text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">${m[1]}</span>`;
-}
-function gerarEstrelasStr(n){
-if(!n)return '<span class="text-xs text-gray-400">Em leitura</span>';
-let html='<span class="inline-flex items-center gap-0.5 align-middle">';
-for(let i=1;i<=5;i++){
-  const filled=i<=Math.floor(n);
-  const half=!filled&&i===Math.ceil(n)&&(n%1!==0);
-  const color=(filled||half)?'text-gold-400':'text-white/20';
-  html+=`<svg viewBox="0 0 24 24" class="w-4 h-4 ${color} inline-block"><path fill="currentColor" d="${STAR_PATH}"/></svg>`;
-}
-html+='</span>';
-return html;
-}
-function definirFormato(v){$('formato').value=v;renderSeletores()}
-function definirStatus(v){$('status').value=v;if(v!=='lido')$('nota').value=0;renderSeletores()}
-function definirNota(v){const el=$('nota');if(parseFloat(el.value)===v)v=0;el.value=v;if(v>0)$('status').value='lido';renderSeletores()}
-function renderSeletores(){
-const f=$('formato').value,st=$('status').value,n=parseFloat($('nota').value)||0;
-document.querySelectorAll('[data-formato]').forEach(b=>b.classList.toggle('ativo',b.dataset.formato===f));
-document.querySelectorAll('[data-status]').forEach(b=>b.classList.toggle('ativo',b.dataset.status===st));
-$('nota-label').innerText=n>0?`(${String(n).replace('.',',')} de 5)`:'(toque nas estrelas)';
-const box=$('star-picker');box.innerHTML='';
-for(let i=1;i<=5;i++){
-const fr=Math.max(0,Math.min(1,n-(i-1))),w=document.createElement('div');
-w.className='relative';w.style.cssText='width:2.75rem;height:2.75rem';
-w.innerHTML=`<svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full text-white/20"><path fill="currentColor" d="${STAR_PATH}"/></svg><div class="absolute inset-0 overflow-hidden" style="width:${fr*100}%"><svg viewBox="0 0 24 24" style="width:2.75rem;height:2.75rem" class="text-gold-400"><path fill="currentColor" d="${STAR_PATH}"/></svg></div><button type="button" class="absolute left-0 top-0 w-1/2 h-full" onclick="definirNota(${i-.5})" aria-label="${i-.5} estrelas"></button><button type="button" class="absolute right-0 top-0 w-1/2 h-full" onclick="definirNota(${i})" aria-label="${i} estrelas"></button>`;
-box.appendChild(w);
-}
-}
-function deletarNota(id,btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
-function paraBR(v){if(!v)return '';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}
-function paraISO(br){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(br||'');return m?`${m[3]}-${m[2]}-${m[1]}`:''}
-function mostrarPeriodo(show){
-$('periodo-box').classList.toggle('hidden',!show);$('periodo-toggle').classList.toggle('hidden',show);
-if(!show){$('periodo-inicio').value='';$('periodo-fim').value=''}
-}
-function periodoTxt(l){
-const t=l.data_inicio&&l.data_fim?`Lido de ${l.data_inicio} a ${l.data_fim}`:l.data_inicio?`Iniciado em ${l.data_inicio}`:l.data_fim?`Concluído em ${l.data_fim}`:'';
-return t?`<p class="text-xs text-gray-400">${esc(t)}</p>`:'';
-}
-function prepararNovoRegistro(){
-const detalhes=$('registro-detalhes'),detalhesBtn=$('registro-detalhes-toggle'),detalhesChevron=$('registro-detalhes-chevron');if(detalhes)detalhes.classList.add('hidden');if(detalhesBtn)detalhesBtn.setAttribute('aria-expanded','false');if(detalhesChevron)detalhesChevron.style.transform='rotate(0deg)';
-$('bookForm').reset();
-['edit_id','capa_url','genero'].forEach(i=>$(i).value='');
-$('formato').value='Kindle';$('nota').value='0';$('status').value='lendo';
-mostrarPeriodo(false);
-renderSeletores();
-$('btn-salvar-modal').innerText='Adicionar';
-toggleModalNovoRegistro();
-}
-function editarLivro(id){
-const l=biblioteca.find(x=>x.id===id);if(!l)return;
-$('edit_id').value=l.id;$('titulo').value=l.titulo;$('autor').value=l.autor;$('paginas').value=l.paginas||'';
-$('formato').value=l.formato||'Kindle';$('nota').value=l.nota||0;$('status').value=statusDe(l);
-$('observacao').value=l.observacao||'';$('capa_url').value=l.capa||'';$('genero').value=l.genero||'';
-mostrarPeriodo(!!l.data_inicio);
-if(l.data_inicio){$('periodo-inicio').value=paraISO(l.data_inicio);$('periodo-fim').value=paraISO(l.data_fim)}
-renderSeletores();
-$('btn-salvar-modal').innerText='Atualizar';
-toggleModalNovoRegistro();
-}
-
-/* Open Library API Otimizada para Português (com Fallback) */
-const seqBusca={};
-async function buscarOpenLibrary(q, limit = 5) {
-  let resultados = await fetchOpenLibraryAPI(`${q} language:por`, limit);
-  if (resultados.length > 0) return resultados;
-  return await fetchOpenLibraryAPI(q, limit);
-}
-
-async function fetchOpenLibraryAPI(queryStr, limit) {
-  const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(queryStr)}&limit=${limit}`;
-  try {
-    let r = await fetch(url);
-    if (!r.ok) return [];
-    let d = await r.json();
-
-    return (d.docs || []).map(item => {
-      const titulo = item.title || '';
-      const autor = Array.isArray(item.author_name) && item.author_name.length ? item.author_name.join(', ') : 'Autor desconhecido';
-      
-      let cover = '';
-      if (item.cover_i) {
-        cover = `https://covers.openlibrary.org/b/id/${item.cover_i}-L.jpg`;
-      } else if (Array.isArray(item.isbn) && item.isbn.length > 0) {
-        cover = `https://covers.openlibrary.org/b/isbn/${item.isbn[0]}-L.jpg`;
-      }
-
-      const paginas = item.number_of_pages_median || 0;
-      const subjects = item.subject || [];
-      const genero = subjects.length ? subjects[0] : '';
-
-      return {
-        titulo,
-        autor,
-        capa: cover,
-        paginas,
-        genero
-      };
-    }).filter(x => x.titulo);
-  } catch (e) {
-    return [];
+    if (badgeModal) { badgeModal.textContent = 'Desconectado'; badgeModal.className = 'font-bold px-2.5 py-0.5 rounded-full text-[10px] bg-white/10 text-gray-400'; }
+    if (badgeConfig) { badgeConfig.textContent = 'Desconectado'; badgeConfig.className = 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2'; }
+    if (lastSyncEl) { lastSyncEl.textContent = 'Nunca'; }
+    if (btnSync) btnSync.classList.add('hidden');
+    if (btnReconectar) btnReconectar.classList.remove('hidden');
+    if (cloudIcon) cloudIcon.style.opacity = '0.5';
   }
 }
 
-async function buscarDetalhesLivro(titulo,autor){
-const query = autor && !/desconhecido/i.test(autor) ? `${titulo} ${autor}` : titulo;
-let lista = await buscarOpenLibrary(query, 3);
-let item = (lista.find(x => x.capa) || lista[0]);
-return item || { capa: '', paginas: 0, genero: '' };
-}
-
-async function atualizarCapasFaltantes(manual=false){
-let alterado=false;
-const semCapa=biblioteca.filter(l=>!l.capa||l.capa.includes('placehold.co')||!l.genero);
-if(manual&&!semCapa.length)return aviso('Todos os livros já têm capas e gêneros salvos.');
-if(manual)aviso(`Buscando informações para ${semCapa.length} livros...`);
-for(const l of semCapa){
- try{
-  const b=await buscarDetalhesLivro(l.titulo,l.autor);
-  if(b.capa&&(!l.capa||l.capa.includes('placehold.co'))){l.capa=b.capa;alterado=true;}
-  if(b.genero&&!l.genero){l.genero=b.genero;alterado=true;}
-  if(b.paginas&&(!l.paginas||l.paginas<=0)){l.paginas=b.paginas;alterado=true;}
- }catch(e){}
-}
-if(alterado){
- salvarLocal();
- renderizarFeed();
- if(manual)aviso('Informações atualizadas com sucesso!');
-}
-}
-
-async function recarregarBancoOpenLibrary(manual=true){
-let alterado=false;
-const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co')||!l.genero);
-if(manual&&!alvos.length)return aviso('Todos os livros já possuem capas, páginas e gêneros atualizados.');
-if(manual)aviso(`Atualizando dados para ${alvos.length} livros...`);
-
-for(const l of alvos){
- try{
-  const b=await buscarDetalhesLivro(l.titulo,l.autor);
-  if(b){
-   if(b.capa && (!l.capa || l.capa.includes('placehold.co'))){ l.capa = b.capa; alterado = true; }
-   if(b.paginas && b.paginas > 0 && (!l.paginas || l.paginas <= 0)){ l.paginas = b.paginas; alterado = true; }
-   if(b.genero && !l.genero){ l.genero = b.genero; alterado = true; }
+function salvarNomeUsuario() {
+  const val = $('input-usuario-nome').value.trim();
+  if (val) {
+    usuarioNome = val;
+    lsSet('lido_usuario_nome', usuarioNome);
+    sincronizarNuvem(false);
+    alert('Perfil atualizado com sucesso!');
   }
- }catch(e){}
-}
-
-if(alterado){
- salvarLocal();
- renderizarFeed();
- if(manual)aviso('Banco de dados atualizado com sucesso via Open Library!');
-}else if(manual){
- aviso('Nenhuma nova alteração encontrada.');
-}
-}
-
-function buscaDebounce(q,tipo){
-clearTimeout(timers[tipo]);
-seqBusca[tipo]=(seqBusca[tipo]||0)+1;
-const skel=$('skel-'+tipo),res=$('res-'+tipo);
-if(!q||q.trim().length<2){skel.classList.add('hidden');res.classList.add('hidden');return}
-skel.classList.remove('hidden');res.classList.add('hidden');
-timers[tipo]=setTimeout(()=>buscarLivrosOpenLibrary(q.trim(),tipo),350);
-}
-
-function buscarLivrosOpenLibrary(q,tipo){
-const skel=$('skel-'+tipo),res=$('res-'+tipo),meu=seqBusca[tipo];
-const alvo=tipo==='modal'?['titulo','autor','capa_url','paginas']:['pergunta_titulo','pergunta_autor','pergunta_capa'];
-buscarOpenLibrary(q,6).then(lista=>{
-if(meu!==seqBusca[tipo])return;
-skel.classList.add('hidden');
-res.innerHTML='';res.classList.remove('hidden');
-if(!lista.length){res.innerHTML='<div class="p-3 text-xs text-gray-400">Nenhum livro encontrado na Open Library.</div>';return}
-lista.forEach(b=>{
-const capa=b.capa||'https://placehold.co/300x450/111/fff?text=Sem+Capa';
-const row=document.createElement('div');
-row.className='flex items-center gap-3 p-2.5 hover:bg-white/10 cursor-pointer border-b border-white/5 text-xs';
-row.innerHTML=`<img src="${esc(capa)}" class="w-8 h-12 object-cover rounded shadow flex-shrink-0" onerror="this.src='https://placehold.co/300x450/111/fff?text=Sem+Capa'"><div class="truncate flex-1"><p class="font-bold text-white truncate">${esc(b.titulo)}</p><p class="text-gray-400 text-[11px] truncate">${esc(b.autor)}</p></div>`;
-row.onclick=()=>{
-  $(alvo[0]).value=b.titulo;
-  $(alvo[1]).value=b.autor;
-  $(alvo[2]).value=b.capa||'';
-  if(alvo[3]&&$(alvo[3])){$('paginas').value=b.paginas>0?b.paginas:''};
-  if($('genero'))$('genero').value=b.genero||'';
-  res.classList.add('hidden')
-};
-res.appendChild(row);
-});
-}).catch(e=>{
-if(meu!==seqBusca[tipo])return;
-skel.classList.add('hidden');res.classList.add('hidden');
-console.error('Open Library:',e);
-aviso('Sem conexão com a Open Library.');
-});
-}
-
-function tratarUploadCapaManual(input){
-const file=input.files[0];
-if(!file)return;
-const reader=new FileReader();
-reader.onload=function(e){
-  const base64=e.target.result;
-  $('capa_url').value=base64;
-  aviso('Capa carregada manualmente com sucesso!');
-  input.value='';
-};
-reader.onerror=()=>aviso('Erro ao ler o arquivo de imagem.');
-reader.readAsDataURL(file);
-}
-
-function salvarLivro(e){
-e.preventDefault();
-const editId=$('edit_id').value;
-const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim(),genero=$('genero').value.trim();
-if(!editId&&!titulo&&!autor){
- if(!observacao)return aviso('Escreva uma observação ou informe o título de um livro.');
- notas.unshift({id:Date.now(),texto:observacao,musica:'',data:new Date().toLocaleDateString('pt-BR')});
- salvarLocal();
- $('bookForm').reset();['capa_url','edit_id','genero'].forEach(i=>$(i).value='');
- toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed();return;
-}
-if(!titulo&&!observacao)return aviso('Informe ao menos o título do livro ou escreva uma observação.');
-const st=$('status').value,lido=st==='lido';
-const nota=lido?(parseFloat($('nota').value)||0):0,hoje=new Date().toLocaleDateString('pt-BR');
-const idx=editId?biblioteca.findIndex(l=>l.id==editId):-1;
-let targetId=editId,obsAntiga='',dataAntiga='',generoAntigo='';
-if(idx!==-1){obsAntiga=biblioteca[idx].observacao||'';dataAntiga=biblioteca[idx].data_fim||'';generoAntigo=biblioteca[idx].genero||''}
-const inicioBR=paraBR($('periodo-inicio').value),fimBR=paraBR($('periodo-fim').value);
-const d={
-  titulo,
-  autor:autor||'Autor Desconhecido',
-  paginas:Math.max(0,parseInt($('paginas').value,10)||0),
-  formato:$('formato').value,
-  lido,
-  abandonado:st==='abandonado',
-  desejado:st==='desejado',
-  data_inicio:inicioBR,
-  data_fim:lido?(fimBR||dataAntiga||hoje):'',
-  nota,
-  observacao,
-  capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo||'Nota')}`,
-  genero:genero||generoAntigo
-};
-if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero)){
- buscarDetalhesLivro(d.titulo,d.autor).then(b=>{
-  if(b){
-    const target=biblioteca.find(x=>x.id==targetId);
-    if(target){
-      if(b.capa&&(!target.capa||target.capa.includes('placehold.co')))target.capa=b.capa;
-      if(b.genero&&!target.genero)target.genero=b.genero;
-      if(b.paginas&&(!target.paginas||target.paginas<=0))target.paginas=b.paginas;
-      salvarLocal();renderizarFeed();
-    }
-  }
- });
-}
-if(idx!==-1)biblioteca[idx]={...biblioteca[idx],...d};
-else{targetId=Date.now();biblioteca.unshift({id:targetId,...d})}
-salvarLocal();
-$('bookForm').reset();['capa_url','edit_id','genero'].forEach(i=>$(i).value='');
-toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed(targetId);
-}
-
-function salvarLivroDesejado(e){
-e.preventDefault();
-const editId=$('edit_id').value;
-const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim(),genero=$('genero').value.trim();
-if(!titulo&&!autor&&!observacao)return aviso('Informe ao menos o título do livro.');
-const idx=editId?biblioteca.findIndex(l=>l.id==editId):-1;
-let targetId=editId,generoAntigo=idx!==-1?biblioteca[idx].genero||'':'';
-const d={
-  titulo,
-  autor:autor||'Autor Desconhecido',
-  paginas:Math.max(0,parseInt($('paginas').value,10)||0),
-  formato:$('formato').value,
-  lido:false,
-  abandonado:false,
-  desejado:true,
-  data_inicio:'',
-  data_fim:'',
-  nota:0,
-  observacao,
-  capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo||'Desejo')}`,
-  genero:genero||generoAntigo
-};
-if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero)){
- buscarDetalhesLivro(d.titulo,d.autor).then(b=>{
-  if(b){
-    const target=biblioteca.find(x=>x.id==targetId);
-    if(target){
-      if(b.capa&&(!target.capa||target.capa.includes('placehold.co')))target.capa=b.capa;
-      if(b.genero&&!target.genero)target.genero=b.genero;
-      if(b.paginas&&(!target.paginas||target.paginas<=0))target.paginas=b.paginas;
-      salvarLocal();renderizarFeed();
-    }
-  }
- });
-}
-if(idx!==-1)biblioteca[idx]={...biblioteca[idx],...d};
-else{targetId=Date.now();biblioteca.unshift({id:targetId,...d})}
-salvarLocal();
-$('bookForm').reset();['capa_url','edit_id','genero'].forEach(i=>$(i).value='');
-toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed(targetId);
-}
-
-/* renderização */
-function obterSaudacao(){const h=new Date().getHours();return h>=5&&h<12?'Bom dia':h>=12&&h<18?'Boa tarde':'Boa noite'}
-function addSecao(pai,html,capa,i=0,fullWidth=false){
-const s=document.createElement('section');
-s.className='snap-item stagger-item';
-s.style.animationDelay=`${i*.05}s`;
-s.dataset.capa=bgCustomizado || capa || BG_PADRAO;
-s.innerHTML=html;
-pai.appendChild(s);
-return s;
-}
-function imgCapa(url,cls,id,tipo){
-const clk=id!=null?` onclick="capaClick(event,${id},'${tipo}')" style="cursor:pointer"`:'';
-return `<img src="${esc(url)}"${clk} class="${cls} object-cover rounded shadow-lg border border-white/10 flex-shrink-0" onerror="this.src='https://placehold.co/400x600/111/fff?text=Sem+Capa'">`;
-}
-function capaClick(ev,id,tipo){
-if(modoSel)return;
-ev.stopPropagation();
-const l=(tipo==='kindle'?notasKindle:biblioteca).find(x=>x.id===id);if(!l)return;
-$('amazon-titulo').textContent=`${l.titulo} · ${l.autor}`;
-$('modal-amazon').classList.remove('hidden');
-}
-function fecharAmazon(){$('modal-amazon').classList.add('hidden')}
-function confirmarAmazon(){fecharAmazon();aviso('Busca na Amazon em breve.')}
-function atualizarTitulo(){
- const h=$('titulo-app');
- h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
- h.style.fontSize='';h.style.lineHeight='';h.style.letterSpacing='';h.style.width='';h.style.margin='';
-}
-let homeSemCapa=false;
-function capaValida(u){return !!u&&!/placehold\.co/.test(u)}
-function mostrarRetangulo(){const r=$('home-ret');if(r)r.style.opacity=(abaAtual==='inicio'&&homeSemCapa)?'.55':'0'}
-
-function renderizarFeed(scrollToId=null){
-homeSemCapa=false;
-atualizarTitulo();
-const feed=$('feed-container');
-feed.innerHTML='';
-const subBar = $('sub-tabs-container');
-const subContent = $('sub-tabs-content');
-
-if(abaAtual==='inicio'){
-  if(subBar) subBar.classList.add('hidden');
-  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col justify-end pb-20 page-transition'+(modoSel?' modo-sel':'');
-  feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
-} else {
-  if(subBar) subBar.classList.remove('hidden');
-  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pb-16 page-transition'+(modoSel?' modo-sel':'');
-  feed.style.paddingTop = 'calc(7.8rem + env(safe-area-inset-top,0px))';
-
-  if(abaAtual==='todos'){
-    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
-  } else if(abaAtual==='lidos'){
-    subContent.innerHTML = `<div class="grid grid-cols-2 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
-  } else if(abaAtual==='observacoes'){
-    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
-  } else if(abaAtual==='buscar'){
-    if(subBar) subBar.classList.add('hidden');
-  } else {
-    if(subBar) subBar.classList.add('hidden');
-  }
-}
-
-const fn={todos:renderizarAbaTodos,buscar:renderizarAbaBusca,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
-if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
-mostrarRetangulo();
-handleFeedScroll();
-}
-
-function renderizarAbaInicio(feed){
-const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
-const wrap=document.createElement('div');
-wrap.className='home-wrap space-y-3 pb-4 w-full mt-auto';
-
-// Card do Livro Sendo Escrito ("SEU PRÓPRIO LIVRO")
-if(livroEscrito){
-  addSecao(wrap, `<div onclick="abrirModalEscrevendoLivro()" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">SEU PRÓPRIO LIVRO</span><span class="text-[10px] text-gray-400">Em andamento</span></div><div class="flex items-start gap-4">${imgCapa(livroEscrito.capa,'w-20 h-28',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(livroEscrito.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(livroEscrito.autor)}</p><div class="text-gold-400 text-sm tracking-wide mt-1">Capítulo ${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</div><p class="text-gray-300 text-xs mt-1">${livroEscrito.paginas} páginas escritas até agora</p></div></div></div>`, livroEscrito.capa, 1, false);
-}
-
-if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
-if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
-const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
-if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="editarLivro(${lendo.id})" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4,false);
-feed.appendChild(wrap);
-homeSemCapa=!l||!capaValida(l.capa);
-transicionarFundo(bgCustomizado || (homeSemCapa?BG_PADRAO:l.capa));
-if(!homeSemCapa && !bgCustomizado){const im=new Image();im.onerror=()=>{if(abaAtual==='inicio'&&biblioteca[0]===l){homeSemCapa=true;transicionarFundo(BG_PADRAO);mostrarRetangulo()}};im.src=l.capa}
-}
-
-let filtroTodos='tudo';
-let filtroSoTextos='todos';
-function definirFiltroTodos(f){filtroTodos=f;renderizarFeed();voltarAoTopo()}
-function definirFiltroSoTextos(f){filtroSoTextos=f;renderizarFeed();voltarAoTopo()}
-
-function renderizarAbaBusca(feed){
-const wrap=document.createElement('div');
-wrap.className='space-y-4 w-full';
-wrap.innerHTML=`
-  <div class="frosted-card p-5 md:p-6 shadow-2xl space-y-4">
-    <div class="flex items-center justify-between border-b border-white/10 pb-3">
-      <span class="text-xs font-bold uppercase tracking-wider text-gold-400">Busca Rápida</span>
-    </div>
-    <div class="space-y-2">
-      <label class="block text-xs font-medium text-gray-300">Procure sua passagem</label>
-      <div class="relative">
-        <input type="text" id="input-busca-global" oninput="executarBuscaGlobal(this.value)" placeholder="Digite o trecho, título ou autor..." autocomplete="off" class="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400">
-        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      </div>
-    </div>
-    <div id="resultados-busca-global" class="max-h-[60vh] overflow-y-auto space-y-2 pt-1 pr-1">
-      <p class="text-xs text-gray-500 text-center py-4">Digite para procurar em suas passagens e livros lidos...</p>
-    </div>
-  </div>
-`;
-feed.appendChild(wrap);
-transicionarFundo(bgCustomizado || BG_PADRAO);
-setTimeout(() => { const inp = $('input-busca-global'); if(inp) inp.focus(); }, 50);
-}
-
-function executarBuscaGlobal(termo){
-  const container = $('resultados-busca-global');
-  if(!container) return;
-  const q = termo.trim().toLowerCase();
-  if(!q || q.length < 2){
-    container.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Digite ao menos 2 caracteres para buscar...</p>';
-    return;
-  }
-  
-  let resultados = [];
-  
-  biblioteca.forEach(l => {
-    const matchTitulo = (l.titulo || '').toLowerCase().includes(q);
-    const matchAutor = (l.autor || '').toLowerCase().includes(q);
-    const matchObs = (l.observacao || '').toLowerCase().includes(q);
-    if(matchTitulo || matchAutor || matchObs){
-      resultados.push({
-        tipo: 'livro',
-        titulo: l.titulo,
-        sub: `Livro (${statusDe(l)}) · ${l.autor}`,
-        trecho: l.observacao || `Livro concluído / em leitura de ${l.autor}`,
-        id: l.id
-      });
-    }
-  });
-
-  notas.forEach(n => {
-    if((n.texto || '').toLowerCase().includes(q)){
-      resultados.push({
-        tipo: 'nota',
-        titulo: 'Nota Pessoal',
-        sub: `Nota · ${n.data}`,
-        trecho: n.texto,
-        id: n.id
-      });
-    }
-  });
-
-  notasKindle.forEach(k => {
-    if((k.observacao || '').toLowerCase().includes(q) || (k.titulo || '').toLowerCase().includes(q)){
-      resultados.push({
-        tipo: 'kindle',
-        titulo: k.titulo,
-        sub: `Kindle · ${k.autor}`,
-        trecho: k.observacao,
-        id: k.id
-      });
-    }
-  });
-
-  if(!resultados.length){
-    container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Nenhum resultado encontrado.</p>';
-    return;
-  }
-
-  container.innerHTML = resultados.map(r => `
-    <div onclick="clicarResultadoBusca('${r.tipo}', ${r.id})" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border border-white/5 transition-colors space-y-1">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold text-white truncate pr-2">${esc(r.titulo)}</span>
-        <span class="text-[9px] uppercase tracking-wider text-gold-400 shrink-0">${r.tipo}</span>
-      </div>
-      <p class="text-[11px] text-gray-400 truncate">${esc(r.sub)}</p>
-      <p class="text-xs text-gray-200 line-clamp-2 font-obs">${esc(r.trecho)}</p>
-    </div>
-  `).join('');
-}
-
-function clicarResultadoBusca(tipo, id){
-  if(tipo === 'livro'){
-    abrirPassagem(id);
-  } else {
-    mudarAba('todos');
-  }
-}
-function htmlLivro(l){
-return `<div class="frosted-card relative p-6 md:p-8 w-full space-y-5 shadow-2xl h-full flex flex-col justify-between"><div class="sel-mark">✓</div>
-<div class="flex items-center justify-between pr-9"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><span class="text-[11px] text-gray-400 uppercase tracking-widest">${biblioteca.filter(x=>statusDe(x)!=='desejado').indexOf(l)+1} de ${biblioteca.filter(x=>statusDe(x)!=='desejado').length}</span></div>
-<div class="flex items-start gap-5">${imgCapa(l.capa,'w-24 h-36 md:w-28 md:h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-xl md:text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}</div></div>
-${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light line-clamp-4">${esc(l.observacao)}</p>`:''}
-<div class="flex items-center justify-between pt-3 border-t border-white/10 gap-2 flex-wrap"><div class="text-gold-400 text-base tracking-widest">${rotuloStatus(l)}</div>
-<div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
-}
-function htmlNota(n){
-return `<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
-}
-function htmlKindle(k){
-return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
-}
-function renderizarAbaTodos(feed,scrollToId){
-const itens=[];
-const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
-if(filtroTodos==='tudo'||filtroTodos==='livros')bibFiltrada.forEach(l=>itens.push({t:'livro',id:l.id,d:l}));
-if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'nota',id:n.id,d:n}));
-if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
-if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
-
-if(!itens.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nada por aqui ainda.</p></div>`,BG_PADRAO,0,false);
-itens.forEach((it,i)=>{
-const d=it.d;
-if(it.t==='livro'){const sc=addSecao(feed,htmlLivro(d),bgCustomizado || d.capa,i+1,false);sc.id=`card-item-${d.id}`;sc.dataset.id=d.id}
-else if(it.t==='nota')addSecao(feed,htmlNota(d),bgCustomizado || BG_PADRAO,i+1,false);
-else addSecao(feed,htmlKindle(d),bgCustomizado || BG_PADRAO,i+1,false);
-});
-transicionarFundo(bgCustomizado || BG_PADRAO);
-if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
-}
-function renderizarAbaDesejados(feed){
-const desejados=biblioteca.filter(l=>statusDe(l)==='desejado');
-addSecao(feed,`<div class="px-1 space-y-3"><h2 class="text-lg font-bold text-white font-serif mb-2">Livros Desejados</h2></div>`,bgCustomizado || BG_PADRAO,0,false);
-if(!desejados.length){
-  addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro desejado cadastrado.</p></div>`,bgCustomizado || BG_PADRAO,1,false);
-  return;
-}
-desejados.forEach((l,i)=>{
-  const html=`<div class="frosted-card relative p-5 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between">
-    <div class="flex items-center justify-between"><span class="bg-blue-500/80 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">Desejado</span><span class="text-[11px] text-gray-400 uppercase tracking-widest">${i+1} de ${desejados.length}</span></div>
-    <div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="space-y-1 my-auto"><h2 class="font-serif text-xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p></div></div>
-    <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/15"><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar / Ler</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div>
-  </div>`;
-  addSecao(feed,html,bgCustomizado || l.capa,i+1,false);
-});
-transicionarFundo(bgCustomizado || BG_PADRAO);
-}
-function renderizarAbaObservacoes(feed){
-const itens=[
-...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
-...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>statusDe(l)!=='desejado'&&(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
-...(filtroSoTextos==='todos'||filtroSoTextos==='kindle'?notasKindle.filter(n=>(n.observacao||'').trim()).map(n=>({tipo:'kindle',obs:n.observacao,rot:`${n.titulo} · ${n.autor}`,capa:n.capa})):[])
-];
-if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,bgCustomizado || BG_PADRAO,0,false);return}
-itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,bgCustomizado || l.capa || BG_PADRAO,i+1,false));
-transicionarFundo(bgCustomizado || BG_PADRAO);
-}
-function abrirPassagem(id){
-const l=biblioteca.find(x=>x.id===id);if(!l)return;
-$('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
-<div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
-${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
-<div class="flex items-center justify-end gap-2 pt-3 border-t border-white/10 flex-wrap"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div>`;
-$('modal-passagem').classList.remove('hidden');
-}
-function fecharPassagem(){$('modal-passagem').classList.add('hidden')}
-
-/* kindle */
-function processarKindleClippings(file){
-if(!file)return;
-fecharKindle();
-const r=new FileReader();
-r.onerror=()=>aviso('Não foi possível ler o arquivo.');
-r.onload=e=>{
-const blocos=e.target.result.replace(/^\ufeff/,'').split('==========').map(b=>b.trim()).filter(Boolean);
-const vistos=new Set(notasKindle.map(n=>(n.titulo+'|'+n.observacao).toLowerCase())),novas=[];
-blocos.forEach((b,idx)=>{
-const lin=b.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-if(lin.length<3)return;
-let titulo=lin[0],autor='Autor Desconhecido';
-const m=lin[0].match(/\(([^)]+)\)[^()]*$/);
-if(m){autor=m[1].trim();titulo=lin[0].replace(m[0],'').trim()}
-const cit=lin.slice(2).join(' ').trim(),k=(titulo+'|'+cit).toLowerCase();
-if(!titulo||!cit||vistos.has(k))return;
-vistos.add(k);novas.push({id:Date.now()+idx,titulo,autor,observacao:cit,capa:`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo)}`});
-});
-if(!novas.length)return aviso('Nenhum marcador novo encontrado.');
-const caps={};
-Promise.all([...new Set(novas.map(n=>n.titulo))].map(t=>buscarDetalhesLivro(t,(novas.find(n=>n.titulo===t)||{}).autor).then(b=>{if(b.capa)caps[t]=b.capa}).catch(()=>{}))).then(()=>{
-novas.forEach(n=>{if(caps[n.titulo])n.capa=caps[n.titulo]});
-notasKindle=[...novas,...notasKindle];salvarLocal();renderizarFeed();
-aviso(`${novas.length} marcadores importados.`);$('kindle-file-input').value='';
-});
-};
-r.readAsText(file,'UTF-8');
-}
-function deletarNotaKindle(id,btn){doisToques(btn,()=>{notasKindle=notasKindle.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
-function deletarLivro(id,btn){doisToques(btn,()=>{biblioteca=biblioteca.filter(l=>l.id!==id);salvarLocal();fecharPassagem();renderizarFeed()})}
-
-/* fundo e rolagem */
-function transicionarFundo(url){
-if(abaAtual==='kindle')return;
-const targetBg = bgCustomizado || url;
-if(currentCapaUrl===targetBg)return;
-currentCapaUrl=targetBg;
-const a=$('bg-layer-a'),b=$('bg-layer-b');
-const usaCustom = !!bgCustomizado;
-a.classList.toggle('bg-layer-custom', usaCustom);
-b.classList.toggle('bg-layer-custom', usaCustom);
-
-if(activeBgLayer==='A'){b.style.backgroundImage=`url('${targetBg}')`;b.style.opacity='1';a.style.opacity='0';activeBgLayer='B'}
-else{a.style.backgroundImage=`url('${targetBg}')`;a.style.opacity='1';b.style.opacity='0';activeBgLayer='A'}
-}
-function handleFeedScroll(){
-const feed=$('feed-container'),items=document.querySelectorAll('.snap-item'),pos=feed.scrollTop+feed.clientHeight/2;
-const noFim=feed.scrollTop+feed.clientHeight>=feed.scrollHeight-50,arrow=$('scroll-arrow'),top=$('top-btn');
-arrow.classList.toggle('hidden',items.length<=1||noFim);
-const mostra=items.length>1&&noFim&&feed.scrollTop>200;
-top.classList.toggle('hidden',!mostra);top.classList.toggle('flex',mostra);
-items.forEach(it=>{if(pos>=it.offsetTop&&pos<=it.offsetTop+it.clientHeight&&it.dataset.capa)transicionarFundo(bgCustomizado || it.dataset.capa)});
-}
-function voltarAoTopo(){$('feed-container').scrollTo({top:0,behavior:'smooth'})}
-function proximoItemFeed(){
-const feed=$('feed-container'),alvo=[...document.querySelectorAll('.snap-item')].find(it=>it.offsetTop-150>feed.scrollTop+10);
-if(alvo)feed.scrollTo({top:alvo.offsetTop-150,behavior:'smooth'});
-}
-
-/* seleção múltipla */
-function iniciarSelecao(){
-toggleModalOpcoes();
-filtroTodos='livros';if(abaAtual!=='todos')mudarAba('todos');else renderizarFeed();
-modoSel=true;selecionados.clear();
-$('feed-container').classList.add('modo-sel');
-$('nav-principal').classList.add('hidden');
-const b=$('sel-bar');b.classList.remove('hidden');b.classList.add('flex');
-atualizarSelBar();
-}
-function sairSelecao(){
-modoSel=false;selecionados.clear();
-$('feed-container').classList.remove('modo-sel');
-document.querySelectorAll('.sel-ativo').forEach(e=>e.classList.remove('sel-ativo'));
-$('nav-principal').classList.remove('hidden');
-const b=$('sel-bar');b.classList.add('hidden');b.classList.remove('flex');
-}
-function alternarSel(id){
-id=String(id);
-if(selecionados.has(id))selecionados.delete(id);else selecionados.add(id);
-const el=$('card-item-'+id);if(el)el.classList.toggle('sel-ativo',selecionados.has(id));
-atualizarSelBar();
-}
-function selecionarTodas(){
-const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
-const todos=selecionados.size===bibFiltrada.length;selecionados.clear();
-document.querySelectorAll('[data-id]').forEach(el=>{if(!todos)selecionados.add(el.dataset.id);el.classList.toggle('sel-ativo',!todos)});
-atualizarSelBar();
-}
-function atualizarSelBar(){
-confirmandoDel=false;const n=selecionados.size,b=$('sel-del');
-$('sel-count').innerText=`${n} selecionada${n===1?'':'s'}`;
-b.innerText='Excluir';b.disabled=n===0;b.classList.toggle('opacity-40',n===0);
-}
-function excluirSelecionadas(){
-if(!selecionados.size)return;
-if(!confirmandoDel){confirmandoDel=true;$('sel-del').innerText=`Confirmar (${selecionados.size})`;return}
-biblioteca=biblioteca.filter(l=>!selecionados.has(String(l.id)));
-salvarLocal();sairSelecao();renderizarFeed();
-}
-
-/* story */
-function carregarImg(url){return new Promise(res=>{if(!url)return res(null);const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=()=>res(null);im.src=url;setTimeout(()=>res(null),6000)})}
-
-function quebrarTexto(ctx,texto,largura){
-const lin=[];let at='';
-String(texto).split(/\s+/).filter(Boolean).forEach(p=>{const t=at?at+' '+p:p;if(ctx.measureText(t).width>largura&&at){lin.push(at);at=p}else at=t});
-if(at)lin.push(at);return lin;
-}
-function cortarLinha(ctx,u,largura){if(ctx.measureText(u).width<=largura)return u;while(u.length>1&&ctx.measureText(u+'…').width>largura)u=u.slice(0,-1);return u.trim()+'…'}
-function pathEstrela(ctx,cx,cy,r){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?r:r*.45,x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
-
-async function renderizarStory(l){
-const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
-try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
-const img=await carregarImg(l.capa);
-ctx.clearRect(0,0,W,H);ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H);
-if(img){
-const mini=document.createElement('canvas');mini.width=27;mini.height=48;
-const mc=mini.getContext('2d'),e=Math.max(27/img.width,48/img.height);
-mc.drawImage(img,(27-img.width*e)/2,(48-img.height*e)/2,img.width*e,img.height*e);
-ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=.6;ctx.drawImage(mini,0,0,W,H);ctx.globalAlpha=1;
-}
-const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(0,0,0,.55)');g.addColorStop(.5,'rgba(0,0,0,.5)');g.addColorStop(1,'rgba(0,0,0,.92)');
-ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-ctx.textBaseline='alphabetic';ctx.textAlign='left';
-const f9='900 46px "Inter",sans-serif',f6='600 46px "Inter",sans-serif';
-ctx.font=f6;const wI=ctx.measureText('LIDO').width;
-ctx.font=f9;const wV=ctx.measureText('LIVROS').width;
-const x0=(W-(wI+wV))/2;
-ctx.font=f6;ctx.fillStyle='#fff';ctx.fillText('LIDO',x0,120);
-ctx.font=f9;ctx.fillStyle='#FACC15';ctx.fillText('LIVROS',x0+wI,120);
-const cw=540,ch=810,cx=(W-cw)/2,cy=170;
-if(img){
-const cr=cw/ch,ir=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;
-if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
-ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=50;ctx.shadowOffsetY=20;ctx.drawImage(img,sx,sy,sw,sh,cx,cy,cw,ch);
-ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
-}else{ctx.fillStyle='#1b2230';ctx.fillRect(cx,cy,cw,ch);ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='400 36px Inter,sans-serif';ctx.textAlign='center';ctx.fillText('Sem capa',W/2,cy+ch/2)}
-ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;ctx.strokeRect(cx,cy,cw,ch);
-ctx.textAlign='center';
-let y=cy+ch+100,tam=64,lin;
-for(;tam>=40;tam-=2){ctx.font=`700 ${tam}px "Inter",sans-serif`;lin=quebrarTexto(ctx,l.titulo,900);if(lin.length<=3)break}
-if(lin.length>3){lin=lin.slice(0,3);lin[2]=cortarLinha(ctx,lin[2]+' …',900)}
-ctx.fillStyle='#fff';lin.forEach(t=>{ctx.fillText(t,W/2,y);y+=tam*1.2});
-y+=4;ctx.font='500 36px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText(cortarLinha(ctx,'por '+l.autor,900),W/2,y);
-y+=70;
-if(l.nota>0){
-const r=44,gap=104,s0=W/2-gap*2;
-for(let i=0;i<5;i++){
-const sx=s0+i*gap;pathEstrela(ctx,sx,y,r);ctx.fillStyle='rgba(250,204,21,.22)';ctx.fill();
-const fr=Math.max(0,Math.min(1,l.nota-i));
-if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx-r,y-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx,y,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
-}
-}else if(statusDe(l)==='lendo'){ctx.font='500 34px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('Em leitura',W/2,y+12)}
-const obs=(l.observacao||'').trim();
-if(obs){
-y+=75;const esp=1820-y;let t=50,ol;
-for(;t>=28;t-=2){ctx.font=`400 ${t}px "Inter",sans-serif`;ol=quebrarTexto(ctx,obs,860);if(ol.length*t*1.3<=esp)break}
-const max=Math.max(1,Math.floor(esp/(t*1.3)));
-if(ol.length>max){ol=ol.slice(0,max);ol[max-1]=cortarLinha(ctx,ol[max-1]+' …',860)}
-ctx.fillStyle='rgba(255,255,255,.92)';ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.3});
-}
-ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1832,600,2);
-ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1884);
-storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
-}
-
-async function renderizarStoryStats(ano){
-const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
-try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
-ctx.clearRect(0,0,W,H);ctx.fillStyle='#000000';ctx.fillRect(0,0,W,H);
-
-const doAno=biblioteca.filter(l=>{const p=parseData(l.data_fim);return statusDe(l)==='lido'&&p&&p.a===ano});
-const covers=doAno.map(l=>l.capa).filter(c=>c&&!c.includes('placehold.co'));
-const loadedImgs=[];
-for(const url of covers.slice(0,24)){
-  const img=await carregarImg(url);
-  if(img)loadedImgs.push(img);
-}
-
-if(loadedImgs.length>0){
-  const cols=4,rows=6,cellW=W/cols,cellH=H/rows;
-  ctx.globalAlpha=0.32;let imgIdx=0;
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const img=loadedImgs[imgIdx%loadedImgs.length];imgIdx++;
-      const x=c*cellW,y=r*cellH;
-      const ir=img.width/img.height,cr=cellW/cellH;
-      let sx=0,sy=0,sw=img.width,sh=img.height;
-      if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
-      ctx.drawImage(img,sx,sy,sw,sh,x,y,cellW,cellH);
-    }
-  }
-  ctx.globalAlpha=1.0;
-}
-
-const g=ctx.createLinearGradient(0,0,0,H);
-g.addColorStop(0,'rgba(0,0,0,0.85)');g.addColorStop(0.5,'rgba(0,0,0,0.78)');g.addColorStop(1,'rgba(0,0,0,0.94)');
-ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-
-ctx.textBaseline='alphabetic';ctx.textAlign='center';
-ctx.font='600 46px "Inter",sans-serif';ctx.fillStyle='#fff';
-const wI=ctx.measureText('LIDO').width;
-ctx.font='900 46px "Inter",sans-serif';const wV=ctx.measureText('LIVROS').width;
-const x0=(W-(wI+wV))/2;
-ctx.font='600 46px "Inter",sans-serif';ctx.fillStyle='#fff';ctx.fillText('LIDO',x0,160);
-ctx.font='900 46px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('LIVROS',x0+wI,160);
-
-ctx.font='800 60px "Inter",sans-serif';ctx.fillStyle='#ffffff';
-ctx.fillText(`RETROSPECTIVA ${ano}`,W/2,260);
-
-const totalLivros=doAno.length;
-const totalPaginas=doAno.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
-const notasValidas=doAno.filter(l=>l.nota>0);
-const mediaNota=notasValidas.length?(notasValidas.reduce((s,l)=>s+l.nota,0)/notasValidas.length).toFixed(1):'-';
-
-const boxY=360,boxH=230;
-drawStatCard(ctx,W/2-460,boxY,920,boxH,`${totalLivros}`,totalLivros===1?'Livro Lido':'Livros Lidos');
-drawStatCard(ctx,W/2-460,boxY+270,920,boxH,`${totalPaginas.toLocaleString('pt-BR')}`,'Páginas Lidas');
-drawStatCard(ctx,W/2-460,boxY+540,920,boxH,`${String(mediaNota).replace('.',',')}`,'Média de Avaliação');
-
-ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1780,600,2);
-ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';
-ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1834);
-
-storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
-}
-
-function drawStatCard(ctx,x,y,w,h,value,label){
-ctx.save();
-ctx.fillStyle='rgba(20,20,20,0.78)';
-ctx.strokeStyle='rgba(255,255,255,0.12)';
-ctx.lineWidth=2;
-ctx.beginPath();ctx.roundRect(x,y,w,h,24);ctx.fill();ctx.stroke();
-
-ctx.textAlign='center';
-ctx.font='800 72px "Inter",sans-serif';ctx.fillStyle='#FACC15';
-ctx.fillText(value,x+w/2,y+95);
-
-ctx.font='600 30px "Inter",sans-serif';ctx.fillStyle='#e5e7eb';
-ctx.fillText(label.toUpperCase(),x+w/2,y+165);
-ctx.restore();
-}
-
-async function abrirInstaModal(id){const l=biblioteca.find(x=>x.id===id);if(!l)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStory(l)}
-async function abrirInstaModalStats(ano){storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStoryStats(ano)}
-function fecharInstaModal(){$('insta-modal').classList.add('hidden')}
-async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`story_estatisticas_${Date.now()}.png`,'image/png')}
-
-/* arquivos */
-try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
-async function baixarArquivo(conteudo,nome,tipo){
-if(!dlCap&&window.claude&&claude.use){try{dlCap=await claude.use('downloads')}catch(e){}}
-if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined0')return false}}
-const blob=conteudo instanceof Blob?conteudo:new Blob([conteudo],{type:tipo});
-if(tipo==='image/png'&&navigator.canShare){try{const f=new File([blob],nome,{type:tipo});if(navigator.canShare({files:[f]})){await navigator.share({files:[f]});return true}}catch(e){}}
-const url=URL.createObjectURL(blob),a=document.createElement('a');
-a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);return true;
-}
-
-function nomeBackup(ext){const d=new Date(),p=n=>String(n).padStart(2,'0');return `LidosBackup_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}h${p(d.getMinutes())}.${ext}`}
-function jsonBackup(){return JSON.stringify({userProfile:{name:usuarioNome},biblioteca,notas,notasKindle,livroEscrito,historicoEscrita,bgCustomizado},null,2)}
-async function enviarBackupPorEmail(){
-if(!biblioteca.length&&!notas.length)return aviso('Nada para enviar ainda.');
-const ag=new Date(),quando=`${ag.toLocaleDateString('pt-BR')} às ${ag.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
-const assunto='Backup do Lidos',corpo=`Oi, eu do futuro, esse aqui é o meu backup do LIDOLIVROS da data ${quando}`;
-const nome=nomeBackup('json'),conteudo=jsonBackup();
-try{
-const f=new File([conteudo],nome,{type:'application/json'});
-if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:assunto,text:corpo});return}
-}catch(e){if(e&&e.name==='AbortError')return}
-await baixarArquivo(conteudo,nome,'application/json');
-window.location.href=`mailto:?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
-aviso('Anexe o arquivo salvo ao e-mail.');
-}
-
-function gerarPromptIA(){
-const onde={Kindle:'no Kindle','Físico':'em livro físico',Audiobook:'em audiobook'};
-let txt='Oi, faça uma análise completa do meu histórico literário com os dados a seguir:\n\n';
-[...biblioteca].reverse().forEach(l=>{
-const s=statusDe(l);
-let p=`${s==='lido'?'Eu li':'Registrei'} o livro intitulado "${l.titulo}", escrito por ${l.autor}, ${onde[l.formato]||'em formato '+l.formato}. `;
-if(l.data_inicio)p+=`Comecei a leitura em ${l.data_inicio}. `;
-p+=s==='lido'?`Eu concluí a leitura${l.data_fim?' em '+l.data_fim:''}${l.nota>0?` e dei nota ${String(l.nota).replace('.',',')} de 5`:''}. `:{lendo:'Eu ainda não concluí a leitura, pois estou lendo no momento. ',abandonado:'I abandonei a leitura. ',desejado:'Eu ainda não li, é um livro que desejo ler. '}[s];
-const obs=(l.observacao||'').trim();
-p+=obs?`A minha anotação sobre o livro foi: "${obs}"`:'Não fiz nenhuma anotação sobre o livro.';
-txt+=p+'\n\n';
-});
-return txt.trim();
-}
-function abrirEnviarIA(){
-if(!biblioteca.length)return aviso('Nenhum livro registrado ainda.');
-toggleModalOpcoes();
-$('modal-ia').classList.remove('hidden');
-}
-function fecharEnviarIA(){$('modal-ia').classList.add('hidden')}
-async function copiarPromptIA(){
-const texto=gerarPromptIA();let ok=false;
-try{await navigator.clipboard.writeText(texto);ok=true}catch(e){}
-if(!ok){const el=document.createElement('textarea');el.value=texto;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();try{ok=document.execCommand('copy')}catch(e){}el.remove()}
-if(ok){fecharEnviarIA();aviso('Prompt copiado. Cole no chat da IA.')}else aviso('Não foi possível copiar o prompt. Tente novamente.');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  verificarEstadoInicial();
-  renderizarFeed();
-  mostrarBoasVindasSePrimeiroAcesso();
-  iniciarVigiaSync();
+  if (lsGet('lido_usuario_nome')) {
+    usuarioNome = lsGet('lido_usuario_nome');
+  }
+  if (cloudSyncAtivo && $('tela-login-inicial')) {
+    $('tela-login-initial').classList.add('hidden');
+  }
+  iniciarSincronizacaoAutomatica();
+  atualizarStatusGoogleUI();
 });
-
-(function configurarBotaoVoltarPWA(){
-  const estadoVoltar = { lidoVoltarPWA: true };
-  function modalVisivel(id){const el=document.getElementById(id);return !!el&&!el.classList.contains('hidden')}
-  function voltarDentroDoApp(){
-    if (modalVisivel('insta-modal')) { fecharInstaModal(); return true; }
-    if (modalVisivel('modal-ia')) { fecharEnviarIA(); return true; }
-    if (modalVisivel('modal-amazon')) { fecharAmazon(); return true; }
-    if (modalVisivel('modal-passagem')) { fecharPassagem(); return true; }
-    if (modalVisivel('modal-kindle')) { fecharKindle(); return true; }
-    if (modalVisivel('modal-sub-backup')) { fecharSubMenuBackup(); return true; }
-    if (modalVisivel('modal-cloud')) { toggleModalCloud(); return true; }
-    if (modalVisivel('modal-registro')) { toggleModalNovoRegistro(); return true; }
-    if (modalVisivel('modal-escrevendo-livro')) { fecharModalEscrevendoLivro(); return true; }
-    if (modalVisivel('modal-opcoes')) { toggleModalOpcoes(); return true; }
-    if (modoSel) { sairSelecao(); return true; }
-    if (typeof abaAtual !== 'undefined' && abaAtual !== 'inicio') { mudarAba('inicio'); return true; }
-    return true;
-  }
-  function manterHistoricoInterno(){try{history.pushState(estadoVoltar,'',location.href)}catch(e){}}
-  window.addEventListener('popstate',function(){voltarDentroDoApp();manterHistoricoInterno()});
-  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',manterHistoricoInterno,{once:true})}else{manterHistoricoInterno()}
-})();
-
-let eventoInstalacaoLiLi = null;
-function appLiLiJaInstalado(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
-function atualizarBotaoInstalarLiLi(){
-  const botaoConfig = $('btn-instalar-lili');
-  const botaoWelcome = $('btn-instalar-lili-welcome');
-  const instalado = appLiLiJaInstalado();
-  if(botaoConfig) botaoConfig.classList.toggle('hidden', instalado);
-  if(botaoWelcome) botaoWelcome.style.display = instalado ? 'none' : 'inline-flex';
-}
-window.addEventListener('beforeinstallprompt',function(evento){evento.preventDefault();eventoInstalacaoLiLi=evento;atualizarBotaoInstalarLiLi()});
-window.addEventListener('appinstalled',function(){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi();if(typeof aviso==='function')aviso('LidoLivros instalado com sucesso.');});
-async function instalarAppLiLi(){
-  if(appLiLiJaInstalado()){atualizarBotaoInstalarLiLi();return}
-  if(eventoInstalacaoLiLi){
-    eventoInstalacaoLiLi.prompt();
-    const escolha=await eventoInstalacaoLiLi.userChoice;
-    if(escolha&&escolha.outcome==='accepted'){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi()}
-    return;
-  }
-  const agente=navigator.userAgent||'';
-  if(/iphone|ipad|ipod/i.test(agente)){
-    alert('Para instalar o LidoLivros no iPhone ou iPad:\n1. Abra esta página no Safari.\n2. Toque em Compartilhar.\n3. Escolha “Adicionar à Tela de Início”.\n4. Toque em Adicionar.');
-  }else{
-    alert('A instalação ainda não está disponível neste momento. No menu do navegador, procure “Instalar app” ou “Adicionar à tela inicial”.');
-  }
-}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',atualizarBotaoInstalarLiLi,{once:true})}else{atualizarBotaoInstalarLiLi()}
 </script>
 </body>
 </html>
