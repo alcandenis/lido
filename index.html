@@ -52,7 +52,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .frosted-card{background:rgba(12,12,12,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);border-radius:.875rem}
 /* Estatísticas: layout mais clean e gráficos com cores variadas */
 .stats-clean .stats-panel{background:rgba(20,20,20,.52);border:1px solid rgba(255,255,255,.075);border-radius:1rem;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.65rem;padding:.4rem .3rem}
+.stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.65rem;padding:.4rem .2rem;max-width:110px;margin:0 auto}
 .stats-clean .stats-heading{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#a3a3a3;font-weight:650}
 .stats-clean .stats-month-bar{border-radius:5px 5px 2px 2px;min-height:0;transition:height .25s ease;}
 .stats-clean .stats-legend-dot{width:.55rem;height:.55rem;border-radius:999px;display:inline-block;flex-shrink:0}
@@ -86,8 +86,30 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .dock-tab{font-size:.75rem;padding:.25rem .5rem;color:#9ca3af;position:relative;transition:color .2s;font-weight:500}
 .dock-tab:hover{color:#e5e7eb}
 .dock-tab.ativo{color:#FACC15;font-weight:700;text-shadow:0 0 12px rgba(250,204,21,0.4)}
-.dock-add{width:2.75rem;height:2.75rem;border-radius:9999px;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);color:#000;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(250,204,21,0.45);transition:all .2s;border:none}
-.dock-add:hover,.dock-add:active{filter:brightness(1.15);transform:scale(1.05)}
+
+/* Botão Nova passagem com estilo Liquid Glass Amarelo */
+.dock-add{
+  width:2.75rem;
+  height:2.75rem;
+  border-radius:9999px;
+  background: rgba(250, 204, 21, 0.25) !important;
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(250, 204, 21, 0.5) !important;
+  box-shadow: 0 8px 32px rgba(250, 204, 21, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  color: #FACC15 !important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .2s;
+}
+.dock-add:hover,.dock-add:active{
+  background: rgba(250, 204, 21, 0.38) !important;
+  filter:brightness(1.15);
+  transform:scale(1.05);
+  box-shadow: 0 8px 32px rgba(250, 204, 21, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+}
+
 .font-obs{font-family:'Inter',sans-serif;font-style:normal;font-weight:400;line-height:1.65}
 .btn-blue-frost{width:2.5rem;height:2.5rem;border-radius:.75rem;display:flex;align-items:center;justify-content:center;color:#bfdbfe;background:rgba(59,130,246,.18);border:1px solid rgba(147,197,253,.3);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:all .2s}
 .btn-blue-frost:hover,.btn-blue-frost:active{background:rgba(59,130,246,.32);color:#fff}
@@ -243,7 +265,6 @@ textarea{
   height:2rem!important;
   min-width:2.35rem!important;
   border-radius:.65rem!important;
-  box-shadow:0 2px 9px rgba(0,0,0,.22)!important;
 }
 .dock-add svg{width:1rem!important;height:1rem!important}
 .dock-add:hover,.dock-add:active{transform:scale(1.025)!important}
@@ -955,7 +976,6 @@ function fecharBoasVindas(){const m=$('welcome-modal');if(m)m.style.display='non
 function boasVindasAdicionarPassagem(){fecharBoasVindas();prepararNovoRegistro()}
 function concluirBoasVindasAposConteudo(){fecharBoasVindas();lsSet('lido_boas_vindas_vista','1')}
 function cancelarNovaPassagem(){toggleModalNovoRegistro();if(lsGet('lido_boas_vindas_vista')!=='1')mostrarBoasVindas()}
-function mostrarBoasVindasSePrimeiroAcesso(){if(lsGet('lido_login_concluido')==='1'&&lsGet('lido_boas_vindas_vista')!=='1')mostrarBoasVindas()}
 function atualizarIconeDockNovaPassagem(){const modal=$('modal-registro'),aberto=!!(modal&&!modal.classList.contains('hidden')),btn=$('dock-add-button'),path=$('dock-add-icon-path');if(path)path.setAttribute('d',aberto?'M6 6l12 12M18 6L6 18':'M12 5v14m7-7H5');if(btn){btn.title=aberto?'Fechar Nova passagem':'Nova passagem';btn.setAttribute('aria-label',aberto?'Fechar Nova passagem':'Abrir Nova passagem')}}
 function toggleModalNovoRegistro(){const modal=$('modal-registro');modal.classList.toggle('hidden');document.body.classList.toggle('registro-aberto',!modal.classList.contains('hidden'));atualizarIconeDockNovaPassagem()}
 function alternarNovaPassagemDock(){const modal=$('modal-registro');if(modal&&!modal.classList.contains('hidden')){toggleModalNovoRegistro();return}if($('welcome-modal')&&$('welcome-modal').style.display!=='none')fecharBoasVindas();prepararNovoRegistro();atualizarIconeDockNovaPassagem()}
@@ -999,7 +1019,7 @@ const maxT=Math.max(...Object.values(tipos),1);
 const totalPaginas=lidos.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
 const paginasDoAno=doAno.reduce((s,x)=>s+Math.max(0,parseInt(x.l.paginas,10)||0),0);
 const aband=biblioteca.filter(l=>statusDe(l)==='abandonado');
-const tile=(r,n)=>`<div class="stats-tile text-center"><div class="text-sm sm:text-base font-bold text-white tabular-nums">${n}</div><div class="text-[8px] uppercase tracking-wider text-gray-400 mt-0.5">${r}</div></div>`;
+const tile=(r,n)=>`<div class="stats-tile text-center"><div class="text-sm sm:text-base font-bold text-white tabular-nums">${n}</div><div class="text-[7px] uppercase tracking-wider text-gray-400 mt-0.5">${r}</div></div>`;
 const chips=anos.map(a=>`<button onclick="definirAnoStats(${a})" class="seg-btn${a===anoStats?' ativo':''}">${a}</button>`).join('');
 const paleta=['linear-gradient(90deg,#FACC15,#F59E0B)','linear-gradient(90deg,#34D399,#10B981)','linear-gradient(90deg,#60A5FA,#818CF8)','linear-gradient(90deg,#F472B6,#E879F9)','linear-gradient(90deg,#FB923C,#F87171)','linear-gradient(90deg,#A78BFA,#818CF8)','linear-gradient(90deg,#2DD4BF,#38BDF8)','linear-gradient(90deg,#FDE68A,#FBBF24)'];
 
