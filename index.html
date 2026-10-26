@@ -488,7 +488,7 @@ textarea{
     <span id="welcome-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span>
     <h2 id="welcome-title" class="font-serif font-semibold text-white">Olá,</h2>
     <div id="welcome-copy">
-      <p>O Lili preserva seus dados de leitura de forma descentralizada. Com o Google Drive, você mantém um backup na nuvem e acessa seus dados em outros dispositivos.</p>
+      <p>O Lili preserva seus dados de leitura de forma descentralizada. Conectado ao Google Drive, você mantém um backup na nuvem e acessa seus dados em outros dispositivos.</p>
       <p>O arquivo de backup é <strong class="text-white">LidosBackup</strong> e ocupa menos de 1 MB.</p>
       <p>Registre livros e notas avulsas, organize marcadores do Kindle, crie uma Lista de Desejo, gere prompts para receber indicações de IA e consulte suas estatísticas na página Lidos.</p>
     </div>
@@ -1210,7 +1210,7 @@ $('btn-salvar-modal').innerText='Atualizar';
 toggleModalNovoRegistro();
 }
 
-/* Google Books API */
+/* Google Books API Corrigida */
 const GOOGLE_BOOKS_API_KEY = 'AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
 
 const seqBusca={};
@@ -1222,15 +1222,20 @@ async function buscarGoogleBooks(q, max = 5) {
 
   let r = null;
   try {
-    r = await fetch(url);
+    r = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
   } catch (e) {
     r = null;
   }
 
   if (!r || !r.ok) {
-    // Tenta fallback sem chave se falhar
-    let urlSemChave = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books`;
-    r = await fetch(urlSemChave);
+    // Tenta fallback alternativo sem parâmetros condicionais extras se falhar
+    let urlFallback = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}`;
+    r = await fetch(urlFallback);
     if (!r.ok) {
       const e = new Error('HTTP ' + r.status);
       e.status = r.status;
@@ -1241,7 +1246,7 @@ async function buscarGoogleBooks(q, max = 5) {
   const d = await r.json();
   return (d.items || []).map(item => {
     const info = item.volumeInfo || {};
-    const links = info.imageLinks || {};
+    const links = item.volumeInfo.imageLinks || {};
     let cover = links.thumbnail || links.smallThumbnail || '';
     cover = cover.replace(/^http:\/\//, 'https://').replace('&edge=curl', '');
     const cats = info.categories || [];
@@ -1261,7 +1266,7 @@ const conhecido=autor&&!/desconhecido/i.test(autor);
 const query = conhecido ? `intitle:${titulo}+inauthor:${autor}` : titulo;
 let lista=await buscarGoogleBooks(query,3);
 let item=(lista.find(x=>x.capa)||lista[0]);
-if(!item&&concihecido){lista=await buscarGoogleBooks(titulo,3);item=(lista.find(x=>x.capa)||lista[0])}
+if(!item&&conhecido){lista=await buscarGoogleBooks(titulo,3);item=(lista.find(x=>x.capa)||lista[0])}
 return item||{capa:'',paginas:0,genero:''};
 }
 
@@ -1949,7 +1954,7 @@ async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`s
 try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
 async function baixarArquivo(conteudo,nome,tipo){
 if(!dlCap&&window.claude&&claude.use){try{dlCap=await claude.use('downloads')}catch(e){}}
-if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined')return false}}
+if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined0')return false}}
 const blob=conteudo instanceof Blob?conteudo:new Blob([conteudo],{type:tipo});
 if(tipo==='image/png'&&navigator.canShare){try{const f=new File([blob],nome,{type:tipo});if(navigator.canShare({files:[f]})){await navigator.share({files:[f]});return true}}catch(e){}}
 const url=URL.createObjectURL(blob),a=document.createElement('a');
