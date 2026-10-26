@@ -492,6 +492,51 @@ textarea{
 </form>
 </div></div>
 
+<!-- Modal Escrevendo um Livro -->
+<div id="modal-escrevendo-livro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+<div class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
+<form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-3">
+<input type="hidden" id="escrita_edit_id">
+<div>
+<label class="block text-xs font-medium text-gray-300 mb-1">Nome do Livro</label>
+<input type="text" id="escrita_titulo" required placeholder="Título do seu livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-300 mb-1">Autor</label>
+<input type="text" id="escrita_autor" readonly class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-300 focus:outline-none cursor-not-allowed">
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-xs font-medium text-gray-300 mb-1">Capítulos Pretendidos</label>
+<input type="number" id="escrita_capitulos_totais" min="1" step="1" inputmode="numeric" required placeholder="Ex: 20" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-300 mb-1">Capítulo Atual</label>
+<input type="number" id="escrita_capitulo_atual" min="1" step="1" inputmode="numeric" required placeholder="Ex: 3" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-300 mb-1">Páginas Escritas Até Agora</label>
+<input type="number" id="escrita_paginas" min="0" step="1" inputmode="numeric" required placeholder="Ex: 45" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+</div>
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="block text-xs font-medium text-gray-300">Upload de Capa (Opcional)</label>
+</div>
+<label for="input-upload-capa-escrita" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-2.5 px-4 cursor-pointer flex items-center justify-center gap-2 text-xs text-gray-300 hover:text-gold-400 transition-colors">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+<span id="escrita-capa-nome-label">Selecionar imagem de capa</span>
+</label>
+<input type="file" id="input-upload-capa-escrita" accept="image/*" onchange="tratarUploadCapaEscrita(this)" class="hidden">
+<input type="hidden" id="escrita_capa_url">
+</div>
+<div class="flex gap-2 pt-2">
+  <button type="button" onclick="fecharModalEscrevendoLivro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">CANCELAR</button>
+  <button type="submit" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Salvar Livro</button>
+</div>
+</form>
+</div></div>
+
 <!-- Boas-vindas -->
 <div id="welcome-modal" class="fixed inset-0 z-[45] flex items-center justify-center p-3" style="display:none" aria-labelledby="welcome-title">
   <section id="welcome-card" class="frosted-card shadow-2xl relative mx-auto">
@@ -525,6 +570,7 @@ textarea{
 <button onclick="conectarGoogleDrive()" class="text-left flex-1"><span class="font-semibold text-white">Google Drive</span></button>
 <span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
 </div>
+<button onclick="abrirModalEscrevendoLivro()" class="opt-row"><span>Estou escrevendo um livro</span><span class="opt-chev">›</span></button>
 <button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="w-full mt-2 flex items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-3 text-left text-sm font-extrabold text-[#211707] shadow-lg shadow-amber-500/20 transition-transform active:scale-[0.99]">
 <span class="flex items-center gap-3"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/10"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
 </button></section>
@@ -614,6 +660,8 @@ function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:[]}catch(e){return[]}}
 let biblioteca=lerJSON('minha_biblioteca'),notasKindle=lerJSON('notas_kindle'),notas=lerJSON('lido_notas'),usuarioNome=lsGet('lido_usuario_nome');
+let livroEscrito = (() => { try { return JSON.parse(localStorage.getItem('livro_escrito')) || null; } catch(e) { return null; } })();
+let historicoEscrita = (() => { try { return JSON.parse(localStorage.getItem('historico_escrita')) || []; } catch(e) { return []; } })();
 let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirmandoDel=false,storyBlob=null,dlCap=null,toastTimer=null;
 const selecionados=new Set(),timers={};
 let removidos={};try{removidos=JSON.parse(lsGet('lido_removidos','{}'))||{}}catch(e){removidos={}}
@@ -1063,6 +1111,85 @@ function toggleModalOpcoes(){
 const m=$('modal-opcoes');m.classList.toggle('hidden');
 if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();}
 }
+
+/* Funções do Livro Sendo Escrito */
+function abrirModalEscrevendoLivro(){
+  toggleModalOpcoes();
+  const nomeU = usuarioNome || lsGet('lido_usuario_nome') || 'Autor';
+  $('escrita_autor').value = nomeU;
+  if(livroEscrito){
+    $('escrita_titulo').value = livroEscrito.titulo || '';
+    $('escrita_capitulos_totais').value = livroEscrito.capitulos_totais || '';
+    $('escrita_capitulo_atual').value = livroEscrito.capitulo_atual || '';
+    $('escrita_paginas').value = livroEscrito.paginas || '';
+    $('escrita_capa_url').value = livroEscrito.capa || '';
+    $('escrita-capa-nome-label').textContent = livroEscrito.capa ? 'Capa selecionada' : 'Selecionar imagem de capa';
+  } else {
+    $('escritaLivroForm').reset();
+    $('escrita_autor').value = nomeU;
+    $('escrita_capa_url').value = '';
+    $('escrita-capa-nome-label').textContent = 'Selecionar imagem de capa';
+  }
+  $('modal-escrevendo-livro').classList.remove('hidden');
+}
+function fecharModalEscrevendoLivro(){
+  $('modal-escrevendo-livro').classList.add('hidden');
+}
+function tratarUploadCapaEscrita(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    $('escrita_capa_url').value = e.target.result;
+    $('escrita-capa-nome-label').textContent = file.name;
+    aviso('Capa carregada com sucesso!');
+  };
+  reader.readAsDataURL(file);
+}
+function salvarLivroEscrito(e){
+  e.preventDefault();
+  const titulo = $('escrita_titulo').value.trim();
+  const autor = $('escrita_autor').value.trim();
+  const capTotais = parseInt($('escrita_capitulos_totais').value, 10) || 1;
+  const capAtual = parseInt($('escrita_capitulo_atual').value, 10) || 1;
+  const paginas = parseInt($('escrita_paginas').value, 10) || 0;
+  const capa = $('escrita_capa_url').value || 'https://placehold.co/400x600/111/fff?text=' + encodeURIComponent(titulo);
+  
+  const hojeStr = new Date().toISOString().split('T')[0];
+  const mesAnoStr = hojeStr.substring(0, 7); // YYYY-MM
+
+  // Registrar histórico diário/mensal de páginas escritas
+  let progressoAnterior = livroEscrito ? (livroEscrito.paginas || 0) : 0;
+  let diffPaginas = paginas - progressoAnterior;
+  if(diffPaginas < 0) diffPaginas = 0; // Se diminuiu, não conta negativo retroativo
+
+  if(!historicoEscrita) historicoEscrita = [];
+  // Procura se já tem registro hoje
+  let regHoje = historicoEscrita.find(h => h.data === hojeStr);
+  if(regHoje){
+    regHoje.paginas += diffPaginas;
+  } else if(diffPaginas > 0 || !historicoEscrita.length) {
+    historicoEscrita.push({ data: hojeStr, mes: mesAnoStr, paginas: diffPaginas });
+  }
+
+  livroEscrito = {
+    titulo,
+    autor,
+    capitulos_totais: capTotais,
+    capitulo_atual: capAtual,
+    paginas,
+    capa,
+    atualizadoEm: Date.now()
+  };
+
+  localStorage.setItem('livro_escrito', JSON.stringify(livroEscrito));
+  localStorage.setItem('historico_escrita', JSON.stringify(historicoEscrita));
+
+  fecharModalEscrevendoLivro();
+  aviso('Livro salvo com sucesso!');
+  renderizarFeed();
+}
+
 let abaLidos='capas',anoStats=null;
 function definirAbaLidos(a){abaLidos=a;renderizarFeed();voltarAoTopo()}
 function definirAnoStats(a){anoStats=a;renderizarFeed()}
@@ -1136,9 +1263,47 @@ const genreHtml=generosOrdenados.length?`<details class="group cursor-pointer st
 </div></details>`:'<p class="text-xs text-gray-500">Sem dados de gênero.</p>';
 
 const autorHtml = `<details class="stats-panel p-4 w-full space-y-3 group cursor-pointer"><summary class="flex items-center justify-between stats-heading list-none select-none"><span>Livros por autor</span><span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span></summary><div class="pt-3 space-y-3 border-t border-white/10 mt-3">${topA.length?topA.map(([a,n],i)=>barraStat(a,n,topA[0][1],paleta[i%paleta.length])).join(''):'<p class="text-xs text-gray-500">Sem dados ainda.</p>'}</div></details>`;
+
+// Estatísticas do Livro Sendo Escrito (Menu Expansível)
+let livroProgressoHtml = '';
+if(livroEscrito){
+  const paginasPorDia = {};
+  const paginasPorMes = {};
+  (historicoEscrita || []).forEach(h => {
+    paginasPorDia[h.data] = (paginasPorDia[h.data] || 0) + h.paginas;
+    paginasPorMes[h.mes] = (paginasPorMes[h.mes] || 0) + h.paginas;
+  });
+  const diasArr = Object.entries(paginasPorDia).sort((a,b)=>b[0].localeCompare(a[0])).slice(0, 7);
+  const mesesArr = Object.entries(paginasPorMes).sort((a,b)=>b[0].localeCompare(a[0])).slice(0, 6);
+
+  livroProgressoHtml = `
+    <details class="stats-panel p-4 w-full space-y-3 group cursor-pointer">
+      <summary class="flex items-center justify-between stats-heading list-none select-none">
+        <span>Progresso do Livro: ${esc(livroEscrito.titulo)}</span>
+        <span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span>
+      </summary>
+      <div class="pt-3 space-y-4 border-t border-white/10 mt-3 text-xs text-gray-200">
+        <div class="flex justify-between items-center bg-white/5 p-2.5 rounded-lg">
+          <span>Capítulo Atual: <strong>${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</strong></span>
+          <span>Total: <strong>${livroEscrito.paginas} páginas</strong></span>
+        </div>
+        <div class="space-y-2">
+          <p class="stats-heading text-[10px]">Páginas escritas por dia (Recentes)</p>
+          ${diasArr.length ? diasArr.map(([d, p]) => `<div class="flex justify-between items-center"><span class="text-gray-400">${d}</span><span class="text-white font-semibold">+${p} pgs</span></div>`).join('') : '<p class="text-gray-500">Nenhum registro diário ainda.</p>'}
+        </div>
+        <div class="space-y-2 pt-2 border-t border-white/5">
+          <p class="stats-heading text-[10px]">Páginas escritas por mês</p>
+          ${mesesArr.length ? mesesArr.map(([m, p]) => `<div class="flex justify-between items-center"><span class="text-gray-400">${m}</span><span class="text-white font-semibold">${p} pgs</span></div>`).join('') : '<p class="text-gray-500">Nenhum registro mensal ainda.</p>'}
+        </div>
+      </div>
+    </details>
+  `;
+}
+
 return `<div class="stats-clean space-y-3">
 <div class="grid grid-cols-4">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Total',lidos.length)}</div>
 <section class="stats-panel p-4 w-full space-y-3"><div class="flex items-center justify-between gap-2"><h3 class="stats-heading">Leituras por mês · ${anoStats}</h3><button onclick="abrirInstaModalStats(${anoStats})" class="text-[11px] btn-gold-degrade px-3 py-1.5 rounded-lg flex items-center gap-1.5"><span>Story do ano</span></button></div><div class="flex flex-wrap gap-1.5">${chips}</div><div class="flex items-end gap-1.5 pt-2" style="height:9rem">${porMes.map((n,i)=>`<div class="flex-1 h-full flex flex-col items-center justify-end gap-1 min-w-0"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full stats-month-bar" style="height:${n?Math.max(5,Math.round(n/maxM*100)):0}px;background:${paleta[i%paleta.length]};opacity:${n?1:.15}"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div></section>
+${livroProgressoHtml}
 ${genreHtml}
 ${secStat('Por formato',`<div class="space-y-3">${Object.entries(tipos).map(([k,n],i)=>barraStat(k,n,maxT,paleta[i%paleta.length])).join('')}</div>`)}
 ${autorHtml}
@@ -1224,11 +1389,8 @@ toggleModalNovoRegistro();
 /* Open Library API Otimizada para Português (com Fallback) */
 const seqBusca={};
 async function buscarOpenLibrary(q, limit = 5) {
-  // 1ª Tentativa: Com foco em português
   let resultados = await fetchOpenLibraryAPI(`${q} language:por`, limit);
   if (resultados.length > 0) return resultados;
-
-  // 2ª Tentativa (Fallback): Busca aberta padrão se a restrição estrita não retornar nada
   return await fetchOpenLibraryAPI(q, limit);
 }
 
@@ -1542,6 +1704,12 @@ function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
 wrap.className='home-wrap space-y-3 pb-4 w-full mt-auto';
+
+// Card do Livro Sendo Escrito ("SEU PRÓPRIO LIVRO")
+if(livroEscrito){
+  addSecao(wrap, `<div onclick="abrirModalEscrevendoLivro()" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">SEU PRÓPRIO LIVRO</span><span class="text-[10px] text-gray-400">Em andamento</span></div><div class="flex items-start gap-4">${imgCapa(livroEscrito.capa,'w-20 h-28',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(livroEscrito.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(livroEscrito.autor)}</p><div class="text-gold-400 text-sm tracking-wide mt-1">Capítulo ${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</div><p class="text-gray-300 text-xs mt-1">${livroEscrito.paginas} páginas escritas até agora</p></div></div></div>`, livroEscrito.capa, 1, false);
+}
+
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
@@ -2042,6 +2210,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (modalVisivel('modal-sub-backup')) { fecharSubMenuBackup(); return true; }
     if (modalVisivel('modal-cloud')) { toggleModalCloud(); return true; }
     if (modalVisivel('modal-registro')) { toggleModalNovoRegistro(); return true; }
+    if (modalVisivel('modal-escrevendo-livro')) { fecharModalEscrevendoLivro(); return true; }
     if (modalVisivel('modal-opcoes')) { toggleModalOpcoes(); return true; }
     if (modoSel) { sairSelecao(); return true; }
     if (typeof abaAtual !== 'undefined' && abaAtual !== 'inicio') { mudarAba('inicio'); return true; }
