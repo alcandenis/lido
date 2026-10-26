@@ -695,7 +695,7 @@ let historicoEscrita = (() => { try { return JSON.parse(localStorage.getItem('hi
 let notasLivroEscrito = (() => { try { return JSON.parse(localStorage.getItem('notas_livro_escrito')) || []; } catch(e) { return []; } })();
 let bgCustomizado = lsGet('lido_bg_customizado', '');
 let tsCfg={};try{tsCfg=JSON.parse(lsGet('lido_ts','{}'))||{}}catch(e){tsCfg={}}
-let ultRenov=0;
+let ultRenov=0,autenticando=false;
 function tocar(c){tsCfg[c]=Date.now();lsSet('lido_ts',JSON.stringify(tsCfg))}
 let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirmandoDel=false,storyBlob=null,dlCap=null,toastTimer=null;
 const selecionados=new Set(),timers={};
@@ -797,15 +797,17 @@ function inicializarGoogleDrive(){
 if(!tokenClient&&window.google&&window.google.accounts&&window.google.accounts.oauth2){
 tokenClient=google.accounts.oauth2.initTokenClient({
 client_id:CLIENT_ID,scope:SCOPES,ux_mode:'popup',
-error_callback:()=>{if(renovandoResolve){const r=renovandoResolve;renovandoResolve=null;r(false)}},
+error_callback:()=>{autenticando=false;if(renovandoResolve){const r=renovandoResolve;renovandoResolve=null;r(false)}},
 callback:async response=>{
+const interativo=autenticando;autenticando=false;
 const resolver=renovandoResolve;renovandoResolve=null;
 if(response.error!==undefined){if(resolver)resolver(false);else aviso('Erro na autenticação com o Google.');return}
 accessToken=response.access_token;
 lsSet('lido_google_access_token',accessToken);
 lsSet('lido_token_exp',String(Date.now()+(parseInt(response.expires_in||3600)*1000)-120000));
 lsSet('lido_google_conectado','1');
-if(resolver){resolver(true);return}
+if(resolver)resolver(true);
+if(resolver&&!interativo)return;
 const inputNome=$('login-usuario-nome');
 if(inputNome&&inputNome.value.trim()){usuarioNome=inputNome.value.trim();lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_perfil_ts',String(Date.now()))}
 aviso('Conectado ao Google Drive com sucesso!');
@@ -819,6 +821,8 @@ mostrarBoasVindasSePrimeiroAcesso();
 }
 function conectarGoogleDrive(fromInitialScreen=false){
 fecharTelaPendente=!!fromInitialScreen;
+if(renovandoResolve){const r=renovandoResolve;renovandoResolve=null;r(false)}
+autenticando=true;setTimeout(()=>{autenticando=false},120000);
 const pedir=()=>tokenClient.requestAccessToken({prompt:lsGet('lido_google_conectado')==='1'?'':'consent'});
 inicializarGoogleDrive();
 if(tokenClient)pedir();
@@ -828,7 +832,7 @@ function tokenExpirado(){const e=parseInt(lsGet('lido_token_exp','0'));return !!
 function renovarTokenSilencioso(){
 return new Promise(res=>{
 inicializarGoogleDrive();
-if(!tokenClient){res(false);return}
+if(!tokenClient||autenticando){res(false);return}
 const t=setTimeout(()=>{if(renovandoResolve){renovandoResolve=null;res(false)}},8000);
 renovandoResolve=ok=>{clearTimeout(t);res(ok)};
 try{tokenClient.requestAccessToken({prompt:''})}catch(e){renovandoResolve=null;clearTimeout(t);res(false)}
@@ -955,6 +959,9 @@ return d.modifiedTime||'';
 }
 async function sincronizarNuvem(manual=false){
 if(!accessToken&&lsGet('lido_google_conectado')!=='1'){if(manual)aviso('Conecte ao Google Drive primeiro.');return}
+if(autenticando)return;
+const telaLogin=$('tela-login-inicial');
+if(!manual&&!accessToken&&telaLogin&&!telaLogin.classList.contains('hidden'))return;
 if(sincronizando){sincPendente=true;return}
 sincronizando=true;
 try{
@@ -1483,7 +1490,4 @@ const genreHtml=generosOrdenados.length?`<details class="group cursor-pointer st
       </div>
     </div>
     <div class="flex-1 w-full space-y-2">
-      ${generosOrdenados.slice(0,6).map(([g,n],i)=>`<div class="flex items-center justify-between text-xs gap-2"><span class="flex items-center gap-2 min-w-0"><span class="stats-legend-dot" style="background:${paleta[i%paleta.length]}"></span><span class="text-gray-200 truncate">${esc(g)}</span></span><span class="text-white font-semibold tabular-nums">${n} (${Math.round(n/totalGenCount*100)}%)</span></div>`).join('')}
-    </div>
-  </div>
-  ${generosOrdenados.length>6?`<div class="pt-3 border-t border-white/10 space-y-2"><p class="text-[10px] text-gray-400 uppercase 
+      ${generosOrdenados.slice(0,6).map(([g,n],i)=>`<div class="flex items-center justify-between text-xs gap-2"><span class="flex items-center gap-2 min-w
