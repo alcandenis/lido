@@ -147,6 +147,125 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 #welcome-copy p{margin:0;text-align:left}
 #welcome-cta{font-size:clamp(.75rem,1.6vh,.9rem);font-weight:700;line-height:1.2;padding:.4rem 0 .1rem;background:linear-gradient(90deg,#facc15,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;flex-shrink:0;text-align:left}
 @media(max-height:700px){#welcome-modal{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:4rem!important}#welcome-card{padding:1rem;gap:.3rem}#welcome-copy{font-size:.6rem;line-height:1.2;gap:.25rem}#welcome-logo-o{width:2rem;height:2.7rem}#welcome-title{font-size:1.15rem}}
+
+
+/* LIQUID GLASS DARK — camada visual neutra aplicada ao arquivo original */
+:root{
+  --glass-surface:rgba(22,22,22,.72);
+  --glass-surface-strong:rgba(15,15,15,.88);
+  --glass-border:rgba(255,255,255,.12);
+  --glass-border-soft:rgba(255,255,255,.075);
+  --glass-shadow:0 12px 32px rgba(0,0,0,.28);
+}
+/* Superfícies principais: vidro escuro sem reflexos decorativos */
+.frosted-card,
+.frosted-modal,
+.frosted-dock,
+#registro-caixa,
+#welcome-card,
+#tela-login-inicial .frosted-card{
+  background:var(--glass-surface)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(.85)!important;
+  backdrop-filter:blur(24px) saturate(.85)!important;
+  border:1px solid var(--glass-border)!important;
+  box-shadow:var(--glass-shadow)!important;
+}
+.frosted-card{border-radius:1rem!important}
+.frosted-modal{border-radius:1.25rem!important}
+.frosted-dock{
+  background:var(--glass-surface-strong)!important;
+  border-color:var(--glass-border-soft)!important;
+  box-shadow:0 8px 28px rgba(0,0,0,.36)!important;
+}
+.frosted-modal-container{
+  background:rgba(0,0,0,.68)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+  backdrop-filter:blur(18px)!important;
+}
+#modal-opcoes,#tela-lidos{
+  background:rgba(8,8,8,.92)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(.85)!important;
+  backdrop-filter:blur(28px) saturate(.85)!important;
+}
+#modal-registro.registro-card-view #registro-caixa,
+#welcome-card{
+  background:rgba(20,20,20,.82)!important;
+  border-color:var(--glass-border)!important;
+  box-shadow:var(--glass-shadow)!important;
+}
+/* Neutraliza o botão azul existente sem alterar sua função */
+.btn-blue-frost,
+.btn-blue-frost:hover,
+.btn-blue-frost:active{
+  color:#e5e5e5!important;
+  background:rgba(255,255,255,.07)!important;
+  border-color:rgba(255,255,255,.14)!important;
+  box-shadow:none!important;
+}
+/* Campos e controles com acabamento de vidro cinza */
+select,
+input:not([type="checkbox"]):not([type="radio"]),
+textarea{
+  color-scheme:dark;
+}
+.seg-btn{
+  background:rgba(255,255,255,.055);
+  border-color:rgba(255,255,255,.12);
+  box-shadow:none;
+}
+.seg-btn.ativo{
+  background:rgba(255,255,255,.88);
+  color:#111;
+  border-color:rgba(255,255,255,.7);
+}
+/* Sem brilho/reflexo nos estados ativos das abas */
+.tab-reg.ativo,.dock-tab.ativo{
+  text-shadow:none!important;
+}
+.sel-ativo .frosted-card{
+  box-shadow:0 0 0 1px rgba(250,204,21,.65)!important;
+}
+/* O vidro fica neutro; mantém apenas o dourado original como cor de ação */
+
+
+
+/* Ajustes solicitados: controles compactos e Liquid Glass Dark mais translúcido */
+.dock-add{
+  width:2.35rem!important;
+  height:2rem!important;
+  min-width:2.35rem!important;
+  border-radius:.65rem!important;
+  box-shadow:0 2px 9px rgba(0,0,0,.22)!important;
+}
+.dock-add svg{width:1rem!important;height:1rem!important}
+.dock-add:hover,.dock-add:active{transform:scale(1.025)!important}
+
+/* Mais transparência nos fundos que envolvem os pop-ups */
+.frosted-modal-container{
+  background:rgba(0,0,0,.38)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+  backdrop-filter:blur(14px)!important;
+}
+/* Superfícies de diálogo: vidro escuro, sem azul nem reflexos */
+.frosted-modal{
+  background:rgba(16,16,16,.54)!important;
+  border-color:rgba(255,255,255,.11)!important;
+  box-shadow:0 12px 36px rgba(0,0,0,.24)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(.82)!important;
+  backdrop-filter:blur(24px) saturate(.82)!important;
+}
+.frosted-card{
+  background:rgba(16,16,16,.50)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(.82)!important;
+  backdrop-filter:blur(22px) saturate(.82)!important;
+}
+/* Telas modais extensas também ficam mais transparentes */
+#modal-opcoes,#tela-lidos{
+  background:rgba(8,8,8,.76)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(.82)!important;
+  backdrop-filter:blur(24px) saturate(.82)!important;
+}
+
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -264,7 +383,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
 <div class="flex gap-2">
   <button type="button" onclick="cancelarNovaPassagem()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">SAIR</button>
-  <button type="button" onclick="salvarLivroDesejado(event)" class="flex-1 py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold">QUERO LER</button>
+  <button type="button" onclick="salvarLivroDesejado(event)" class="flex-none w-11 h-10 rounded-lg bg-white/10 hover:bg-white/15 text-white flex items-center justify-center transition-colors" title="Quero ler" aria-label="Quero ler"><svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.8L6 21V4.75Z"/></svg></button>
   <button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button>
 </div>
 </form>
