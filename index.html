@@ -808,13 +808,15 @@ lsSet('lido_token_exp',String(Date.now()+(parseInt(response.expires_in||3600)*10
 lsSet('lido_google_conectado','1');
 if(resolver)resolver(true);
 if(resolver&&!interativo)return;
+if(fecharTelaPendente){const tl=$('tela-login-inicial');if(tl)tl.classList.add('hidden');lsSet('lido_login_concluido','1');fecharTelaPendente=false}
+try{
 const inputNome=$('login-usuario-nome');
 if(inputNome&&inputNome.value.trim()){usuarioNome=inputNome.value.trim();lsSet('lido_usuario_nome',usuarioNome);lsSet('lido_perfil_ts',String(Date.now()))}
 aviso('Conectado ao Google Drive com sucesso!');
-if(fecharTelaPendente){$('tela-login-inicial').classList.add('hidden');lsSet('lido_login_concluido','1');fecharTelaPendente=false}
 definirEstadoNuvem('ok');
 await sincronizarNuvem(true);
 mostrarBoasVindasSePrimeiroAcesso();
+}catch(err){console.error('Pós-login:',err)}
 }
 });
 }
@@ -1490,4 +1492,4 @@ const genreHtml=generosOrdenados.length?`<details class="group cursor-pointer st
       </div>
     </div>
     <div class="flex-1 w-full space-y-2">
-      ${generosOrdenados.slice(0,6).map(([g,n],i)=>`<div class="flex items-center justify-between text-xs gap-2"><span class="flex items-center gap-2 min-w
+      ${generosOrdenados.slice(0,6).map(([g,n],i)=>`<div class="flex items-center justi
