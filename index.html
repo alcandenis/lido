@@ -44,7 +44,7 @@ body{background:#000000;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hi
 .frosted-modal-container{background:rgba(0,0,0,.6)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 #modal-opcoes,#tela-lidos{background:rgba(0,0,0,.85)!important;backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2)}
 select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
-.tab-reg{padding:.6rem 0;font-size:.75rem;letter-spacing:.25em;font-weight:400;color:#9ca3af;background:none;border:none;transition:all .2s}
+.tab-reg{padding:.5rem 0;font-size:.75rem;letter-spacing:.2em;font-weight:400;color:#9ca3af;background:none;border:none;transition:all .2s;cursor:pointer}
 .tab-reg.sm{letter-spacing:.06em}
 .tab-reg:hover{color:#e5e7eb}
 .tab-reg.ativo{color:#fff;font-weight:700}
@@ -191,7 +191,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
   </div>
 </div>
 
-<header id="app-header" class="fixed top-0 left-0 right-0 z-40 pb-6 px-6 flex justify-between items-center bg-gradient-to-b from-[#000000] via-[#000000]/90 to-transparent pointer-events-none" style="padding-top:calc(1.25rem + env(safe-area-inset-top,0px))">
+<header id="app-header" class="fixed top-0 left-0 right-0 z-40 pb-4 px-6 flex justify-between items-center bg-gradient-to-b from-[#000000] via-[#000000]/90 to-transparent pointer-events-none" style="padding-top:calc(1.25rem + env(safe-area-inset-top,0px))">
 <div class="pointer-events-auto cursor-pointer" onclick="mudarAba('inicio')" title="Tela inicial">
 <h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
 </div>
@@ -211,7 +211,12 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 </div>
 </header>
 
-<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-16 page-transition" style="padding-top:calc(5.5rem + env(safe-area-inset-top,0px))"></main>
+<!-- Sub-abas fixas logo abaixo do cabeçalho -->
+<div id="sub-tabs-container" class="fixed left-0 right-0 z-30 bg-[#000000]/90 backdrop-blur-xl border-b border-white/10 px-4 py-2 hidden" style="top:calc(4.2rem + env(safe-area-inset-top,0px))">
+  <div id="sub-tabs-content" class="max-w-2xl mx-auto flex items-center justify-center"></div>
+</div>
+
+<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-16 page-transition"></main>
 
 <div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-16 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
 <div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-16 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
@@ -837,10 +842,8 @@ function definirAbaLidos(a){abaLidos=a;renderizarFeed();voltarAoTopo()}
 function definirAnoStats(a){anoStats=a;renderizarFeed()}
 function renderizarAbaLidos(feed){
 const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
-const tabs=[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''}">${r}</button>`).join('');
 if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,0,false);
 else addSecao(feed,htmlStats(lidos),BG_PADRAO,0,false);
-addSecao(feed,`<div class="px-1 space-y-3 pt-4"><div class="grid grid-cols-2">${tabs}</div></div>`,BG_PADRAO,1,false);
 transicionarFundo(BG_PADRAO);
 }
 function htmlCapasLidos(l){
@@ -1146,7 +1149,29 @@ homeSemCapa=false;
 atualizarTitulo();
 const feed=$('feed-container');
 feed.innerHTML='';
-feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-16 page-transition'+(modoSel?' modo-sel':'');
+const subBar = $('sub-tabs-container');
+const subContent = $('sub-tabs-content');
+
+if(abaAtual==='inicio'){
+  if(subBar) subBar.classList.add('hidden');
+  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col justify-end pb-20 page-transition'+(modoSel?' modo-sel':'');
+  feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
+} else {
+  if(subBar) subBar.classList.remove('hidden');
+  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pb-16 page-transition'+(modoSel?' modo-sel':'');
+  feed.style.paddingTop = 'calc(7.8rem + env(safe-area-inset-top,0px))';
+
+  if(abaAtual==='todos'){
+    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else if(abaAtual==='lidos'){
+    subContent.innerHTML = `<div class="grid grid-cols-2 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else if(abaAtual==='observacoes'){
+    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else {
+    if(subBar) subBar.classList.add('hidden');
+  }
+}
+
 const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
 mostrarRetangulo();
@@ -1156,7 +1181,7 @@ handleFeedScroll();
 function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
-wrap.className='home-wrap space-y-3 pb-2';
+wrap.className='home-wrap space-y-3 pb-4 w-full mt-auto';
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-3">${imgCapa(l.capa,'w-14 h-20',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
@@ -1192,7 +1217,6 @@ if(filtroTodos==='tudo'||filtroTodos==='livros')bibFiltrada.forEach(l=>itens.pus
 if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'nota',id:n.id,d:n}));
 if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
 if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
-const tabs=[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''}">${r}</button>`).join('');
 
 if(!itens.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nada por aqui ainda.</p></div>`,BG_PADRAO,0,false);
 itens.forEach((it,i)=>{
@@ -1201,7 +1225,6 @@ if(it.t==='livro'){const sc=addSecao(feed,htmlLivro(d),d.capa,i+1,false);sc.id=`
 else if(it.t==='nota')addSecao(feed,htmlNota(d),BG_PADRAO,i+1,false);
 else addSecao(feed,htmlKindle(d),BG_PADRAO,i+1,false);
 });
-addSecao(feed,`<div class="px-1 space-y-3 pt-4 pb-4"><div class="grid grid-cols-4">${tabs}</div></div>`,BG_PADRAO,itens.length+1,false);
 transicionarFundo(BG_PADRAO);
 if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
 }
@@ -1223,7 +1246,6 @@ desejados.forEach((l,i)=>{
 transicionarFundo(BG_PADRAO);
 }
 function renderizarAbaObservacoes(feed){
-const tabs=[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''}">${r}</button>`).join('');
 const itens=[
 ...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>statusDe(l)!=='desejado'&&(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
@@ -1231,7 +1253,6 @@ const itens=[
 ];
 if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,BG_PADRAO,0,false);return}
 itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,l.capa||BG_PADRAO,i+1,false));
-addSecao(feed,`<div class="px-1 pb-1 space-y-3 pt-4"><div class="grid grid-cols-4">${tabs}</div></div>`,BG_PADRAO,itens.length+1,false);
 transicionarFundo(BG_PADRAO);
 }
 function abrirPassagem(id){
