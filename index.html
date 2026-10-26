@@ -1210,55 +1210,69 @@ $('btn-salvar-modal').innerText='Atualizar';
 toggleModalNovoRegistro();
 }
 
-/* Google Books API Corrigida */
+/* Google Books API com Proxy Antirrecusa e Fallback */
 const GOOGLE_BOOKS_API_KEY = 'AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
 
 const seqBusca={};
 async function buscarGoogleBooks(q, max = 5) {
-  let url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books`;
+  let urlOriginal = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books`;
   if (GOOGLE_BOOKS_API_KEY) {
-    url += `&key=${GOOGLE_BOOKS_API_KEY}`;
+    urlOriginal += `&key=${GOOGLE_BOOKS_API_KEY}`;
   }
 
-  let r = null;
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlOriginal)}`;
+
   try {
-    r = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-  } catch (e) {
-    r = null;
-  }
+    let r = await fetch(proxyUrl);
+    if (!r.ok) throw new Error('Erro no proxy');
+    
+    let jsonWrapper = await r.json();
+    if (!jsonWrapper.contents) throw new Error('Conteúdo vazio');
+    
+    let d = JSON.parse(jsonWrapper.contents);
+    
+    return (d.items || []).map(item => {
+      const info = item.volumeInfo || {};
+      const links = info.imageLinks || {};
+      let cover = links.thumbnail || links.smallThumbnail || '';
+      cover = cover.replace(/^http:\/\//, 'https://').replace('&edge=curl', '');
+      const cats = info.categories || [];
+      const genero = cats.length ? cats[0] : '';
+      return {
+        titulo: info.title || '',
+        autor: Array.isArray(info.authors) && info.authors.length ? info.authors.join(', ') : 'Autor desconhecido',
+        capa: cover,
+        paginas: info.pageCount || 0,
+        genero: genero
+      };
+    }).filter(x => x.titulo);
 
-  if (!r || !r.ok) {
-    // Tenta fallback alternativo sem parâmetros condicionais extras se falhar
-    let urlFallback = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}`;
-    r = await fetch(urlFallback);
-    if (!r.ok) {
-      const e = new Error('HTTP ' + r.status);
-      e.status = r.status;
-      throw e;
+  } catch (err) {
+    console.warn('Tentativa via proxy falhou, tentando chamada direta...', err);
+    
+    try {
+      let rDireta = await fetch(urlOriginal);
+      if (!rDireta.ok) throw new Error('HTTP ' + rDireta.status);
+      let d = await rDireta.json();
+      return (d.items || []).map(item => {
+        const info = item.volumeInfo || {};
+        const links = info.imageLinks || {};
+        let cover = links.thumbnail || links.smallThumbnail || '';
+        cover = cover.replace(/^http:\/\//, 'https://').replace('&edge=curl', '');
+        const cats = info.categories || [];
+        return {
+          titulo: info.title || '',
+          autor: Array.isArray(info.authors) && info.authors.length ? info.authors.join(', ') : 'Autor desconhecido',
+          capa: cover,
+          paginas: info.pageCount || 0,
+          genero: cats.length ? cats[0] : ''
+        };
+      }).filter(x => x.titulo);
+    } catch (e2) {
+      console.error('Google Books falhou permanentemente:', e2);
+      return [];
     }
   }
-
-  const d = await r.json();
-  return (d.items || []).map(item => {
-    const info = item.volumeInfo || {};
-    const links = item.volumeInfo.imageLinks || {};
-    let cover = links.thumbnail || links.smallThumbnail || '';
-    cover = cover.replace(/^http:\/\//, 'https://').replace('&edge=curl', '');
-    const cats = info.categories || [];
-    const genero = cats.length ? cats[0] : '';
-    return {
-      titulo: info.title || '',
-      autor: Array.isArray(info.authors) && info.authors.length ? info.authors.join(', ') : 'Autor desconhecido',
-      capa: cover,
-      paginas: info.pageCount || 0,
-      genero: genero
-    };
-  }).filter(x => x.titulo);
 }
 
 async function buscarDetalhesLivro(titulo,autor){
@@ -1351,7 +1365,7 @@ res.appendChild(row);
 if(meu!==seqBusca[tipo])return;
 skel.classList.add('hidden');res.classList.add('hidden');
 console.error('Google Books:',e);
-aviso(e&&e.status?`Google Books recusou a busca (erro ${e.status}).`:'Sem conexão com o Google Books.');
+aviso('Sem conexão com o Google Books.');
 });
 }
 
