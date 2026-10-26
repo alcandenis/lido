@@ -50,9 +50,10 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .tab-reg.ativo{color:#FACC15;font-weight:700;text-shadow:0 0 10px rgba(250,204,21,0.3)}
 .frosted-modal{background:rgba(10,10,10,.75);backdrop-filter:blur(28px) saturate(1.2);-webkit-backdrop-filter:blur(28px) saturate(1.2);border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);border-radius:1.25rem;animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards}
 .frosted-card{background:rgba(12,12,12,.65);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);border-radius:.875rem}
-/* Estatísticas: layout mais clean e gráficos com cores variadas */
+/* Estatísticas: layout mais clean e gráficos com cores variadas (tiles justificadas lado a lado) */
 .stats-clean .stats-panel{background:rgba(20,20,20,.52);border:1px solid rgba(255,255,255,.075);border-radius:1rem;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.65rem;padding:.4rem .2rem;max-width:110px;margin:0 auto}
+.stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.65rem;padding:.5rem .25rem;width:100%}
+.stats-clean .grid-cols-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem}
 .stats-clean .stats-heading{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#a3a3a3;font-weight:650}
 .stats-clean .stats-month-bar{border-radius:5px 5px 2px 2px;min-height:0;transition:height .25s ease;}
 .stats-clean .stats-legend-dot{width:.55rem;height:.55rem;border-radius:999px;display:inline-block;flex-shrink:0}
@@ -70,8 +71,8 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .sel-ativo .frosted-card{border-color:#FACC15;box-shadow:0 0 0 2px rgba(250,204,21,.6)}
 .seg-btn{padding:.625rem .5rem;font-size:.75rem;border-radius:.5rem;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#d1d5db;transition:all .15s}
 .seg-btn.ativo{background:#fff;color:#000;font-weight:600;border-color:#fff}
-.btn-gold-degrade{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);color:#000;font-weight:700;transition:all .2s}
-.btn-gold-degrade:hover{filter:brightness(1.1);box-shadow:0 0 22px rgba(250,204,21,.45)}
+.btn-gold-degrade{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);color:#000;font-weight:700;transition:all .2s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(250,204,21,0.4);box-shadow:0 4px 16px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,0.3)}
+.btn-gold-degrade:hover{filter:brightness(1.1);box-shadow:0 4px 16px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.4)}
 .text-gold-gradient{background:linear-gradient(90deg,#facc15 0%,#fbbf24 52%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .titulo-novas{font-weight:900;letter-spacing:.12em;font-feature-settings:"kern" 1;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:color .3s ease}
 .text-yellow-orange-gradient{background:linear-gradient(90deg,#fef08a 0%,#facc15 42%,#fb923c 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
@@ -87,7 +88,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .dock-tab:hover{color:#e5e7eb}
 .dock-tab.ativo{color:#FACC15;font-weight:700;text-shadow:0 0 12px rgba(250,204,21,0.4)}
 
-/* Botão Nova passagem com estilo Liquid Glass Amarelo */
+/* Botão Nova passagem com estilo Liquid Glass Amarelo (sem glow) */
 .dock-add{
   width:2.75rem;
   height:2.75rem;
@@ -96,7 +97,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   backdrop-filter: blur(16px) saturate(1.5);
   -webkit-backdrop-filter: blur(16px) saturate(1.5);
   border: 1px solid rgba(250, 204, 21, 0.5) !important;
-  box-shadow: 0 8px 32px rgba(250, 204, 21, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
   color: #FACC15 !important;
   display:flex;
   align-items:center;
@@ -107,7 +108,20 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   background: rgba(250, 204, 21, 0.38) !important;
   filter:brightness(1.15);
   transform:scale(1.05);
-  box-shadow: 0 8px 32px rgba(250, 204, 21, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Estilo Liquid Glass para os botões do modal Nova Passagem */
+#modal-registro button[type="button"],
+#modal-registro button[type="submit"] {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+#modal-registro button[type="button"]:hover,
+#modal-registro button[type="submit"]:hover {
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .font-obs{font-family:'Inter',sans-serif;font-style:normal;font-weight:400;line-height:1.65}
@@ -1058,7 +1072,7 @@ const genreHtml=generosOrdenados.length?`<details class="group cursor-pointer st
 
 const autorHtml = `<details class="stats-panel p-4 w-full space-y-3 group cursor-pointer"><summary class="flex items-center justify-between stats-heading list-none select-none"><span>Livros por autor</span><span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span></summary><div class="pt-3 space-y-3 border-t border-white/10 mt-3">${topA.length?topA.map(([a,n],i)=>barraStat(a,n,topA[0][1],paleta[i%paleta.length])).join(''):'<p class="text-xs text-gray-500">Sem dados ainda.</p>'}</div></details>`;
 return `<div class="stats-clean space-y-3">
-<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Total',lidos.length)}</div>
+<div class="grid grid-cols-4">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Total',lidos.length)}</div>
 <section class="stats-panel p-4 w-full space-y-3"><div class="flex items-center justify-between gap-2"><h3 class="stats-heading">Leituras por mês · ${anoStats}</h3><button onclick="abrirInstaModalStats(${anoStats})" class="text-[11px] btn-gold-degrade px-3 py-1.5 rounded-lg flex items-center gap-1.5"><span>Story do ano</span></button></div><div class="flex flex-wrap gap-1.5">${chips}</div><div class="flex items-end gap-1.5 pt-2" style="height:9rem">${porMes.map((n,i)=>`<div class="flex-1 h-full flex flex-col items-center justify-end gap-1 min-w-0"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full stats-month-bar" style="height:${n?Math.max(5,Math.round(n/maxM*100)):0}px;background:${paleta[i%paleta.length]};opacity:${n?1:.15}"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div></section>
 ${genreHtml}
 ${secStat('Por formato',`<div class="space-y-3">${Object.entries(tipos).map(([k,n],i)=>barraStat(k,n,maxT,paleta[i%paleta.length])).join('')}</div>`)}
