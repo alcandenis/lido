@@ -33,7 +33,7 @@ body{background:#000000;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hi
 .snap-feed-container{overflow-y:scroll;height:100vh;height:100dvh;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .snap-feed-container::-webkit-scrollbar{display:none}
 .snap-item{margin-bottom:.75rem}
-.snap-item:last-child{margin-bottom:7.5rem}
+.snap-item:last-child{margin-bottom:6rem}
 @media(min-width:768px){.snap-item{margin-bottom:0!important}}
 .home-wrap>.snap-item{margin-bottom:0!important}
 @keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
@@ -105,7 +105,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   flex-direction:column!important;
   align-items:center!important;
   justify-content:flex-start!important;
-  padding:calc(7rem + env(safe-area-inset-top,0px)) 1rem calc(6.5rem + env(safe-area-inset-bottom,0px))!important;
+  padding:calc(7rem + env(safe-area-inset-top,0px)) 1rem calc(5.5rem + env(safe-area-inset-bottom,0px))!important;
   overflow-y:auto;
   background:transparent!important;
   -webkit-backdrop-filter:none!important;
@@ -135,20 +135,19 @@ body.welcome-menu-open #feed-container,
 body.welcome-menu-open #scroll-arrow,
 body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!important}
 @media(max-height:700px){
-  #modal-registro.registro-card-view{padding-top:calc(6rem + env(safe-area-inset-top,0px))!important;padding-bottom:5.5rem!important}
+  #modal-registro.registro-card-view{padding-top:calc(6rem + env(safe-area-inset-top,0px))!important;padding-bottom:5rem!important}
   #modal-registro.registro-card-view #registro-caixa{padding:1.25rem}
 }
 
-
-/* Boas-vindas: card integrado à página, no lugar do feed (não é pop-up centralizado) */
-#welcome-modal{align-items:flex-end!important;justify-content:center!important;padding:calc(7rem + env(safe-area-inset-top,0px)) 1rem calc(6.5rem + env(safe-area-inset-bottom,0px))!important;overflow-y:auto;background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none!important}
+/* Boas-vindas: card integrado à página, no lugar do feed */
+#welcome-modal{align-items:flex-end!important;justify-content:center!important;padding:calc(7rem + env(safe-area-inset-top,0px)) 1rem calc(5.5rem + env(safe-area-inset-bottom,0px))!important;overflow-y:auto;background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none!important}
 #welcome-card{pointer-events:auto;width:100%;max-width:42rem;max-height:none;overflow:visible;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:.55rem;padding:1.5rem;margin:auto auto 0;text-align:left;background:rgba(12,12,12,.65);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);border-radius:.875rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards}
 #welcome-logo-o{display:block;width:clamp(2.8rem,8vh,4.8rem);height:clamp(3.8rem,10vh,6rem);border-radius:.45rem;margin:.1rem 0 .25rem;flex-shrink:0}
 #welcome-title{font-size:clamp(1.35rem,3.5vh,1.8rem);line-height:1.05;margin:0;text-align:left}
 #welcome-copy{font-size:clamp(.65rem,1.55vh,.76rem);line-height:1.35;color:#e5e7eb;display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;max-width:31rem;text-align:left}
 #welcome-copy p{margin:0;text-align:left}
 #welcome-cta{font-size:clamp(.8rem,1.8vh,.95rem);font-weight:700;line-height:1.2;padding:.55rem 0 .2rem;background:linear-gradient(90deg,#facc15,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;flex-shrink:0;text-align:left}
-@media(max-height:700px){#welcome-modal{padding-top:calc(6rem + env(safe-area-inset-top,0px))!important;padding-bottom:5.5rem!important}#welcome-card{padding:1.1rem;gap:.4rem}#welcome-copy{font-size:.62rem;line-height:1.25;gap:.3rem}#welcome-logo-o{width:2.3rem;height:3.1rem}#welcome-title{font-size:1.25rem}}
+@media(max-height:700px){#welcome-modal{padding-top:calc(6rem + env(safe-area-inset-top,0px))!important;padding-bottom:5rem!important}#welcome-card{padding:1.1rem;gap:.4rem}#welcome-copy{font-size:.62rem;line-height:1.25;gap:.3rem}#welcome-logo-o{width:2.3rem;height:3.1rem}#welcome-title{font-size:1.25rem}}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -198,7 +197,6 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
 </div>
 <div class="flex items-center gap-3 pointer-events-auto">
-  <!-- Ícone de Nuvem no Cabeçalho (Vetorizado sem fundo, com gradiente amarelo/laranja se vinculado ou branco se desvinculado) -->
   <button onclick="toggleModalCloud()" class="h-[1.98rem] md:h-[2.4rem] flex items-center transition-transform hover:scale-105" aria-label="Status do Google Drive" title="Status da Nuvem">
     <svg id="header-cloud-icon" class="w-7 h-7 transition-colors" viewBox="0 0 24 24" fill="none" stroke="url(#cloudGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <defs>
@@ -214,10 +212,10 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 </div>
 </header>
 
-<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto px-4 md:px-6 pt-28 pb-28 page-transition md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 lg:gap-6" style="padding-top:calc(7rem + env(safe-area-inset-top,0px))"></main>
+<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto px-4 md:px-6 pt-28 pb-20 page-transition md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 lg:gap-6" style="padding-top:calc(7rem + env(safe-area-inset-top,0px))"></main>
 
-<div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-24 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
-<div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-24 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
+<div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-20 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
+<div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-20 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
 
 <div id="sel-bar" class="fixed bottom-0 inset-x-0 z-50 hidden items-center justify-between gap-2 px-4 py-3 bg-[#000000]/95 backdrop-blur-xl border-t border-white/10">
 <span id="sel-count" class="text-xs text-gray-300 font-medium">0 selecionadas</span>
@@ -229,7 +227,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 </div>
 
 <nav id="nav-principal" class="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
-<div class="pointer-events-auto bg-gradient-to-t from-[#000000] via-[#000000]/85 to-transparent pt-10 pb-4 px-6" style="padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px))">
+<div class="pointer-events-auto bg-gradient-to-t from-[#000000] via-[#000000]/85 to-transparent pt-8 pb-3 px-6" style="padding-bottom:calc(0.75rem + env(safe-area-inset-bottom,0px))">
 <div class="max-w-md mx-auto flex items-center justify-between">
 <button onclick="mudarAba('inicio')" id="btn-tab-inicio" class="dock-tab">Início</button>
 <button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab">Textos</button>
@@ -268,7 +266,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 </form>
 </div></div>
 
-<!-- Boas-vindas inicial e acessível pelo menu Configurações -->
+<!-- Boas-vindas -->
 <div id="welcome-modal" class="fixed inset-0 z-[45] flex items-center justify-center p-3" style="display:none" aria-labelledby="welcome-title">
   <section id="welcome-card" class="frosted-card shadow-2xl relative mx-auto">
     <button type="button" id="welcome-close" onclick="fecharBoasVindas()" aria-label="Fechar Boas-vindas" title="Fechar" style="display:none;position:absolute;top:.65rem;right:.65rem;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:9999px;color:#d1d5db;background:rgba(255,255,255,.07);font-size:1.35rem;line-height:1">×</button>
@@ -315,7 +313,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <section><h3 class="opt-sec">Exibição</h3>
 <button onclick="alternarTelaCheia()" class="opt-row"><span>Tela cheia</span><span class="opt-chev">›</span></button>
 <button type="button" onclick="toggleModalOpcoes();mostrarBoasVindas(true)" class="opt-row"><span>Visualizar Boas-vindas</span><span class="opt-chev">›</span></button></section>
-<section><h3 class="opt-sec">versão v0.4.8</h3>
+<section><h3 class="opt-sec">versão v0.4.9</h3>
 <p class="text-gray-200 font-medium pt-1">LID<span class="o-filled-yellow-orange" aria-hidden="true"></span>OLIVROS desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer" class="text-gold-gradient font-bold underline">@alcandenis</a></p></section>
 </div></div>
 
@@ -438,7 +436,7 @@ agendarSync();
 
 function aviso(msg){
 let el=$('toast');
-if(!el){el=document.createElement('div');el.id='toast';el.className='fixed left-1/2 -translate-x-1/2 bottom-24 z-[70] max-w-xs w-[90%] text-center text-xs text-white bg-[#0a0a0a]/95 border border-white/15 rounded-xl px-4 py-3 shadow-2xl';document.body.appendChild(el)}
+if(!el){el=document.createElement('div');el.id='toast';el.className='fixed left-1/2 -translate-x-1/2 bottom-20 z-[70] max-w-xs w-[90%] text-center text-xs text-white bg-[#0a0a0a]/95 border border-white/15 rounded-xl px-4 py-3 shadow-2xl';document.body.appendChild(el)}
 el.textContent=msg;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.style.display='none'},3500);
 }
 function doisToques(btn,fn){
@@ -780,7 +778,7 @@ function telaCheiaAtiva(){return !!(document.fullscreenElement||document.webkitF
 function entrarTelaCheia(){const el=document.documentElement,fn=el.requestFullscreen||el.webkitRequestFullscreen;if(!fn)return;try{const r=fn.call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
 function sairTelaCheia(){const fn=document.exitFullscreen||document.webkitExitFullscreen;if(!fn)return;try{const r=fn.call(document);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
 function alternarTelaCheia(){toggleModalOpcoes();if(telaCheiaAtiva()){lsSet('lido_fs','off');sairTelaCheia()}else{lsSet('lido_fs','on');entrarTelaCheia()}}
-/* Verificação Inicial */
+
 function verificarEstadoInicial() {
   if (usuarioNome) {
     const el = $('login-usuario-nome');
@@ -876,7 +874,7 @@ const tile=(r,n)=>`<div class="flex-1 rounded-xl bg-white/5 border border-white/
 const chips=anos.map(a=>`<button onclick="definirAnoStats(${a})" class="seg-btn${a===anoStats?' ativo':''}">${a}</button>`).join('');
 return `<div class="space-y-3">
 <div class="frosted-card p-4 w-full shadow-2xl grid grid-cols-2 sm:grid-cols-4 gap-2">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Total',lidos.length)}</div>
-${secStat('Por mês',`<div class="flex flex-wrap gap-2">${chips}</div><div class="flex items-end gap-1.5" style="height:8.5rem">${porMes.map((n,i)=>`<div class="flex-1 flex flex-col items-center justify-end gap-1"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full rounded-t bg-gradient-to-t from-yellow-500 to-amber-300" style="height:${n?Math.max(6,Math.round(n/maxM*80)):0}px"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div>`)}
+<section class="frosted-card p-5 w-full shadow-2xl space-y-3"><div class="flex items-center justify-between"><h3 class="text-[11px] uppercase tracking-widest text-gray-400 font-semibold">Por mês (${anoStats})</h3><button onclick="abrirInstaModalStats(${anoStats})" class="text-xs btn-gold-degrade px-3 py-1.5 rounded-lg flex items-center gap-1.5"><span>Story do Ano</span></button></div><div class="flex flex-wrap gap-2">${chips}</div><div class="flex items-end gap-1.5" style="height:8.5rem">${porMes.map((n,i)=>`<div class="flex-1 flex flex-col items-center justify-end gap-1"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full rounded-t bg-gradient-to-t from-yellow-500 to-amber-300" style="height:${n?Math.max(6,Math.round(n/maxM*80)):0}px"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div></section>
 ${secStat('Por tipo',`<div class="space-y-3">${Object.entries(tipos).map(([k,n])=>barraStat(k,n,maxT)).join('')}</div>`)}
 ${secStat('Livros por autor',topA.length?`<div class="space-y-3">${topA.map(([a,n])=>barraStat(a,n,topA[0][1])).join('')}</div>`:'<p class="text-xs text-gray-500">Sem dados ainda.</p>')}
 ${secStat('Abandonados ('+aband.length+')',aband.length?`<ul class="space-y-1.5">${aband.map(l=>`<li class="text-sm text-gray-200">${esc(l.titulo)} <span class="text-gray-500 text-xs">· ${esc(l.autor)}</span></li>`).join('')}</ul>`:'<p class="text-xs text-gray-500">Nenhum livro abandonado.</p>')}
@@ -1003,12 +1001,9 @@ for(const l of alvos){
  try{
   const conhecido = l.autor && !/desconhecido/i.test(l.autor);
   let lista = [];
-  
-  // Tenta buscar com título e autor (se conhecido)
   if (conhecido) {
     lista = await buscarGoogleBooks(`${l.titulo} ${l.autor}`, 3);
   }
-  // Se não encontrou ou o autor for desconhecido, busca apenas pelo título
   if (!lista.length) {
     lista = await buscarGoogleBooks(l.titulo, 3);
   }
@@ -1031,7 +1026,6 @@ if(alterado){
 }
 }
 
-/* busca de livros (modal e pergunta diária) */
 function buscaDebounce(q,tipo){
 clearTimeout(timers[tipo]);
 seqBusca[tipo]=(seqBusca[tipo]||0)+1;
@@ -1068,7 +1062,6 @@ function salvarLivro(e){
 e.preventDefault();
 const editId=$('edit_id').value;
 const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim();
-// Sem título/autor de livro, a observação é salva como uma nota independente.
 if(!editId&&!titulo&&!autor){
  if(!observacao)return aviso('Escreva uma observação ou informe o título de um livro.');
  notas.unshift({id:Date.now(),texto:observacao,musica:'',data:new Date().toLocaleDateString('pt-BR')});
@@ -1148,21 +1141,23 @@ function atualizarTitulo(){
 let homeSemCapa=false;
 function capaValida(u){return !!u&&!/placehold\.co/.test(u)}
 function mostrarRetangulo(){const r=$('home-ret');if(r)r.style.opacity=(abaAtual==='inicio'&&homeSemCapa)?'.55':'0'}
+
 function renderizarFeed(scrollToId=null){
 homeSemCapa=false;
 atualizarTitulo();
 const feed=$('feed-container');
 feed.innerHTML='';
-feed.className='snap-feed-container relative z-10 w-full max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto px-4 md:px-6 pt-28 pb-28 page-transition md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 lg:gap-6'+(modoSel?' modo-sel':'');
+feed.className='snap-feed-container relative z-10 w-full max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto px-4 md:px-6 pt-28 pb-20 page-transition md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-5 lg:gap-6'+(modoSel?' modo-sel':'');
 const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
 mostrarRetangulo();
 handleFeedScroll();
 }
+
 function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
-wrap.className='home-wrap min-h-[calc(100dvh-14rem)] md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end';
+wrap.className='home-wrap min-h-[calc(100dvh-12rem)] md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end pb-4';
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors h-full flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-3">${imgCapa(l.capa,'w-14 h-20',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,true);
 if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl h-full flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
@@ -1172,6 +1167,7 @@ homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(homeSemCapa?BG_PADRAO:l.capa);
 if(!homeSemCapa){const im=new Image();im.onerror=()=>{if(abaAtual==='inicio'&&biblioteca[0]===l){homeSemCapa=true;transicionarFundo(BG_PADRAO);mostrarRetangulo()}};im.src=l.capa}
 }
+
 let filtroTodos='tudo';
 let filtroSoTextos='todos';
 function definirFiltroTodos(f){filtroTodos=f;renderizarFeed();voltarAoTopo()}
@@ -1353,6 +1349,7 @@ if(at)lin.push(at);return lin;
 }
 function cortarLinha(ctx,u,largura){if(ctx.measureText(u).width<=largura)return u;while(u.length>1&&ctx.measureText(u+'…').width>largura)u=u.slice(0,-1);return u.trim()+'…'}
 function pathEstrela(ctx,cx,cy,r){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?r:r*.45,x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
+
 async function renderizarStory(l){
 const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
 try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
@@ -1408,9 +1405,88 @@ ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1832,600,2);
 ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1884);
 storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
 }
+
+async function renderizarStoryStats(ano){
+const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
+try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
+ctx.clearRect(0,0,W,H);ctx.fillStyle='#000000';ctx.fillRect(0,0,W,H);
+
+const doAno=biblioteca.filter(l=>{const p=parseData(l.data_fim);return statusDe(l)==='lido'&&p&&p.a===ano});
+const covers=doAno.map(l=>l.capa).filter(c=>c&&!c.includes('placehold.co'));
+const loadedImgs=[];
+for(const url of covers.slice(0,24)){
+  const img=await carregarImg(url);
+  if(img)loadedImgs.push(img);
+}
+
+if(loadedImgs.length>0){
+  const cols=4,rows=6,cellW=W/cols,cellH=H/rows;
+  ctx.globalAlpha=0.32;let imgIdx=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const img=loadedImgs[imgIdx%loadedImgs.length];imgIdx++;
+      const x=c*cellW,y=r*cellH;
+      const ir=img.width/img.height,cr=cellW/cellH;
+      let sx=0,sy=0,sw=img.width,sh=img.height;
+      if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
+      ctx.drawImage(img,sx,sy,sw,sh,x,y,cellW,cellH);
+    }
+  }
+  ctx.globalAlpha=1.0;
+}
+
+const g=ctx.createLinearGradient(0,0,0,H);
+g.addColorStop(0,'rgba(0,0,0,0.85)');g.addColorStop(0.5,'rgba(0,0,0,0.78)');g.addColorStop(1,'rgba(0,0,0,0.94)');
+ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+ctx.textBaseline='alphabetic';ctx.textAlign='center';
+ctx.font='600 46px "Inter",sans-serif';ctx.fillStyle='#fff';
+const wI=ctx.measureText('LIDO').width;
+ctx.font='900 46px "Inter",sans-serif';const wV=ctx.measureText('LIVROS').width;
+const x0=(W-(wI+wV))/2;
+ctx.font='600 46px "Inter",sans-serif';ctx.fillStyle='#fff';ctx.fillText('LIDO',x0,160);
+ctx.font='900 46px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('LIVROS',x0+wI,160);
+
+ctx.font='800 60px "Inter",sans-serif';ctx.fillStyle='#ffffff';
+ctx.fillText(`RETROSPECTIVA ${ano}`,W/2,260);
+
+const totalLivros=doAno.length;
+const totalPaginas=doAno.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
+const notasValidas=doAno.filter(l=>l.nota>0);
+const mediaNota=notasValidas.length?(notasValidas.reduce((s,l)=>s+l.nota,0)/notasValidas.length).toFixed(1):'-';
+
+const boxY=360,boxH=230;
+drawStatCard(ctx,W/2-460,boxY,920,boxH,`${totalLivros}`,totalLivros===1?'Livro Lido':'Livros Lidos');
+drawStatCard(ctx,W/2-460,boxY+270,920,boxH,`${totalPaginas.toLocaleString('pt-BR')}`,'Páginas Lidas');
+drawStatCard(ctx,W/2-460,boxY+540,920,boxH,`${String(mediaNota).replace('.',',')}`,'Média de Avaliação');
+
+ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1780,600,2);
+ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';
+ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1834);
+
+storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
+}
+
+function drawStatCard(ctx,x,y,w,h,value,label){
+ctx.save();
+ctx.fillStyle='rgba(20,20,20,0.78)';
+ctx.strokeStyle='rgba(255,255,255,0.12)';
+ctx.lineWidth=2;
+ctx.beginPath();ctx.roundRect(x,y,w,h,24);ctx.fill();ctx.stroke();
+
+ctx.textAlign='center';
+ctx.font='800 72px "Inter",sans-serif';ctx.fillStyle='#FACC15';
+ctx.fillText(value,x+w/2,y+95);
+
+ctx.font='600 30px "Inter",sans-serif';ctx.fillStyle='#e5e7eb';
+ctx.fillText(label.toUpperCase(),x+w/2,y+165);
+ctx.restore();
+}
+
 async function abrirInstaModal(id){const l=biblioteca.find(x=>x.id===id);if(!l)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStory(l)}
+async function abrirInstaModalStats(ano){storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStoryStats(ano)}
 function fecharInstaModal(){$('insta-modal').classList.add('hidden')}
-async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`story_lido_${Date.now()}.png`,'image/png')}
+async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`story_estatisticas_${Date.now()}.png`,'image/png')}
 
 /* arquivos */
 try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
@@ -1466,7 +1542,6 @@ if(!ok){const el=document.createElement('textarea');el.value=texto;el.style.posi
 if(ok){fecharEnviarIA();aviso('Prompt copiado. Cole no chat da IA.')}else aviso('Não foi possível copiar o prompt. Tente novamente.');
 }
 
-
 window.addEventListener('DOMContentLoaded', () => {
   verificarEstadoInicial();
   renderizarFeed();
@@ -1474,17 +1549,10 @@ window.addEventListener('DOMContentLoaded', () => {
   iniciarVigiaSync();
 });
 
-/* navegação pelo botão Voltar do Android/PWA — adição isolada */
 (function configurarBotaoVoltarPWA(){
   const estadoVoltar = { lidoVoltarPWA: true };
-
-  function modalVisivel(id){
-    const el = document.getElementById(id);
-    return !!el && !el.classList.contains('hidden');
-  }
-
+  function modalVisivel(id){const el=document.getElementById(id);return !!el&&!el.classList.contains('hidden')}
   function voltarDentroDoApp(){
-    // Fecha primeiro a camada/modal que estiver aberta, sem alterar seus dados.
     if (modalVisivel('insta-modal')) { fecharInstaModal(); return true; }
     if (modalVisivel('modal-ia')) { fecharEnviarIA(); return true; }
     if (modalVisivel('modal-amazon')) { fecharAmazon(); return true; }
@@ -1494,84 +1562,36 @@ window.addEventListener('DOMContentLoaded', () => {
     if (modalVisivel('modal-cloud')) { toggleModalCloud(); return true; }
     if (modalVisivel('modal-registro')) { toggleModalNovoRegistro(); return true; }
     if (modalVisivel('modal-opcoes')) { toggleModalOpcoes(); return true; }
-
     if (modoSel) { sairSelecao(); return true; }
-
-    // Se estiver em uma aba interna, retorna à tela inicial.
-    if (typeof abaAtual !== 'undefined' && abaAtual !== 'inicio') {
-      mudarAba('inicio');
-      return true;
-    }
-
-    // Na tela inicial, mantém o histórico interno para evitar sair do PWA.
+    if (typeof abaAtual !== 'undefined' && abaAtual !== 'inicio') { mudarAba('inicio'); return true; }
     return true;
   }
-
-  function manterHistoricoInterno(){
-    try { history.pushState(estadoVoltar, '', location.href); } catch(e) {}
-  }
-
-  window.addEventListener('popstate', function(){
-    voltarDentroDoApp();
-    manterHistoricoInterno();
-  });
-
-  // Cria a primeira entrada interna para o botão Voltar ser tratado pelo app.
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', manterHistoricoInterno, { once: true });
-  } else {
-    manterHistoricoInterno();
-  }
+  function manterHistoricoInterno(){try{history.pushState(estadoVoltar,'',location.href)}catch(e){}}
+  window.addEventListener('popstate',function(){voltarDentroDoApp();manterHistoricoInterno()});
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',manterHistoricoInterno,{once:true})}else{manterHistoricoInterno()}
 })();
 
-
-/* Instalação do PWA LiLi — adição isolada */
 let eventoInstalacaoLiLi = null;
-function appLiLiJaInstalado(){
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-}
-function atualizarBotaoInstalarLiLi(){
-  const botao = document.getElementById('btn-instalar-lili');
-  if (botao) botao.classList.toggle('hidden', appLiLiJaInstalado());
-}
-window.addEventListener('beforeinstallprompt', function(evento){
-  evento.preventDefault();
-  eventoInstalacaoLiLi = evento;
-  atualizarBotaoInstalarLiLi();
-});
-window.addEventListener('appinstalled', function(){
-  eventoInstalacaoLiLi = null;
-  atualizarBotaoInstalarLiLi();
-  if (typeof aviso === 'function') aviso('LiLi instalado com sucesso.');
-});
+function appLiLiJaInstalado(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
+function atualizarBotaoInstalarLiLi(){const botao=$('btn-instalar-lili');if(botao)botao.classList.toggle('hidden',appLiLiJaInstalado())}
+window.addEventListener('beforeinstallprompt',function(evento){evento.preventDefault();eventoInstalacaoLiLi=evento;atualizarBotaoInstalarLiLi()});
+window.addEventListener('appinstalled',function(){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi();if(typeof aviso==='function')aviso('LiLi instalado com sucesso.')});
 async function instalarAppLiLi(){
-  if (appLiLiJaInstalado()) {
-    atualizarBotaoInstalarLiLi();
-    return;
-  }
-  if (eventoInstalacaoLiLi) {
+  if(appLiLiJaInstalado()){atualizarBotaoInstalarLiLi();return}
+  if(eventoInstalacaoLiLi){
     eventoInstalacaoLiLi.prompt();
-    const escolha = await eventoInstalacaoLiLi.userChoice;
-    if (escolha && escolha.outcome === 'accepted') {
-      eventoInstalacaoLiLi = null;
-      atualizarBotaoInstalarLiLi();
-    }
+    const escolha=await eventoInstalacaoLiLi.userChoice;
+    if(escolha&&escolha.outcome==='accepted'){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi()}
     return;
   }
-  const agente = navigator.userAgent || '';
-  const eIOS = /iphone|ipad|ipod/i.test(agente);
-  if (eIOS) {
+  const agente=navigator.userAgent||'';
+  if(/iphone|ipad|ipod/i.test(agente)){
     alert('Para instalar o LiLi no iPhone ou iPad:\n1. Abra esta página no Safari.\n2. Toque em Compartilhar.\n3. Escolha “Adicionar à Tela de Início”.\n4. Toque em Adicionar.');
-  } else {
-    alert('A instalação ainda não está disponível neste momento. No menu do navegador, procure “Instalar app” ou “Adicionar à tela inicial”. Se essa opção não aparecer, abra o LiLi no Chrome e tente novamente.');
+  }else{
+    alert('A instalação ainda não está disponível neste momento. No menu do navegador, procure “Instalar app” ou “Adicionar à tela inicial”.');
   }
 }
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', atualizarBotaoInstalarLiLi, { once: true });
-} else {
-  atualizarBotaoInstalarLiLi();
-}
-
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',atualizarBotaoInstalarLiLi,{once:true})}else{atualizarBotaoInstalarLiLi()}
 </script>
 </body>
 </html>
