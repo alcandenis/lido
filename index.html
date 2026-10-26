@@ -78,7 +78,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .dock-tab{font-size:.75rem;padding:.25rem .5rem;color:#9ca3af;position:relative;transition:color .2s;font-weight:500}
 .dock-tab:hover{color:#e5e7eb}
 .dock-tab.ativo{color:#FACC15;font-weight:700;text-shadow:0 0 12px rgba(250,204,21,0.4)}
-.dock-add{width:2.4rem;height:2rem;border-radius:.5rem;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);color:#000;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(250,204,21,0.45);transition:all .2s;border:none}
+.dock-add{width:2.75rem;height:2.75rem;border-radius:9999px;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);color:#000;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(250,204,21,0.45);transition:all .2s;border:none}
 .dock-add:hover,.dock-add:active{filter:brightness(1.15);transform:scale(1.05)}
 .font-obs{font-family:'Inter',sans-serif;font-style:normal;font-weight:400;line-height:1.65}
 .btn-blue-frost{width:2.5rem;height:2.5rem;border-radius:.75rem;display:flex;align-items:center;justify-content:center;color:#bfdbfe;background:rgba(59,130,246,.18);border:1px solid rgba(147,197,253,.3);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:all .2s}
@@ -160,8 +160,8 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <div id="tela-login-inicial" class="fixed inset-0 z-[100] bg-[#000000] flex flex-col items-center justify-center p-6 text-center overflow-y-auto">
   <div class="frosted-card p-8 max-w-md w-full space-y-6 shadow-2xl border border-white/10 my-auto">
     <div class="space-y-1">
-      <h1 class="text-4xl font-serif font-medium tracking-wide text-gray-300" style="-webkit-font-smoothing:antialiased; text-shadow:0 0 1px rgba(255,255,255,0.2);">
-        <span class="text-yellow-orange-gradient font-medium">LID<span id="login-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-gray-300 font-medium">LIVROS</span>
+      <h1 class="text-4xl font-serif font-extrabold tracking-widest">
+        <span class="text-yellow-orange-gradient">LID<span id="login-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>
       </h1>
       <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">SEU DIÁRIO DE LEITURA</p>
     </div>
@@ -193,7 +193,7 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 
 <header id="app-header" class="fixed top-0 left-0 right-0 z-40 pb-4 px-6 flex justify-between items-center bg-gradient-to-b from-[#000000] via-[#000000]/90 to-transparent pointer-events-none" style="padding-top:calc(1.25rem + env(safe-area-inset-top,0px))">
 <div class="pointer-events-auto cursor-pointer" onclick="mudarAba('inicio')" title="Tela inicial">
-<h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-medium tracking-wide leading-none text-gray-300" style="-webkit-font-smoothing:antialiased; text-shadow:0 0 1px rgba(255,255,255,0.2);"></h1>
+<h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
 </div>
 <div class="flex items-center gap-3 pointer-events-auto">
   <button onclick="toggleModalCloud()" class="h-[1.98rem] md:h-[2.4rem] flex items-center transition-transform hover:scale-105" aria-label="Status do Google Drive" title="Status da Nuvem">
@@ -211,8 +211,12 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 </div>
 </header>
 
-<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-16 page-transition">
-</main>
+<!-- Sub-abas fixas com design frosted -->
+<div id="sub-tabs-container" class="fixed left-0 right-0 z-30 bg-[rgba(12,12,12,0.75)] backdrop-blur-2xl border-b border-white/15 px-4 py-2.5 hidden shadow-lg" style="top:calc(4.2rem + env(safe-area-inset-top,0px))">
+  <div id="sub-tabs-content" class="max-w-2xl mx-auto flex items-center justify-center"></div>
+</div>
+
+<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-16 page-transition"></main>
 
 <div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-16 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
 <div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-16 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
@@ -231,15 +235,14 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <div class="max-w-md mx-auto flex items-center justify-between">
 <button onclick="mudarAba('inicio')" id="btn-tab-inicio" class="dock-tab">Início</button>
 <button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab">Textos</button>
-<button id="dock-add-button" onclick="toggleModalNovoRegistro()" class="dock-add" title="Nova passagem" aria-label="Abrir Nova passagem"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v14m7-7H5"/></svg></button>
+<button id="dock-add-button" onclick="alternarNovaPassagemDock()" class="dock-add" title="Nova passagem" aria-label="Abrir Nova passagem"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="dock-add-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.75" d="M12 5v14m7-7H5"/></svg></button>
 <button onclick="mudarAba('lidos')" id="btn-tab-lidos" class="dock-tab">Lidos</button>
 </div></div>
 </nav>
 
-<div id="modal-registro" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-<div class="frosted-modal w-full max-w-lg p-6 md:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
-<div class="flex items-center justify-between"><h2 class="text-base font-bold text-white font-serif">Nova Passagem / Livro</h2><button onclick="toggleModalNovoRegistro()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
-<form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-4">
+<div id="modal-registro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+<div id="registro-caixa" class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
+<form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
 <input type="hidden" id="edit_id">
 <div class="relative"><label class="block text-xs font-medium text-gray-300 mb-1">Título</label>
 <input type="text" id="titulo" oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar no Google Books..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
@@ -247,6 +250,8 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <div id="res-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-56 overflow-y-auto"></div></div>
 <div class="grid grid-cols-[minmax(0,1fr)_6.5rem] gap-2 items-end"><div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><div><label class="block text-xs font-medium text-gray-300 mb-1">Páginas</label><input type="number" id="paginas" min="1" step="1" inputmode="numeric" placeholder="Nº" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div></div>
 <input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url">
+<button type="button" id="registro-detalhes-toggle" aria-expanded="false" aria-controls="registro-detalhes" onclick="toggleDetalhesRegistro()" class="inline-flex items-center gap-1.5 text-[11px] text-gold-400 hover:underline transition-colors"><span>Detalhes da leitura</span><span id="registro-detalhes-chevron" aria-hidden="true" class="transition-transform">⌄</span></button>
+<div id="registro-detalhes" class="hidden space-y-3 rounded-lg border border-white/10 bg-black/10 p-3">
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Tipo de leitura</label>
 <div class="grid grid-cols-3 gap-2"><button type="button" data-formato="Kindle" onclick="definirFormato('Kindle')" class="seg-btn">Kindle</button><button type="button" data-formato="Audiobook" onclick="definirFormato('Audiobook')" class="seg-btn">Áudio</button><button type="button" data-formato="Físico" onclick="definirFormato('Físico')" class="seg-btn">Físico</button></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Status</label>
@@ -255,8 +260,13 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 <div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
 <div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
 <div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
+</div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
-<div class="flex gap-2 pt-2"><button type="button" onclick="salvarLivroDesejado(event)" class="flex-1 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold">QUERO LER</button><button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-3 rounded-lg text-sm uppercase tracking-wider">Adicionar</button></div>
+<div class="flex gap-2">
+  <button type="button" onclick="cancelarNovaPassagem()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">SAIR</button>
+  <button type="button" onclick="salvarLivroDesejado(event)" class="flex-1 py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold">QUERO LER</button>
+  <button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button>
+</div>
 </form>
 </div></div>
 
@@ -938,6 +948,7 @@ const t=l.data_inicio&&l.data_fim?`Lido de ${l.data_inicio} a ${l.data_fim}`:l.d
 return t?`<p class="text-xs text-gray-400">${esc(t)}</p>`:'';
 }
 function prepararNovoRegistro(){
+const detalhes=$('registro-detalhes'),detalhesBtn=$('registro-detalhes-toggle'),detalhesChevron=$('registro-detalhes-chevron');if(detalhes)detalhes.classList.add('hidden');if(detalhesBtn)detalhesBtn.setAttribute('aria-expanded','false');if(detalhesChevron)detalhesChevron.style.transform='rotate(0deg)';
 $('bookForm').reset();
 ['edit_id','capa_url'].forEach(i=>$(i).value='');
 $('formato').value='Kindle';$('nota').value='0';$('status').value='lendo';
@@ -1148,7 +1159,7 @@ function fecharAmazon(){$('modal-amazon').classList.add('hidden')}
 function confirmarAmazon(){fecharAmazon();aviso('Busca na Amazon em breve.')}
 function atualizarTitulo(){
  const h=$('titulo-app');
- h.innerHTML=`<span class="text-yellow-orange-gradient font-medium" style="-webkit-font-smoothing:antialiased; text-shadow:0 0 1px rgba(255,255,255,0.2);">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-gray-300 font-medium" style="-webkit-font-smoothing:antialiased; text-shadow:0 0 1px rgba(255,255,255,0.2);">LIVROS</span>`;
+ h.innerHTML=`<span class="text-yellow-orange-gradient">LID<span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span></span><span class="text-white">LIVROS</span>`;
  h.style.fontSize='';h.style.lineHeight='';h.style.letterSpacing='';h.style.width='';h.style.margin='';
 }
 let homeSemCapa=false;
@@ -1160,6 +1171,29 @@ homeSemCapa=false;
 atualizarTitulo();
 const feed=$('feed-container');
 feed.innerHTML='';
+const subBar = $('sub-tabs-container');
+const subContent = $('sub-tabs-content');
+
+if(abaAtual==='inicio'){
+  if(subBar) subBar.classList.add('hidden');
+  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col justify-end pb-20 page-transition'+(modoSel?' modo-sel':'');
+  feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
+} else {
+  if(subBar) subBar.classList.remove('hidden');
+  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pb-16 page-transition'+(modoSel?' modo-sel':'');
+  feed.style.paddingTop = 'calc(7.8rem + env(safe-area-inset-top,0px))';
+
+  if(abaAtual==='todos'){
+    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else if(abaAtual==='lidos'){
+    subContent.innerHTML = `<div class="grid grid-cols-2 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else if(abaAtual==='observacoes'){
+    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else {
+    if(subBar) subBar.classList.add('hidden');
+  }
+}
+
 const fn={todos:renderizarAbaTodos,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
 mostrarRetangulo();
@@ -1199,8 +1233,6 @@ function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function renderizarAbaTodos(feed,scrollToId){
-const topoHtml=`<div class="flex items-center justify-between gap-1 mb-4 bg-white/5 p-1 rounded-xl border border-white/10">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg flex-1 text-center py-1.5 rounded-lg text-xs${filtroTodos===k?' ativo bg-white/10 text-gold-400 font-semibold':''}">${r}</button>`).join('')}</div>`;
-const wrap=document.createElement('div');wrap.className='space-y-3';wrap.innerHTML=topoHtml;feed.appendChild(wrap);
 const itens=[];
 const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
 if(filtroTodos==='tudo'||filtroTodos==='livros')bibFiltrada.forEach(l=>itens.push({t:'livro',id:l.id,d:l}));
@@ -1236,8 +1268,6 @@ desejados.forEach((l,i)=>{
 transicionarFundo(BG_PADRAO);
 }
 function renderizarAbaObservacoes(feed){
-const topoHtml=`<div class="flex items-center justify-between gap-1 mb-4 bg-white/5 p-1 rounded-xl border border-white/10">${[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg flex-1 text-center py-1.5 rounded-lg text-xs${filtroSoTextos===k?' ativo bg-white/10 text-gold-400 font-semibold':''}">${r}</button>`).join('')}</div>`;
-const wrap=document.createElement('div');wrap.className='space-y-3';wrap.innerHTML=topoHtml;feed.appendChild(wrap);
 const itens=[
 ...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>statusDe(l)!=='desejado'&&(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
