@@ -493,54 +493,76 @@ textarea{
 </form>
 </div></div>
 
-<!-- Modal Escrevendo um Livro -->
-<div id="modal-escrevendo-livro" class="frosted-modal-container registro-card-view fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-<div class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
-<form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-3">
-<input type="hidden" id="escrita_edit_id">
-<div class="flex items-center justify-between">
-  <h2 class="text-sm font-bold uppercase tracking-wider text-gold-400">Gerenciar Livro Sendo Escrito</h2>
-  <button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/30 px-3 py-1 rounded-lg transition-colors">Excluir Livro</button>
+<!-- Página Completa: Estou Criando um Livro -->
+<div id="tela-escrevendo-livro" class="fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden">
+  <div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10">
+    <div class="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button onclick="fecharModalEscrevendoLivro()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+        <h2 class="text-base font-bold text-white font-serif">Gerenciar Livro Sendo Escrito</h2>
+      </div>
+      <button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/30 px-3 py-1 rounded-lg transition-colors">Excluir Livro</button>
+    </div>
+  </div>
+  <div class="max-w-2xl mx-auto px-5 pt-6 pb-24 space-y-6">
+    <form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-4 frosted-card p-6 md:p-8 shadow-2xl">
+      <input type="hidden" id="escrita_edit_id">
+      <div>
+        <label class="block text-xs font-medium text-gray-300 mb-1">Nome do Livro</label>
+        <input type="text" id="escrita_titulo" required placeholder="Título do seu livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-300 mb-1">Autor</label>
+        <input type="text" id="escrita_autor" readonly class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-300 focus:outline-none cursor-not-allowed">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-300 mb-1">Capítulos Pretendidos</label>
+          <input type="number" id="escrita_capitulos_totais" min="1" step="1" inputmode="numeric" required placeholder="Ex: 20" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-300 mb-1">Capítulo Atual</label>
+          <input type="number" id="escrita_capitulo_atual" min="1" step="1" inputmode="numeric" required placeholder="Ex: 3" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-300 mb-1">Páginas Escritas Até Agora</label>
+        <input type="number" id="escrita_paginas" min="0" step="1" inputmode="numeric" required placeholder="Ex: 45" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <label class="block text-xs font-medium text-gray-300">Upload de Capa (Opcional)</label>
+        </div>
+        <label for="input-upload-capa-escrita" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-2.5 px-4 cursor-pointer flex items-center justify-center gap-2 text-xs text-gray-300 hover:text-gold-400 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span id="escrita-capa-nome-label">Selecionar imagem de capa</span>
+        </label>
+        <input type="file" id="input-upload-capa-escrita" accept="image/*" onchange="tratarUploadCapaEscrita(this)" class="hidden">
+        <input type="hidden" id="escrita_capa_url">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="fecharModalEscrevendoLivro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">VOLTAR</button>
+        <button type="submit" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Salvar Livro</button>
+      </div>
+    </form>
+
+    <!-- Seção de Notas do Livro Sendo Escrito -->
+    <div class="frosted-card p-6 md:p-8 shadow-2xl space-y-4">
+      <h3 class="text-sm font-bold uppercase tracking-wider text-gold-400">Notas do Livro</h3>
+      <div class="space-y-3">
+        <div>
+          <textarea id="escrita_nota_texto" rows="3" placeholder="Escreva uma nota ou lembrete para este livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea>
+        </div>
+        <button type="button" onclick="adicionarNotaLivroEscrito()" class="w-full btn-gold-degrade py-2 rounded-lg text-xs uppercase tracking-wider">Adicionar Nota</button>
+      </div>
+      <div class="pt-4 border-t border-white/10">
+        <div id="lista-notas-escrita" class="space-y-3">
+          <!-- Injetado dinamicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Nome do Livro</label>
-<input type="text" id="escrita_titulo" required placeholder="Título do seu livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Autor</label>
-<input type="text" id="escrita_autor" readonly class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-300 focus:outline-none cursor-not-allowed">
-</div>
-<div class="grid grid-cols-2 gap-3">
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Capítulos Pretendidos</label>
-<input type="number" id="escrita_capitulos_totais" min="1" step="1" inputmode="numeric" required placeholder="Ex: 20" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Capítulo Atual</label>
-<input type="number" id="escrita_capitulo_atual" min="1" step="1" inputmode="numeric" required placeholder="Ex: 3" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-</div>
-<div>
-<label class="block text-xs font-medium text-gray-300 mb-1">Páginas Escritas Até Agora</label>
-<input type="number" id="escrita_paginas" min="0" step="1" inputmode="numeric" required placeholder="Ex: 45" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
-</div>
-<div>
-<div class="flex items-center justify-between mb-1">
-<label class="block text-xs font-medium text-gray-300">Upload de Capa (Opcional)</label>
-</div>
-<label for="input-upload-capa-escrita" class="w-full bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg py-2.5 px-4 cursor-pointer flex items-center justify-center gap-2 text-xs text-gray-300 hover:text-gold-400 transition-colors">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-<span id="escrita-capa-nome-label">Selecionar imagem de capa</span>
-</label>
-<input type="file" id="input-upload-capa-escrita" accept="image/*" onchange="tratarUploadCapaEscrita(this)" class="hidden">
-<input type="hidden" id="escrita_capa_url">
-</div>
-<div class="flex gap-2 pt-2">
-  <button type="button" onclick="fecharModalEscrevendoLivro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">CANCELAR</button>
-  <button type="submit" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Salvar Livro</button>
-</div>
-</form>
-</div></div>
 
 <!-- Boas-vindas -->
 <div id="welcome-modal" class="fixed inset-0 z-[45] flex items-center justify-center p-3" style="display:none" aria-labelledby="welcome-title">
@@ -670,6 +692,7 @@ function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array
 let biblioteca=lerJSON('minha_biblioteca'),notasKindle=lerJSON('notas_kindle'),notas=lerJSON('lido_notas'),usuarioNome=lsGet('lido_usuario_nome');
 let livroEscrito = (() => { try { return JSON.parse(localStorage.getItem('livro_escrito')) || null; } catch(e) { return null; } })();
 let historicoEscrita = (() => { try { return JSON.parse(localStorage.getItem('historico_escrita')) || []; } catch(e) { return []; } })();
+let notasLivroEscrito = (() => { try { return JSON.parse(localStorage.getItem('notas_livro_escrito')) || []; } catch(e) { return []; } })();
 let bgCustomizado = lsGet('lido_bg_customizado', '');
 let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirmandoDel=false,storyBlob=null,dlCap=null,toastTimer=null;
 const selecionados=new Set(),timers={};
@@ -867,6 +890,10 @@ if(Array.isArray(rem.historicoEscrita)){
   historicoEscrita = rem.historicoEscrita;
   lsSet('historico_escrita', JSON.stringify(historicoEscrita));
 }
+if(Array.isArray(rem.notasLivroEscrito)){
+  notasLivroEscrito = rem.notasLivroEscrito;
+  lsSet('notas_livro_escrito', JSON.stringify(notasLivroEscrito));
+}
 
 // Sincronização do plano de fundo personalizado
 if(rem.bgCustomizado !== undefined){
@@ -894,6 +921,7 @@ const corpo=JSON.stringify({
   removidos,
   livroEscrito,
   historicoEscrita,
+  notasLivroEscrito,
   bgCustomizado
 });
 let r;
@@ -1035,6 +1063,7 @@ if(Array.isArray(j.notas))notas=j.notas;
 if(Array.isArray(j.notasKindle))notasKindle=j.notasKindle;
 if(j.livroEscrito)livroEscrito=j.livroEscrito;
 if(Array.isArray(j.historicoEscrita))historicoEscrita=j.historicoEscrita;
+if(Array.isArray(j.notasLivroEscrito))notasLivroEscrito=j.notasLivroEscrito;
 if(j.bgCustomizado!==undefined)bgCustomizado=j.bgCustomizado;
 msg('Importação realizada com sucesso!');
 }else{
@@ -1046,6 +1075,7 @@ const vk=new Set(notasKindle.map(n=>(n.titulo+'|'+n.observacao).toLowerCase()));
 kd.filter(n=>n&&n.observacao).forEach((n,i)=>{const k=(n.titulo+'|'+n.observacao).toLowerCase();if(vk.has(k))return;vk.add(k);nk++;notasKindle.push({...n,id:n.id||Date.now()+i})});
 if(j.livroEscrito){livroEscrito=j.livroEscrito;lsSet('livro_escrito',JSON.stringify(livroEscrito))}
 if(Array.isArray(j.historicoEscrita)){historicoEscrita=j.historicoEscrita;lsSet('historico_escrita',JSON.stringify(historicoEscrita))}
+if(Array.isArray(j.notasLivroEscrito)){notasLivroEscrito=j.notasLivroEscrito;lsSet('notas_livro_escrito',JSON.stringify(notasLivroEscrito))}
 if(j.bgCustomizado!==undefined){bgCustomizado=j.bgCustomizado;lsSet('lido_bg_customizado',bgCustomizado)}
 notas.sort((a,b)=>b.id-a.id);
 msg(`${nl} livros, ${nn} notas e ${nk} marcadores restaurados.`);
@@ -1157,7 +1187,7 @@ const m=$('modal-opcoes');m.classList.toggle('hidden');
 if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();}
 }
 
-/* Funções do Livro Sendo Escrito */
+/* Funções do Livro Sendo Escrito (Página Inteira) */
 function abrirModalEscrevendoLivro(){
   toggleModalOpcoes();
   const nomeU = usuarioNome || lsGet('lido_usuario_nome') || 'Autor';
@@ -1175,10 +1205,11 @@ function abrirModalEscrevendoLivro(){
     $('escrita_capa_url').value = '';
     $('escrita-capa-nome-label').textContent = 'Selecionar imagem de capa';
   }
-  $('modal-escrevendo-livro').classList.remove('hidden');
+  renderizarNotasLivroEscrito();
+  $('tela-escrevendo-livro').classList.remove('hidden');
 }
 function fecharModalEscrevendoLivro(){
-  $('modal-escrevendo-livro').classList.add('hidden');
+  $('tela-escrevendo-livro').classList.add('hidden');
 }
 function tratarUploadCapaEscrita(input){
   const file=input.files[0];
@@ -1203,13 +1234,11 @@ function salvarLivroEscrito(e){
   const hojeStr = new Date().toISOString().split('T')[0];
   const mesAnoStr = hojeStr.substring(0, 7); // YYYY-MM
 
-  // Registrar histórico diário/mensal de páginas escritas
   let progressoAnterior = livroEscrito ? (livroEscrito.paginas || 0) : 0;
   let diffPaginas = paginas - progressoAnterior;
-  if(diffPaginas < 0) diffPaginas = 0; // Se diminuiu, não conta negativo retroativo
+  if(diffPaginas < 0) diffPaginas = 0;
 
   if(!historicoEscrita) historicoEscrita = [];
-  // Procura se já tem registro hoje
   let regHoje = historicoEscrita.find(h => h.data === hojeStr);
   if(regHoje){
     regHoje.paginas += diffPaginas;
@@ -1230,10 +1259,58 @@ function salvarLivroEscrito(e){
   localStorage.setItem('livro_escrito', JSON.stringify(livroEscrito));
   localStorage.setItem('historico_escrita', JSON.stringify(historicoEscrita));
 
-  fecharModalEscrevendoLivro();
   aviso('Livro salvo com sucesso!');
   salvarLocal();
   renderizarFeed();
+}
+
+function adicionarNotaLivroEscrito(){
+  const texto = $('escrita_nota_texto').value.trim();
+  if(!texto) return aviso('Escreva o conteúdo da nota.');
+  
+  const agora = new Date();
+  const dataFormatada = agora.toLocaleDateString('pt-BR');
+  const horaFormatada = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+  
+  const novaNota = {
+    id: Date.now(),
+    texto,
+    dataHora: `${dataFormatada} às ${horaFormatada}`,
+    atualizadoEm: Date.now()
+  };
+  
+  notasLivroEscrito.unshift(novaNota);
+  lsSet('notas_livro_escrito', JSON.stringify(notasLivroEscrito));
+  $('escrita_nota_texto').value = '';
+  renderizarNotasLivroEscrito();
+  aviso('Nota adicionada com sucesso!');
+  salvarLocal();
+}
+
+function deletarNotaLivroEscrito(id){
+  notasLivroEscrito = notasLivroEscrito.filter(n => n.id !== id);
+  lsSet('notas_livro_escrito', JSON.stringify(notasLivroEscrito));
+  renderizarNotasLivroEscrito();
+  aviso('Nota excluída.');
+  salvarLocal();
+}
+
+function renderizarNotasLivroEscrito(){
+  const container = $('lista-notas-escrita');
+  if(!container) return;
+  if(!notasLivroEscrito || !notasLivroEscrito.length){
+    container.innerHTML = '<p class="text-xs text-gray-500">Nenhuma nota cadastrada para este livro ainda.</p>';
+    return;
+  }
+  container.innerHTML = notasLivroEscrito.map(n => `
+    <div class="p-3 bg-white/5 rounded-lg border border-white/5 space-y-1">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] text-gold-400 font-semibold">${esc(n.dataHora)}</span>
+        <button type="button" onclick="deletarNotaLivroEscrito(${n.id})" class="text-[10px] text-red-400 hover:text-red-300">Excluir</button>
+      </div>
+      <p class="text-xs text-gray-200 font-obs">${esc(n.texto)}</p>
+    </div>
+  `).join('');
 }
 
 function deletarLivroEscrito(btn){
@@ -1241,7 +1318,9 @@ function deletarLivroEscrito(btn){
     livroEscrito = null;
     localStorage.removeItem('livro_escrito');
     localStorage.removeItem('historico_escrita');
+    localStorage.removeItem('notas_livro_escrito');
     historicoEscrita = [];
+    notasLivroEscrito = [];
     fecharModalEscrevendoLivro();
     aviso('Seu livro sendo escrito foi excluído.');
     salvarLocal();
@@ -1347,7 +1426,6 @@ const genreHtml=generosOrdenados.length?`<details class="group cursor-pointer st
 
 const autorHtml = `<details class="stats-panel p-4 w-full space-y-3 group cursor-pointer"><summary class="flex items-center justify-between stats-heading list-none select-none"><span>Livros por autor</span><span class="transition-transform group-open:rotate-180 text-gray-400 font-bold">⌄</span></summary><div class="pt-3 space-y-3 border-t border-white/10 mt-3">${topA.length?topA.map(([a,n],i)=>barraStat(a,n,topA[0][1],paleta[i%paleta.length])).join(''):'<p class="text-xs text-gray-500">Sem dados ainda.</p>'}</div></details>`;
 
-// Estatísticas do Livro Sendo Escrito (Menu Expansível)
 let livroProgressoHtml = '';
 if(livroEscrito){
   const paginasPorDia = {};
@@ -2238,7 +2316,7 @@ a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();set
 }
 
 function nomeBackup(ext){const d=new Date(),p=n=>String(n).padStart(2,'0');return `LidosBackup_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}h${p(d.getMinutes())}.${ext}`}
-function jsonBackup(){return JSON.stringify({userProfile:{name:usuarioNome},biblioteca,notas,notasKindle,livroEscrito,historicoEscrita,bgCustomizado},null,2)}
+function jsonBackup(){return JSON.stringify({userProfile:{name:usuarioNome},biblioteca,notas,notasKindle,livroEscrito,historicoEscrita,notasLivroEscrito,bgCustomizado},null,2)}
 async function enviarBackupPorEmail(){
 if(!biblioteca.length&&!notas.length)return aviso('Nada para enviar ainda.');
 const ag=new Date(),quando=`${ag.toLocaleDateString('pt-BR')} às ${ag.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
@@ -2299,7 +2377,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (modalVisivel('modal-sub-backup')) { fecharSubMenuBackup(); return true; }
     if (modalVisivel('modal-cloud')) { toggleModalCloud(); return true; }
     if (modalVisivel('modal-registro')) { toggleModalNovoRegistro(); return true; }
-    if (modalVisivel('modal-escrevendo-livro')) { fecharModalEscrevendoLivro(); return true; }
+    if (modalVisivel('tela-escrevendo-livro')) { fecharModalEscrevendoLivro(); return true; }
     if (modalVisivel('modal-opcoes')) { toggleModalOpcoes(); return true; }
     if (modoSel) { sairSelecao(); return true; }
     if (typeof abaAtual !== 'undefined' && abaAtual !== 'inicio') { mudarAba('inicio'); return true; }
