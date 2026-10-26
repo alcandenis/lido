@@ -1215,52 +1215,70 @@ async function buscarGoogleBooks(q, max = 5) {
   }).filter(x => x.titulo);
 }
 
-async function buscarDetalhesLivro(titulo,autor){
-const conhecido=autor&&!/desconhecido/i.test(autor);
-const query = conhecido ? `intitle:${titulo}+inauthor:${autor}` : titulo;
-let lista=await buscarGoogleBooks(query,3);
-let item=(lista.find(x=>x.capa)||lista[0]);
-if(!item&&concihecido){lista=await buscarGoogleBooks(titulo,3);item=(lista.find(x=>x.capa)||lista[0])}
-return item||{capa:'',paginas:0,genero:''};
-}
+const seqBusca={};
+const _cacheGB={};
+const _espera=ms=>new Promise(r=>setTimeout(r,ms));
 
-async function atualizarCapasFaltantes(manual=false){
-let alterado=false;
-const semCapa=biblioteca.filter(l=>!l.capa||l.capa.includes('placehold.co')||!l.genero);
-if(manual&&!semCapa.length)return aviso('Todos os livros já têm capas e gêneros salvos.');
-if(manual)aviso(`Buscando informações para ${semCapa.length} livros...`);
-for(const l of semCapa){
- try{
-  const b=await buscarDetalhesLivro(l.titulo,l.autor);
-  if(b.capa&&(!l.capa||l.capa.includes('placehold.co'))){l.capa=b.capa;alterado=true;}
-  if(b.genero&&!l.genero){l.genero=b.genero;alterado=true;}
-  if(b.paginas&&(!l.paginas||l.paginas<=0)){l.paginas=b.paginas;alterado=true;}
- }catch(e){}
-}
-if(alterado){
- salvarLocal();
- renderizarFeed();
- if(manual)aviso('Informações atualizadas com sucesso!');
-}
-}
-
-async function recarregarBancoGoogleBooks(manual=true){
-let alterado=false;
-const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co')||!l.genero);
-if(manual&&!alvos.length)return aviso('Todos os livros já possuem capas, páginas e gêneros atualizados.');
-if(manual)aviso(`Atualizando dados para ${alvos.length} livros...`);
-
-for(const l of alvos){
- try{
-  const b=await buscarDetalhesLivro(l.titulo,l.autor);
-  if(b){
-   if(b.capa && (!l.capa || l.capa.includes('placehold.co'))){ l.capa = b.capa; alterado = true; }
-   if(b.paginas && b.paginas > 0 && (!l.paginas || l.paginas <= 0)){ l.paginas = b.paginas; alterado = true; }
-   if(b.genero && !l.genero){ l.genero = b.genero; alterado = true; }
+async function _fetchGB(url,tentativas=3){
+  let ultimo=null;
+  for(let i=0;i<tentativas;i++){
+    try{
+      const r=await fetch(url);
+      if(r.ok)return r;
+      ultimo=r;
+      if(r.status!==429&&r.status<500)return r;
+    }catch(e){ultimo=null}
+    await _espera(600*(i+1));
   }
- }catch(e){}
+  return ultimo;
 }
 
+async function buscarGoogleBooks(q, max = 5) {
+  const chave=q+'|'+max;
+  if(_cacheGB[chave])return _cacheGB[chave];
+
+  const base=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books&projection=lite`;
+  let r=null;
+  if(GOOGLE_BOOKS_API_KEY)r=await _fetchGB(base+`&key=${GOOGLE_BOOKS_API_KEY}`);
+  if(!r||!r.ok)r=await _fetchGB(base);
+
+  if(!r||!r.ok){
+    const e=new Error('HTTP '+(r?r.status:'rede'));
+    e.status=r?r.status:0;
+    throw e;
+  }
+
+  const d=await r.json();
+  const lista=(d.items||[]).map(item=>{
+    const info=item.volumeInfo||{};
+    const links=info.imageLinks||{};
+    let cover=links.thumbnail||links.smallThumbnail||'';
+    if(!cover&&item.id)cover=`https://books.google.com/books/content?id=${item.id}&printsec=frontcover&img=1&zoom=1`;
+    cover=cover.replace(/^http:\/\//,'https://').replace(/&edge=curl/g,'');
+    const cats=info.categories||[];
+    return {
+      titulo:info.title||'',
+      autor:Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido',
+      capa:cover,
+      paginas:info.pageCount||0,
+      genero:cats.length?cats[0]:''
+    };
+  }).filter(x=>x.titulo);
+  _cacheGB[chave]=lista;
+  return lista;
+}
+
+async function buscarDetalhesLivro(titulo,autor){
+  const conhecido=autor&&!/desconhecido/i.test(autor);
+  const limpo=s=>String(s||'').replace(/["]/g,'').trim();
+  const query=conhecido?`intitle:"${limpo(titulo)}" inauthor:"${limpo(autor)}"`:`intitle:"${limpo(titulo)}"`;
+  let lista=await buscarGoogleBooks(query,3);
+  let item=(lista.find(x=>x.capa)||lista[0]);
+  if(!item){lista=await buscarGoogleBooks(limpo(titulo)+(conhecido?' '+limpo(autor):''),3);item=(lista.find(x=>x.capa)||lista[0])}
+  await _espera(250);
+  return item||{capa:'',paginas:0,genero:''};
+}
+  
 if(alterado){
  salvarLocal();
  renderizarFeed();
