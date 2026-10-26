@@ -171,6 +171,37 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   box-shadow:0 25px 50px -12px rgba(0,0,0,.25);
   animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards;
 }
+
+/* Regras aplicadas ao Card de Busca na Dock (mesmo comportamento estrutural do card nova passagem, posicionado no topo e sem encobrir a dock) */
+#modal-busca-dock{
+  pointer-events:none!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  padding:calc(5.5rem + env(safe-area-inset-top,0px)) 1rem calc(4.5rem + env(safe-area-inset-bottom,0px))!important;
+  overflow-y:auto;
+  background:transparent!important;
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+#modal-busca-dock > div{
+  pointer-events:auto;
+  display:block;
+  width:100%;
+  max-width:42rem;
+  max-height:none!important;
+  overflow:visible!important;
+  margin:auto auto 0;
+  padding:1.25rem;
+  background:rgba(12,12,12,.85)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  backdrop-filter:blur(20px)!important;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:.875rem;
+  box-shadow:0 25px 50px -12px rgba(0,0,0,.25);
+  animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards;
+}
+
 body.registro-aberto #feed-container,
 body.registro-aberto #scroll-arrow,
 body.registro-aberto #top-btn,
@@ -180,6 +211,8 @@ body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!
 @media(max-height:700px){
   #modal-registro.registro-card-view{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:4rem!important}
   #modal-registro.registro-card-view #registro-caixa{padding:1rem}
+  #modal-busca-dock{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:4rem!important}
+  #modal-busca-dock > div{padding:1rem}
 }
 
 /* Boas-vindas */
@@ -404,12 +437,11 @@ textarea{
 </div></div>
 </nav>
 
-<!-- Modal Card de Busca Global -->
+<!-- Modal Card de Busca Global (Sem o botão "X") -->
 <div id="modal-busca-dock" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharModalBuscaDock()">
   <div class="frosted-card w-full max-w-lg p-5 md:p-6 shadow-2xl space-y-4 animate-[fadeUp_.25s_cubic-bezier(.16,1,.3,1)_forwards]">
     <div class="flex items-center justify-between border-b border-white/10 pb-3">
       <span class="text-xs font-bold uppercase tracking-wider text-gold-400">Busca Rápida</span>
-      <button onclick="fecharModalBuscaDock()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-gray-300 flex items-center justify-center text-base" aria-label="Fechar">✕</button>
     </div>
     <div class="space-y-2">
       <label class="block text-xs font-medium text-gray-300">Procure sua passagem</label>
@@ -420,6 +452,9 @@ textarea{
     </div>
     <div id="resultados-busca-global" class="max-h-64 overflow-y-auto space-y-2 pt-1 pr-1">
       <p class="text-xs text-gray-500 text-center py-4">Digite para procurar em suas passagens e livros lidos...</p>
+    </div>
+    <div class="pt-2 flex justify-end">
+      <button type="button" onclick="fecharModalBuscaDock()" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white text-xs">FECHAR</button>
     </div>
   </div>
 </div>
@@ -568,7 +603,7 @@ textarea{
 <script>
 function lsGet(k,d=''){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;N'}[c]))}
 function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:[]}catch(e){return[]}}
 let biblioteca=lerJSON('minha_biblioteca'),notasKindle=lerJSON('notas_kindle'),notas=lerJSON('lido_notas'),usuarioNome=lsGet('lido_usuario_nome');
 let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirmandoDel=false,storyBlob=null,dlCap=null,toastTimer=null;
@@ -1879,7 +1914,7 @@ async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`s
 try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
 async function baixarArquivo(conteudo,nome,tipo){
 if(!dlCap&&window.claude&&claude.use){try{dlCap=await claude.use('downloads')}catch(e){}}
-if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined')return false}}
+if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined'0)return false}}
 const blob=conteudo instanceof Blob?conteudo:new Blob([conteudo],{type:tipo});
 if(tipo==='image/png'&&navigator.canShare){try{const f=new File([blob],nome,{type:tipo});if(navigator.canShare({files:[f]})){await navigator.share({files:[f]});return true}}catch(e){}}
 const url=URL.createObjectURL(blob),a=document.createElement('a');
