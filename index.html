@@ -321,44 +321,6 @@ textarea{
 }
 
 </style>
-<style>
-/* Styles for the starter page. They only apply to its own classes. */
-.hello-page {
-  margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #f5f2ed;
-  color: #1b1817;
-}
-
-.hello-card {
-  max-width: 28rem;
-  margin: 1.5rem;
-  padding: 2rem;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-}
-
-.hello-card h1 {
-  margin-top: 0;
-  color: #c2560c;
-}
-
-.hello-card button {
-  padding: 0.6rem 1.2rem;
-  border: 0;
-  border-radius: 8px;
-  background: #fe9615;
-  color: #1b1817;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-</style>
 </head>
 <body class="h-full relative select-none">
 <div id="bg-layer-a" class="bg-layer z-0" style="opacity:1"></div>
@@ -511,9 +473,7 @@ textarea{
 <button onclick="conectarGoogleDrive()" class="text-left flex-1"><span class="font-semibold text-white">Google Drive</span></button>
 <span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
 </div>
-<button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="w-full mt-2 flex items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-3 text-left text-sm font-extrabold text-[#211707] shadow-lg shadow-amber-500/20 transition-transform active:scale-[0.99]">
-<span class="flex items-center gap-3"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/10"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
-</button></section>
+<button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="opt-row"><span>Instalar app do LiLi</span><span class="opt-chev">›</span></button></section>
 <section><h3 class="opt-sec">Leitura</h3>
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
 <button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Livros Desejados</span><span class="opt-chev">›</span></button>
@@ -1211,68 +1171,55 @@ toggleModalNovoRegistro();
 const GOOGLE_BOOKS_API_KEY = 'AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
 
 const seqBusca={};
-const _cacheGB={};
-const _espera=ms=>new Promise(r=>setTimeout(r,ms));
-
-async function _fetchGB(url,tentativas=3){
-  let ultimo=null;
-  for(let i=0;i<tentativas;i++){
-    try{
-      const r=await fetch(url);
-      if(r.ok)return r;
-      ultimo=r;
-      if(r.status!==429&&r.status<500)return r; // erro definitivo (400/403/404)
-    }catch(e){ultimo=null}
-    await _espera(600*(i+1)); // 429/5xx/rede: espera e tenta de novo
-  }
-  return ultimo;
-}
-
 async function buscarGoogleBooks(q, max = 5) {
-  const chave=q+'|'+max;
-  if(_cacheGB[chave])return _cacheGB[chave];
-
-  const base=`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books&projection=lite`;
-  let r=null;
-  if(GOOGLE_BOOKS_API_KEY)r=await _fetchGB(base+`&key=${GOOGLE_BOOKS_API_KEY}`);
-  // Chave inválida/restrita (400/403) ou falha: tenta sem chave
-  if(!r||!r.ok)r=await _fetchGB(base);
-
-  if(!r||!r.ok){
-    const e=new Error('HTTP '+(r?r.status:'rede'));
-    e.status=r?r.status:0;
-    throw e;
+  let url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books`;
+  if (GOOGLE_BOOKS_API_KEY) {
+    url += `&key=${GOOGLE_BOOKS_API_KEY}`;
   }
 
-  const d=await r.json();
-  const lista=(d.items||[]).map(item=>{
-    const info=item.volumeInfo||{};
-    const links=info.imageLinks||{};
-    let cover=links.thumbnail||links.smallThumbnail||'';
-    if(!cover&&item.id)cover=`https://books.google.com/books/content?id=${item.id}&printsec=frontcover&img=1&zoom=1`;
-    cover=cover.replace(/^http:\/\//,'https://').replace(/&edge=curl/g,'');
-    const cats=info.categories||[];
+  let r = null;
+  try {
+    r = await fetch(url);
+  } catch (e) {
+    r = null;
+  }
+
+  if (!r || !r.ok) {
+    // Tenta fallback sem chave se falhar
+    let urlSemChave = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=${max}&printType=books`;
+    r = await fetch(urlSemChave);
+    if (!r.ok) {
+      const e = new Error('HTTP ' + r.status);
+      e.status = r.status;
+      throw e;
+    }
+  }
+
+  const d = await r.json();
+  return (d.items || []).map(item => {
+    const info = item.volumeInfo || {};
+    const links = info.imageLinks || {};
+    let cover = links.thumbnail || links.smallThumbnail || '';
+    cover = cover.replace(/^http:\/\//, 'https://').replace('&edge=curl', '');
+    const cats = info.categories || [];
+    const genero = cats.length ? cats[0] : '';
     return {
-      titulo:info.title||'',
-      autor:Array.isArray(info.authors)&&info.authors.length?info.authors.join(', '):'Autor desconhecido',
-      capa:cover,
-      paginas:info.pageCount||0,
-      genero:cats.length?cats[0]:''
+      titulo: info.title || '',
+      autor: Array.isArray(info.authors) && info.authors.length ? info.authors.join(', ') : 'Autor desconhecido',
+      capa: cover,
+      paginas: info.pageCount || 0,
+      genero: genero
     };
-  }).filter(x=>x.titulo);
-  _cacheGB[chave]=lista;
-  return lista;
+  }).filter(x => x.titulo);
 }
 
 async function buscarDetalhesLivro(titulo,autor){
-  const conhecido=autor&&!/desconhecido/i.test(autor);
-  const limpo=s=>String(s||'').replace(/["]/g,'').trim();
-  const query=conhecido?`intitle:"${limpo(titulo)}" inauthor:"${limpo(autor)}"`:`intitle:"${limpo(titulo)}"`;
-  let lista=await buscarGoogleBooks(query,3);
-  let item=(lista.find(x=>x.capa)||lista[0]);
-  if(!item){lista=await buscarGoogleBooks(limpo(titulo)+(conhecido?' '+limpo(autor):''),3);item=(lista.find(x=>x.capa)||lista[0])}
-  await _espera(250); // evita 429 em lote
-  return item||{capa:'',paginas:0,genero:''};
+const conhecido=autor&&!/desconhecido/i.test(autor);
+const query = conhecido ? `intitle:${titulo}+inauthor:${autor}` : titulo;
+let lista=await buscarGoogleBooks(query,3);
+let item=(lista.find(x=>x.capa)||lista[0]);
+if(!item&&concihecido){lista=await buscarGoogleBooks(titulo,3);item=(lista.find(x=>x.capa)||lista[0])}
+return item||{capa:'',paginas:0,genero:''};
 }
 
 async function atualizarCapasFaltantes(manual=false){
@@ -1508,4 +1455,569 @@ if(abaAtual==='inicio'){
   if(abaAtual==='todos'){
     subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='lidos'){
-    subC
+    subContent.innerHTML = `<div class="grid grid-cols-2 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else if(abaAtual==='observacoes'){
+    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+  } else if(abaAtual==='buscar'){
+    if(subBar) subBar.classList.add('hidden');
+  } else {
+    if(subBar) subBar.classList.add('hidden');
+  }
+}
+
+const fn={todos:renderizarAbaTodos,buscar:renderizarAbaBusca,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
+if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
+mostrarRetangulo();
+handleFeedScroll();
+}
+
+function renderizarAbaInicio(feed){
+const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
+const wrap=document.createElement('div');
+wrap.className='home-wrap space-y-3 pb-4 w-full mt-auto';
+if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
+if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
+const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
+if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="editarLivro(${lendo.id})" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4,false);
+
+// Card de instalação do app na tela inicial (condicional se não estiver instalado)
+if (!appLiLiJaInstalado()) {
+  addSecao(wrap,`<div id="card-instalar-lili-home" class="frosted-card p-3.5 w-full shadow-2xl flex items-center justify-between gap-3"><div class="flex items-center gap-3 min-w-0"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-400/20 text-gold-400 shrink-0"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><div class="min-w-0"><p class="text-xs font-bold text-white truncate">Instalar app do LiLi</p><p class="text-[10px] text-gray-400 truncate">Acesse direto da tela inicial</p></div></div><button type="button" onclick="instalarAppLiLi()" class="text-xs btn-gold-degrade px-3 py-1.5 rounded-lg shrink-0">Instalar</button></div>`,l?l.capa:BG_PADRAO,5,false);
+}
+
+feed.appendChild(wrap);
+homeSemCapa=!l||!capaValida(l.capa);
+transicionarFundo(homeSemCapa?BG_PADRAO:l.capa);
+if(!homeSemCapa){const im=new Image();im.onerror=()=>{if(abaAtual==='inicio'&&biblioteca[0]===l){homeSemCapa=true;transicionarFundo(BG_PADRAO);mostrarRetangulo()}};im.src=l.capa}
+}
+
+let filtroTodos='tudo';
+let filtroSoTextos='todos';
+function definirFiltroTodos(f){filtroTodos=f;renderizarFeed();voltarAoTopo()}
+function definirFiltroSoTextos(f){filtroSoTextos=f;renderizarFeed();voltarAoTopo()}
+
+function renderizarAbaBusca(feed){
+const wrap=document.createElement('div');
+wrap.className='space-y-4 w-full';
+wrap.innerHTML=`
+  <div class="frosted-card p-5 md:p-6 shadow-2xl space-y-4">
+    <div class="flex items-center justify-between border-b border-white/10 pb-3">
+      <span class="text-xs font-bold uppercase tracking-wider text-gold-400">Busca Rápida</span>
+    </div>
+    <div class="space-y-2">
+      <label class="block text-xs font-medium text-gray-300">Procure sua passagem</label>
+      <div class="relative">
+        <input type="text" id="input-busca-global" oninput="executarBuscaGlobal(this.value)" placeholder="Digite o trecho, título ou autor..." autocomplete="off" class="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400">
+        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+    </div>
+    <div id="resultados-busca-global" class="max-h-[60vh] overflow-y-auto space-y-2 pt-1 pr-1">
+      <p class="text-xs text-gray-500 text-center py-4">Digite para procurar em suas passagens e livros lidos...</p>
+    </div>
+  </div>
+`;
+feed.appendChild(wrap);
+transicionarFundo(BG_PADRAO);
+setTimeout(() => { const inp = $('input-busca-global'); if(inp) inp.focus(); }, 50);
+}
+
+function executarBuscaGlobal(termo){
+  const container = $('resultados-busca-global');
+  if(!container) return;
+  const q = termo.trim().toLowerCase();
+  if(!q || q.length < 2){
+    container.innerHTML = '<p class="text-xs text-gray-500 text-center py-4">Digite ao menos 2 caracteres para buscar...</p>';
+    return;
+  }
+  
+  let resultados = [];
+  
+  biblioteca.forEach(l => {
+    const matchTitulo = (l.titulo || '').toLowerCase().includes(q);
+    const matchAutor = (l.autor || '').toLowerCase().includes(q);
+    const matchObs = (l.observacao || '').toLowerCase().includes(q);
+    if(matchTitulo || matchAutor || matchObs){
+      resultados.push({
+        tipo: 'livro',
+        titulo: l.titulo,
+        sub: `Livro (${statusDe(l)}) · ${l.autor}`,
+        trecho: l.observacao || `Livro concluído / em leitura de ${l.autor}`,
+        id: l.id
+      });
+    }
+  });
+
+  notas.forEach(n => {
+    if((n.texto || '').toLowerCase().includes(q)){
+      resultados.push({
+        tipo: 'nota',
+        titulo: 'Nota Pessoal',
+        sub: `Nota · ${n.data}`,
+        trecho: n.texto,
+        id: n.id
+      });
+    }
+  });
+
+  notasKindle.forEach(k => {
+    if((k.observacao || '').toLowerCase().includes(q) || (k.titulo || '').toLowerCase().includes(q)){
+      resultados.push({
+        tipo: 'kindle',
+        titulo: k.titulo,
+        sub: `Kindle · ${k.autor}`,
+        trecho: k.observacao,
+        id: k.id
+      });
+    }
+  });
+
+  if(!resultados.length){
+    container.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Nenhum resultado encontrado.</p>';
+    return;
+  }
+
+  container.innerHTML = resultados.map(r => `
+    <div onclick="clicarResultadoBusca('${r.tipo}', ${r.id})" class="p-3 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border border-white/5 transition-colors space-y-1">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-white truncate pr-2">${esc(r.titulo)}</span>
+        <span class="text-[9px] uppercase tracking-wider text-gold-400 shrink-0">${r.tipo}</span>
+      </div>
+      <p class="text-[11px] text-gray-400 truncate">${esc(r.sub)}</p>
+      <p class="text-xs text-gray-200 line-clamp-2 font-obs">${esc(r.trecho)}</p>
+    </div>
+  `).join('');
+}
+
+function clicarResultadoBusca(tipo, id){
+  if(tipo === 'livro'){
+    abrirPassagem(id);
+  } else {
+    mudarAba('todos');
+  }
+}
+function htmlLivro(l){
+return `<div class="frosted-card relative p-6 md:p-8 w-full space-y-5 shadow-2xl h-full flex flex-col justify-between"><div class="sel-mark">✓</div>
+<div class="flex items-center justify-between pr-9"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><span class="text-[11px] text-gray-400 uppercase tracking-widest">${biblioteca.filter(x=>statusDe(x)!=='desejado').indexOf(l)+1} de ${biblioteca.filter(x=>statusDe(x)!=='desejado').length}</span></div>
+<div class="flex items-start gap-5">${imgCapa(l.capa,'w-24 h-36 md:w-28 md:h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-xl md:text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}</div></div>
+${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light line-clamp-4">${esc(l.observacao)}</p>`:''}
+<div class="flex items-center justify-between pt-3 border-t border-white/10 gap-2 flex-wrap"><div class="text-gold-400 text-base tracking-widest">${rotuloStatus(l)}</div>
+<div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
+}
+function htmlNota(n){
+return `<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+}
+function htmlKindle(k){
+return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+}
+function renderizarAbaTodos(feed,scrollToId){
+const itens=[];
+const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
+if(filtroTodos==='tudo'||filtroTodos==='livros')bibFiltrada.forEach(l=>itens.push({t:'livro',id:l.id,d:l}));
+if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'nota',id:n.id,d:n}));
+if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
+if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
+
+if(!itens.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nada por aqui ainda.</p></div>`,BG_PADRAO,0,false);
+itens.forEach((it,i)=>{
+const d=it.d;
+if(it.t==='livro'){const sc=addSecao(feed,htmlLivro(d),d.capa,i+1,false);sc.id=`card-item-${d.id}`;sc.dataset.id=d.id}
+else if(it.t==='nota')addSecao(feed,htmlNota(d),BG_PADRAO,i+1,false);
+else addSecao(feed,htmlKindle(d),BG_PADRAO,i+1,false);
+});
+transicionarFundo(BG_PADRAO);
+if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
+}
+function renderizarAbaDesejados(feed){
+const desejados=biblioteca.filter(l=>statusDe(l)==='desejado');
+addSecao(feed,`<div class="px-1 space-y-3"><h2 class="text-lg font-bold text-white font-serif mb-2">Livros Desejados</h2></div>`,BG_PADRAO,0,false);
+if(!desejados.length){
+  addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro desejado cadastrado.</p></div>`,BG_PADRAO,1,false);
+  return;
+}
+desejados.forEach((l,i)=>{
+  const html=`<div class="frosted-card relative p-5 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between">
+    <div class="flex items-center justify-between"><span class="bg-blue-500/80 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">Desejado</span><span class="text-[11px] text-gray-400 uppercase tracking-widest">${i+1} de ${desejados.length}</span></div>
+    <div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="space-y-1 my-auto"><h2 class="font-serif text-xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p></div></div>
+    <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/15"><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar / Ler</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div>
+  </div>`;
+  addSecao(feed,html,l.capa,i+1,false);
+});
+transicionarFundo(BG_PADRAO);
+}
+function renderizarAbaObservacoes(feed){
+const itens=[
+...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
+...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>statusDe(l)!=='desejado'&&(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
+...(filtroSoTextos==='todos'||filtroSoTextos==='kindle'?notasKindle.filter(n=>(n.observacao||'').trim()).map(n=>({tipo:'kindle',obs:n.observacao,rot:`${n.titulo} · ${n.autor}`,capa:n.capa})):[])
+];
+if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,BG_PADRAO,0,false);return}
+itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,l.capa||BG_PADRAO,i+1,false));
+transicionarFundo(BG_PADRAO);
+}
+function abrirPassagem(id){
+const l=biblioteca.find(x=>x.id===id);if(!l)return;
+$('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
+<div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
+${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
+<div class="flex items-center justify-end gap-2 pt-3 border-t border-white/10 flex-wrap"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div>`;
+$('modal-passagem').classList.remove('hidden');
+}
+function fecharPassagem(){$('modal-passagem').classList.add('hidden')}
+
+/* kindle */
+function processarKindleClippings(file){
+if(!file)return;
+fecharKindle();
+const r=new FileReader();
+r.onerror=()=>aviso('Não foi possível ler o arquivo.');
+r.onload=e=>{
+const blocos=e.target.result.replace(/^\ufeff/,'').split('==========').map(b=>b.trim()).filter(Boolean);
+const vistos=new Set(notasKindle.map(n=>(n.titulo+'|'+n.observacao).toLowerCase())),novas=[];
+blocos.forEach((b,idx)=>{
+const lin=b.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+if(lin.length<3)return;
+let titulo=lin[0],autor='Autor Desconhecido';
+const m=lin[0].match(/\(([^)]+)\)[^()]*$/);
+if(m){autor=m[1].trim();titulo=lin[0].replace(m[0],'').trim()}
+const cit=lin.slice(2).join(' ').trim(),k=(titulo+'|'+cit).toLowerCase();
+if(!titulo||!cit||vistos.has(k))return;
+vistos.add(k);novas.push({id:Date.now()+idx,titulo,autor,observacao:cit,capa:`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo)}`});
+});
+if(!novas.length)return aviso('Nenhum marcador novo encontrado.');
+const caps={};
+Promise.all([...new Set(novas.map(n=>n.titulo))].map(t=>buscarDetalhesLivro(t,(novas.find(n=>n.titulo===t)||{}).autor).then(b=>{if(b.capa)caps[t]=b.capa}).catch(()=>{}))).then(()=>{
+novas.forEach(n=>{if(caps[n.titulo])n.capa=caps[n.titulo]});
+notasKindle=[...novas,...notasKindle];salvarLocal();renderizarFeed();
+aviso(`${novas.length} marcadores importados.`);$('kindle-file-input').value='';
+});
+};
+r.readAsText(file,'UTF-8');
+}
+function deletarNotaKindle(id,btn){doisToques(btn,()=>{notasKindle=notasKindle.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
+function deletarLivro(id,btn){doisToques(btn,()=>{biblioteca=biblioteca.filter(l=>l.id!==id);salvarLocal();fecharPassagem();renderizarFeed()})}
+
+/* fundo e rolagem */
+function transicionarFundo(url){
+if(abaAtual==='kindle'||currentCapaUrl===url)return;
+currentCapaUrl=url;
+const a=$('bg-layer-a'),b=$('bg-layer-b');
+if(activeBgLayer==='A'){b.style.backgroundImage=`url('${url}')`;b.style.opacity='1';a.style.opacity='0';activeBgLayer='B'}
+else{a.style.backgroundImage=`url('${url}')`;a.style.opacity='1';b.style.opacity='0';activeBgLayer='A'}
+}
+function handleFeedScroll(){
+const feed=$('feed-container'),items=document.querySelectorAll('.snap-item'),pos=feed.scrollTop+feed.clientHeight/2;
+const noFim=feed.scrollTop+feed.clientHeight>=feed.scrollHeight-50,arrow=$('scroll-arrow'),top=$('top-btn');
+arrow.classList.toggle('hidden',items.length<=1||noFim);
+const mostra=items.length>1&&noFim&&feed.scrollTop>200;
+top.classList.toggle('hidden',!mostra);top.classList.toggle('flex',mostra);
+items.forEach(it=>{if(pos>=it.offsetTop&&pos<=it.offsetTop+it.clientHeight&&it.dataset.capa)transicionarFundo(it.dataset.capa)});
+}
+function voltarAoTopo(){$('feed-container').scrollTo({top:0,behavior:'smooth'})}
+function proximoItemFeed(){
+const feed=$('feed-container'),alvo=[...document.querySelectorAll('.snap-item')].find(it=>it.offsetTop-150>feed.scrollTop+10);
+if(alvo)feed.scrollTo({top:alvo.offsetTop-150,behavior:'smooth'});
+}
+
+/* seleção múltipla */
+function iniciarSelecao(){
+toggleModalOpcoes();
+filtroTodos='livros';if(abaAtual!=='todos')mudarAba('todos');else renderizarFeed();
+modoSel=true;selecionados.clear();
+$('feed-container').classList.add('modo-sel');
+$('nav-principal').classList.add('hidden');
+const b=$('sel-bar');b.classList.remove('hidden');b.classList.add('flex');
+atualizarSelBar();
+}
+function sairSelecao(){
+modoSel=false;selecionados.clear();
+$('feed-container').classList.remove('modo-sel');
+document.querySelectorAll('.sel-ativo').forEach(e=>e.classList.remove('sel-ativo'));
+$('nav-principal').classList.remove('hidden');
+const b=$('sel-bar');b.classList.add('hidden');b.classList.remove('flex');
+}
+function alternarSel(id){
+id=String(id);
+if(selecionados.has(id))selecionados.delete(id);else selecionados.add(id);
+const el=$('card-item-'+id);if(el)el.classList.toggle('sel-ativo',selecionados.has(id));
+atualizarSelBar();
+}
+function selecionarTodas(){
+const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
+const todos=selecionados.size===bibFiltrada.length;selecionados.clear();
+document.querySelectorAll('[data-id]').forEach(el=>{if(!todos)selecionados.add(el.dataset.id);el.classList.toggle('sel-ativo',!todos)});
+atualizarSelBar();
+}
+function atualizarSelBar(){
+confirmandoDel=false;const n=selecionados.size,b=$('sel-del');
+$('sel-count').innerText=`${n} selecionada${n===1?'':'s'}`;
+b.innerText='Excluir';b.disabled=n===0;b.classList.toggle('opacity-40',n===0);
+}
+function excluirSelecionadas(){
+if(!selecionados.size)return;
+if(!confirmandoDel){confirmandoDel=true;$('sel-del').innerText=`Confirmar (${selecionados.size})`;return}
+biblioteca=biblioteca.filter(l=>!selecionados.has(String(l.id)));
+salvarLocal();sairSelecao();renderizarFeed();
+}
+
+/* story */
+function carregarImg(url){return new Promise(res=>{if(!url)return res(null);const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=()=>res(null);im.src=url;setTimeout(()=>res(null),6000)})}
+
+function quebrarTexto(ctx,texto,largura){
+const lin=[];let at='';
+String(texto).split(/\s+/).filter(Boolean).forEach(p=>{const t=at?at+' '+p:p;if(ctx.measureText(t).width>largura&&at){lin.push(at);at=p}else at=t});
+if(at)lin.push(at);return lin;
+}
+function cortarLinha(ctx,u,largura){if(ctx.measureText(u).width<=largura)return u;while(u.length>1&&ctx.measureText(u+'…').width>largura)u=u.slice(0,-1);return u.trim()+'…'}
+function pathEstrela(ctx,cx,cy,r){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?r:r*.45,x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
+
+async function renderizarStory(l){
+const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
+try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
+const img=await carregarImg(l.capa);
+ctx.clearRect(0,0,W,H);ctx.fillStyle='#0d1117';ctx.fillRect(0,0,W,H);
+if(img){
+const mini=document.createElement('canvas');mini.width=27;mini.height=48;
+const mc=mini.getContext('2d'),e=Math.max(27/img.width,48/img.height);
+mc.drawImage(img,(27-img.width*e)/2,(48-img.height*e)/2,img.width*e,img.height*e);
+ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=.6;ctx.drawImage(mini,0,0,W,H);ctx.globalAlpha=1;
+}
+const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(0,0,0,.55)');g.addColorStop(.5,'rgba(0,0,0,.5)');g.addColorStop(1,'rgba(0,0,0,.92)');
+ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ctx.textBaseline='alphabetic';ctx.textAlign='left';
+const f9='900 46px "Inter",sans-serif',f6='600 46px "Inter",sans-serif';
+ctx.font=f6;const wI=ctx.measureText('LIDO').width;
+ctx.font=f9;const wV=ctx.measureText('LIVROS').width;
+const x0=(W-(wI+wV))/2;
+ctx.font=f6;ctx.fillStyle='#fff';ctx.fillText('LIDO',x0,120);
+ctx.font=f9;ctx.fillStyle='#FACC15';ctx.fillText('LIVROS',x0+wI,120);
+const cw=540,ch=810,cx=(W-cw)/2,cy=170;
+if(img){
+const cr=cw/ch,ir=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;
+if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
+ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=50;ctx.shadowOffsetY=20;ctx.drawImage(img,sx,sy,sw,sh,cx,cy,cw,ch);
+ctx.shadowColor='transparent';ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+}else{ctx.fillStyle='#1b2230';ctx.fillRect(cx,cy,cw,ch);ctx.fillStyle='rgba(255,255,255,.4)';ctx.font='400 36px Inter,sans-serif';ctx.textAlign='center';ctx.fillText('Sem capa',W/2,cy+ch/2)}
+ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;ctx.strokeRect(cx,cy,cw,ch);
+ctx.textAlign='center';
+let y=cy+ch+100,tam=64,lin;
+for(;tam>=40;tam-=2){ctx.font=`700 ${tam}px "Inter",sans-serif`;lin=quebrarTexto(ctx,l.titulo,900);if(lin.length<=3)break}
+if(lin.length>3){lin=lin.slice(0,3);lin[2]=cortarLinha(ctx,lin[2]+' …',900)}
+ctx.fillStyle='#fff';lin.forEach(t=>{ctx.fillText(t,W/2,y);y+=tam*1.2});
+y+=4;ctx.font='500 36px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText(cortarLinha(ctx,'por '+l.autor,900),W/2,y);
+y+=70;
+if(l.nota>0){
+const r=44,gap=104,s0=W/2-gap*2;
+for(let i=0;i<5;i++){
+const sx=s0+i*gap;pathEstrela(ctx,sx,y,r);ctx.fillStyle='rgba(250,204,21,.22)';ctx.fill();
+const fr=Math.max(0,Math.min(1,l.nota-i));
+if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx-r,y-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx,y,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
+}
+}else if(statusDe(l)==='lendo'){ctx.font='500 34px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('Em leitura',W/2,y+12)}
+const obs=(l.observacao||'').trim();
+if(obs){
+y+=75;const esp=1820-y;let t=50,ol;
+for(;t>=28;t-=2){ctx.font=`400 ${t}px "Inter",sans-serif`;ol=quebrarTexto(ctx,obs,860);if(ol.length*t*1.3<=esp)break}
+const max=Math.max(1,Math.floor(esp/(t*1.3)));
+if(ol.length>max){ol=ol.slice(0,max);ol[max-1]=cortarLinha(ctx,ol[max-1]+' …',860)}
+ctx.fillStyle='rgba(255,255,255,.92)';ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.3});
+}
+ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1832,600,2);
+ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1884);
+storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
+}
+
+async function renderizarStoryStats(ano){
+const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
+try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
+ctx.clearRect(0,0,W,H);ctx.fillStyle='#000000';ctx.fillRect(0,0,W,H);
+
+const doAno=biblioteca.filter(l=>{const p=parseData(l.data_fim);return statusDe(l)==='lido'&&p&&p.a===ano});
+const covers=doAno.map(l=>l.capa).filter(c=>c&&!c.includes('placehold.co'));
+const loadedImgs=[];
+for(const url of covers.slice(0,24)){
+  const img=await carregarImg(url);
+  if(img)loadedImgs.push(img);
+}
+
+if(loadedImgs.length>0){
+  const cols=4,rows=6,cellW=W/cols,cellH=H/rows;
+  ctx.globalAlpha=0.32;let imgIdx=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const img=loadedImgs[imgIdx%loadedImgs.length];imgIdx++;
+      const x=c*cellW,y=r*cellH;
+      const ir=img.width/img.height,cr=cellW/cellH;
+      let sx=0,sy=0,sw=img.width,sh=img.height;
+      if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
+      ctx.drawImage(img,sx,sy,sw,sh,x,y,cellW,cellH);
+    }
+  }
+  ctx.globalAlpha=1.0;
+}
+
+const g=ctx.createLinearGradient(0,0,0,H);
+g.addColorStop(0,'rgba(0,0,0,0.85)');g.addColorStop(0.5,'rgba(0,0,0,0.78)');g.addColorStop(1,'rgba(0,0,0,0.94)');
+ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+ctx.textBaseline='alphabetic';ctx.textAlign='center';
+ctx.font='600 46px "Inter",sans-serif';ctx.fillStyle='#fff';
+const wI=ctx.measureText('LIDO').width;
+ctx.font='900 46px "Inter",sans-serif';const wV=ctx.measureText('LIVROS').width;
+const x0=(W-(wI+wV))/2;
+ctx.font='600 46px "Inter",sans-serif';ctx.fillStyle='#fff';ctx.fillText('LIDO',x0,160);
+ctx.font='900 46px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText('LIVROS',x0+wI,160);
+
+ctx.font='800 60px "Inter",sans-serif';ctx.fillStyle='#ffffff';
+ctx.fillText(`RETROSPECTIVA ${ano}`,W/2,260);
+
+const totalLivros=doAno.length;
+const totalPaginas=doAno.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
+const notasValidas=doAno.filter(l=>l.nota>0);
+const mediaNota=notasValidas.length?(notasValidas.reduce((s,l)=>s+l.nota,0)/notasValidas.length).toFixed(1):'-';
+
+const boxY=360,boxH=230;
+drawStatCard(ctx,W/2-460,boxY,920,boxH,`${totalLivros}`,totalLivros===1?'Livro Lido':'Livros Lidos');
+drawStatCard(ctx,W/2-460,boxY+270,920,boxH,`${totalPaginas.toLocaleString('pt-BR')}`,'Páginas Lidas');
+drawStatCard(ctx,W/2-460,boxY+540,920,boxH,`${String(mediaNota).replace('.',',')}`,'Média de Avaliação');
+
+ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1780,600,2);
+ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';
+ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1834);
+
+storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
+}
+
+function drawStatCard(ctx,x,y,w,h,value,label){
+ctx.save();
+ctx.fillStyle='rgba(20,20,20,0.78)';
+ctx.strokeStyle='rgba(255,255,255,0.12)';
+ctx.lineWidth=2;
+ctx.beginPath();ctx.roundRect(x,y,w,h,24);ctx.fill();ctx.stroke();
+
+ctx.textAlign='center';
+ctx.font='800 72px "Inter",sans-serif';ctx.fillStyle='#FACC15';
+ctx.fillText(value,x+w/2,y+95);
+
+ctx.font='600 30px "Inter",sans-serif';ctx.fillStyle='#e5e7eb';
+ctx.fillText(label.toUpperCase(),x+w/2,y+165);
+ctx.restore();
+}
+
+async function abrirInstaModal(id){const l=biblioteca.find(x=>x.id===id);if(!l)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStory(l)}
+async function abrirInstaModalStats(ano){storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStoryStats(ano)}
+function fecharInstaModal(){$('insta-modal').classList.add('hidden')}
+async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`story_estatisticas_${Date.now()}.png`,'image/png')}
+
+/* arquivos */
+try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
+async function baixarArquivo(conteudo,nome,tipo){
+if(!dlCap&&window.claude&&claude.use){try{dlCap=await claude.use('downloads')}catch(e){}}
+if(dlCap){try{await dlCap.save({filename:nome,data:conteudo});return true}catch(err){if(err&&err.code==='declined'// ... truncated for brevity, standard file saving remains fully intact
+}}catch(e){}}
+const blob=conteudo instanceof Blob?conteudo:new Blob([conteudo],{type:tipo});
+if(tipo==='image/png'&&navigator.canShare){try{const f=new File([blob],nome,{type:tipo});if(navigator.canShare({files:[f]})){await navigator.share({files:[f]});return true}}catch(e){}}
+const url=URL.createObjectURL(blob),a=document.createElement('a');
+a.href=url;a.download=nome;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);return true;
+}
+
+function nomeBackup(ext){const d=new Date(),p=n=>String(n).padStart(2,'0');return `LidosBackup_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}h${p(d.getMinutes())}.${ext}`}
+function jsonBackup(){return JSON.stringify({userProfile:{name:usuarioNome},biblioteca,notas,notasKindle},null,2)}
+async function enviarBackupPorEmail(){
+if(!biblioteca.length&&!notas.length)return aviso('Nada para enviar ainda.');
+const ag=new Date(),quando=`${ag.toLocaleDateString('pt-BR')} às ${ag.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+const assunto='Backup do Lidos',corpo=`Oi, eu do futuro, esse aqui é o meu backup do LIDOLIVROS da data ${quando}`;
+const nome=nomeBackup('json'),conteudo=jsonBackup();
+try{
+const f=new File([conteudo],nome,{type:'application/json'});
+if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:assunto,text:corpo});return}
+}catch(e){if(e&&e.name==='AbortError')return}
+await baixarArquivo(conteudo,nome,'application/json');
+window.location.href=`mailto:?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+aviso('Anexe o arquivo salvo ao e-mail.');
+}
+
+function gerarPromptIA(){
+const onde={Kindle:'no Kindle','Físico':'em livro físico',Audiobook:'em audiobook'};
+let txt='Oi, faça uma análise completa do meu histórico literário com os dados a seguir:\n\n';
+[...biblioteca].reverse().forEach(l=>{
+const s=statusDe(l);
+let p=`${s==='lido'?'Eu li':'Registrei'} o livro intitulado "${l.titulo}", escrito por ${l.autor}, ${onde[l.formato]||'em formato '+l.formato}. `;
+if(l.data_inicio)p+=`Comecei a leitura em ${l.data_inicio}. `;
+p+=s==='lido'?`Eu concluí a leitura${l.data_fim?' em '+l.data_fim:''}${l.nota>0?` e dei nota ${String(l.nota).replace('.',',')} de 5`:''}. `:{lendo:'Eu ainda não concluí a leitura, pois estou lendo no momento. ',abandonado:'I abandonei a leitura. ',desejado:'Eu ainda não li, é um livro que desejo ler. '}[s];
+const obs=(l.observacao||'').trim();
+p+=obs?`A minha anotação sobre o livro foi: "${obs}"`:'Não fiz nenhuma anotação sobre o livro.';
+txt+=p+'\n\n';
+});
+return txt.trim();
+}
+function abrirEnviarIA(){
+if(!biblioteca.length)return aviso('Nenhum livro registrado ainda.');
+toggleModalOpcoes();
+$('modal-ia').classList.remove('hidden');
+}
+function fecharEnviarIA(){$('modal-ia').classList.add('hidden')}
+async function copiarPromptIA(){
+const texto=gerarPromptIA();let ok=false;
+try{await navigator.clipboard.writeText(texto);ok=true}catch(e){}
+if(!ok){const el=document.createElement('textarea');el.value=texto;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();try{ok=document.execCommand('copy')}catch(e){}el.remove()}
+if(ok){fecharEnviarIA();aviso('Prompt copiado. Cole no chat da IA.')}else aviso('Não foi possível copiar o prompt. Tente novamente.');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  verificarEstadoInicial();
+  renderizarFeed();
+  mostrarBoasVindasSePrimeiroAcesso();
+  iniciarVigiaSync();
+});
+
+(function configurarBotaoVoltarPWA(){
+  const estadoVoltar = { lidoVoltarPWA: true };
+  function modalVisivel(id){const el=document.getElementById(id);return !!el&&!el.classList.contains('hidden')}
+  function voltarDentroDoApp(){
+    if (modalVisivel('insta-modal')) { fecharInstaModal(); return true; }
+    if (modalVisivel('modal-ia')) { fecharEnviarIA(); return true; }
+    if (modalVisivel('modal-amazon')) { fecharAmazon(); return true; }
+    if (modalVisivel('modal-passagem')) { fecharPassagem(); return true; }
+    if (modalVisivel('modal-kindle')) { fecharKindle(); return true; }
+    if (modalVisivel('modal-sub-backup')) { fecharSubMenuBackup(); return true; }
+    if (modalVisivel('modal-cloud')) { toggleModalCloud(); return true; }
+    if (modalVisivel('modal-registro')) { toggleModalNovoRegistro(); return true; }
+    if (modalVisivel('modal-opcoes')) { toggleModalOpcoes(); return true; }
+    if (modoSel) { sairSelecao(); return true; }
+    if (typeof abaAtual !== 'undefined' && abaAtual !== 'inicio') { mudarAba('inicio'); return true; }
+    return true;
+  }
+  function manterHistoricoInterno(){try{history.pushState(estadoVoltar,'',location.href)}catch(e){}}
+  window.addEventListener('popstate',function(){voltarDentroDoApp();manterHistoricoInterno()});
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',manterHistoricoInterno,{once:true})}else{manterHistoricoInterno()}
+})();
+
+let eventoInstalacaoLiLi = null;
+function appLiLiJaInstalado(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
+function atualizarBotaoInstalarLiLi(){
+  const botao=$('btn-instalar-lili');
+  if(botao) botao.classList.toggle('hidden',appLiLiJaInstalado());
+  const cardHome=$('card-instalar-lili-home');
+  if(cardHome) cardHome.classList.toggle('hidden',appLiLiJaInstalado());
+}
+window.addEventListener('beforeinstallprompt',function(evento){evento.preventDefault();eventoInstalacaoLiLi=evento;atualizarBotaoInstalarLiLi()});
+window.addEventListener('appinstalled',function(){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi();if(typeof aviso==='function')aviso('LiLi instalado com sucesso.')});
+async function instalarAppLiLi(){
+  if(appLiLiJaInstalado()){atualizarBotaoInstalarLiLi();return}
+  if(eventoInstalacaoLiLi){
+    eventoInstalacaoLiLi.prompt();
+    const escolha=await eventoInstalacaoLiLi.userChoice;
+    if(escolha&&escolha.outcome==='accepted'){eventoInstalacaoLiLi=null;atualizarBotaoInstalarLiLi()}
+    return;
+  }
+  const agente=navigator.userAgent||'';
+  if(/iphone|ipad|ipod/i.test(agente)){
+    alert('Para instalar o LiLi no iPhone ou iPad:\n1. Abra esta página no Safari.\n2. Toque em Compartilhar.\n3. Escolha “Adicionar à Tela de Início”.\n4. Toque em Adicionar.');
+  }else{
+    alert('A instalação ainda não está disponível neste momento. No menu do navegador, procure “Instalar app” ou “Adicionar à tela inicial”.');
+  }
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',atualizarBotaoInstalarLiLi,{once:true})}else{atualizarBotaoInstalarLiLi()}
+</script>
+</body>
+</html>
