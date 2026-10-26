@@ -540,8 +540,28 @@ textarea{
       <button type="button" id="aba-escritor-notas" onclick="mudarAbaEscritor('notas')" class="tab-reg sm text-center">Notas</button>
     </div>
   </div>
-  <div class="max-w-4xl mx-auto px-5 pt-6 pb-24 space-y-6">
-    <form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-4">
+  <div class="max-w-4xl mx-auto px-5 pt-5 pb-24 space-y-5">
+    <!-- Card de identidade do projeto: permanece visível nas duas abas -->
+    <section id="card-resumo-escritor" class="relative overflow-hidden rounded-2xl border border-amber-300/20 bg-gradient-to-br from-amber-300/10 via-white/[0.045] to-transparent p-4 sm:p-5 shadow-lg shadow-black/20">
+      <div class="flex items-center gap-4 sm:gap-5">
+        <div class="shrink-0 w-[76px] h-[112px] sm:w-[92px] sm:h-[136px] rounded-lg overflow-hidden border border-white/10 bg-black/30 shadow-xl">
+          <img id="escrita-capa-preview" src="" alt="Capa do livro em desenvolvimento" class="w-full h-full object-cover hidden">
+          <div id="escrita-capa-placeholder" class="w-full h-full flex flex-col items-center justify-center gap-2 text-amber-200/60 px-2 text-center">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H20v17H6.5A1.5 1.5 0 0 0 5 21.5z"/><path d="M5 4.5v17M8 7h8M8 10h6"/></svg>
+            <span class="text-[9px] leading-tight">Capa do livro</span>
+          </div>
+        </div>
+        <div class="min-w-0 flex-1 py-1">
+          <p class="text-[10px] uppercase tracking-[.2em] text-amber-200/70 mb-2">Projeto em desenvolvimento</p>
+          <h3 id="escrita-resumo-titulo" class="font-serif text-xl sm:text-2xl font-semibold leading-tight text-white break-words">Seu próximo livro</h3>
+          <p id="escrita-resumo-autor" class="text-sm text-gray-300 mt-2 break-words">Autor</p>
+          <div class="mt-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1 text-[10px] text-gray-300">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span> Em escrita
+          </div>
+        </div>
+      </div>
+    </section>
+    <form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-4 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 sm:p-5">
       <div>
         <label class="block text-xs font-medium text-gray-300 mb-1">Nome do Livro</label>
         <input type="text" id="escrita_titulo" required placeholder="Título do seu livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
@@ -585,9 +605,14 @@ textarea{
     <div id="painel-escritor-notas" class="space-y-4 hidden">
       <h3 class="text-sm font-bold uppercase tracking-wider text-gold-400">Notas do Livro</h3>
       <p id="escritor-notas-aviso" class="text-xs text-gray-400 hidden">Salve o livro na aba Livro para adicionar notas.</p>
-      <div id="escritor-notas-form" class="space-y-3">
-        <textarea id="escrita_nota_texto" rows="3" placeholder="Escreva uma nota ou lembrete para este livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea>
-        <button type="button" id="btn-add-nota-escrita" onclick="adicionarNotaLivroEscrito()" class="w-full btn-gold-degrade py-2 rounded-lg text-xs uppercase tracking-wider">Adicionar Nota</button>
+      <div id="escritor-notas-form" class="space-y-3 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 sm:p-5">
+        <label for="escrita_nota_categoria" class="block text-xs font-medium text-gray-300">Categoria <span class="text-gray-500">(opcional)</span></label>
+        <select id="escrita_nota_categoria" class="w-full bg-[#171717] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-300/70">
+          <option value="Ideia solta">Ideia solta</option><option value="Personagem">Personagem</option><option value="Enredo">Enredo</option><option value="Cenário">Cenário</option><option value="Diálogo">Diálogo</option><option value="Pesquisa">Pesquisa</option>
+        </select>
+        <label for="escrita_nota_texto" class="block text-xs font-medium text-gray-300">Sua anotação</label>
+        <textarea id="escrita_nota_texto" rows="4" placeholder="Registre uma ideia, uma fala, um detalhe ou algo para desenvolver depois..." class="w-full bg-white/[0.035] border border-white/10 rounded-xl px-4 py-3 text-sm leading-relaxed text-white placeholder-gray-500 focus:outline-none focus:border-amber-300/60 resize-y min-h-[112px]"></textarea>
+        <button type="button" id="btn-add-nota-escrita" onclick="adicionarNotaLivroEscrito()" class="w-full btn-gold-degrade py-2.5 rounded-lg text-xs uppercase tracking-wider">Adicionar Nota</button>
         <button type="button" id="btn-cancelar-edicao-nota" onclick="cancelarEdicaoNotaEscrita()" class="hidden w-full py-2 rounded-lg bg-white/10 text-white text-xs">Cancelar edição</button>
       </div>
       <div class="pt-4 border-t border-white/10">
@@ -1285,7 +1310,20 @@ function capaPlaceholder(titulo){
   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="400" height="600" fill="#111"/><text x="200" y="300" fill="#fff" font-family="sans-serif" font-size="28" text-anchor="middle">'+t+'</text></svg>';
   return 'data:image/svg+xml,'+encodeURIComponent(svg).replace(/'/g,'%27').replace(/\(/g,'%28').replace(/\)/g,'%29');
 }
+function atualizarResumoEscritor(){
+  const titulo=( $('escrita_titulo')?.value || livroEscrito?.titulo || '' ).trim();
+  const autor=( $('escrita_autor')?.value || livroEscrito?.autor || usuarioNome || 'Autor' ).trim();
+  const capa=$('escrita_capa_url')?.value || livroEscrito?.capa || '';
+  const t=$('escrita-resumo-titulo'),a=$('escrita-resumo-autor'),img=$('escrita-capa-preview'),ph=$('escrita-capa-placeholder');
+  if(t)t.textContent=titulo||'Seu próximo livro';
+  if(a)a.textContent=autor||'Autor';
+  if(img&&ph){
+    if(capa){img.onerror=()=>{img.classList.add('hidden');ph.classList.remove('hidden')};img.onload=()=>{img.classList.remove('hidden');ph.classList.add('hidden')};img.src=capa;}
+    else{img.removeAttribute('src');img.classList.add('hidden');ph.classList.remove('hidden')}
+  }
+}
 function atualizarBotoesEscritor(){
+  atualizarResumoEscritor();
   const b=$('btn-excluir-livro-escrito');if(b)b.classList.toggle('hidden',!livroEscrito);
   const f=$('escritor-notas-form'),av=$('escritor-notas-aviso');
   if(f)f.classList.toggle('hidden',!livroEscrito);
@@ -1302,13 +1340,16 @@ function mudarAbaEscritor(aba){
 function cancelarEdicaoNotaEscrita(){
   notaEditandoId=null;
   const t=$('escrita_nota_texto');if(t)t.value='';
+  const cat=$('escrita_nota_categoria');if(cat)cat.value='Ideia solta';
   const b=$('btn-add-nota-escrita');if(b)b.textContent='Adicionar Nota';
   const c=$('btn-cancelar-edicao-nota');if(c)c.classList.add('hidden');
 }
 function editarNotaLivroEscrito(id){
   const n=notasLivroEscrito.find(x=>x.id===id);if(!n)return;
   notaEditandoId=id;
-  const t=$('escrita_nota_texto');t.value=n.texto;t.focus();
+  const t=$('escrita_nota_texto');t.value=n.texto;
+  const cat=$('escrita_nota_categoria');if(cat)cat.value=n.categoria||'Ideia solta';
+  t.focus();
   $('btn-add-nota-escrita').textContent='Salvar Edição';
   $('btn-cancelar-edicao-nota').classList.remove('hidden');
 }
@@ -1352,6 +1393,7 @@ function tratarUploadCapaEscrita(input){
       cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
       $('escrita_capa_url').value=cv.toDataURL('image/jpeg',0.82);
       $('escrita-capa-nome-label').textContent=file.name;
+      atualizarResumoEscritor();
       aviso('Capa carregada com sucesso!');
     };
     img.onerror=()=>aviso('Não foi possível ler a imagem.');
@@ -1413,7 +1455,7 @@ function adicionarNotaLivroEscrito(){
   if(!livroEscrito) return aviso('Salve o livro antes de adicionar notas.');
   if(notaEditandoId != null){
     const n = notasLivroEscrito.find(x => x.id === notaEditandoId);
-    if(n){ n.texto = texto; n.atualizadoEm = Date.now(); }
+    if(n){ n.texto = texto; n.categoria = $('escrita_nota_categoria')?.value || n.categoria || 'Ideia solta'; n.atualizadoEm = Date.now(); }
     lsSet('notas_livro_escrito', JSON.stringify(notasLivroEscrito));
     cancelarEdicaoNotaEscrita();
     renderizarNotasLivroEscrito();
@@ -1427,6 +1469,7 @@ function adicionarNotaLivroEscrito(){
   const novaNota = {
     id: Date.now(),
     texto,
+    categoria: $('escrita_nota_categoria')?.value || 'Ideia solta',
     dataHora: `${dataFormatada} às ${horaFormatada}`,
     atualizadoEm: Date.now()
   };
@@ -1457,18 +1500,21 @@ function renderizarNotasLivroEscrito(){
     return;
   }
   container.innerHTML = notasLivroEscrito.map(n => `
-    <div class="p-3 bg-white/5 rounded-lg border border-white/5 space-y-1">
-      <div class="flex items-center justify-between">
-        <span class="text-[10px] text-gold-400 font-semibold">${esc(n.dataHora)}</span>
+    <div class="p-4 bg-white/[0.035] rounded-xl border border-white/[0.08] space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-2"><span class="inline-flex rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] text-amber-200">${esc(n.categoria||'Ideia solta')}</span><span class="text-[10px] text-gray-500">${esc(n.dataHora||'Nota antiga')}</span></div>
         <div class="flex items-center gap-3">
           <button type="button" onclick="editarNotaLivroEscrito(${n.id})" class="text-[10px] text-gold-400 hover:text-white">Editar</button>
           <button type="button" onclick="deletarNotaLivroEscrito(${n.id})" class="text-[10px] text-red-400 hover:text-red-300">Excluir</button>
         </div>
       </div>
-      <p class="text-xs text-gray-200 font-obs">${esc(n.texto)}</p>
+      <p class="text-sm leading-relaxed text-gray-200 whitespace-pre-wrap break-words">${esc(n.texto)}</p>
     </div>
   `).join('');
 }
+
+// Atualiza o card de destaque enquanto o projeto é preenchido.
+['escrita_titulo','escrita_autor'].forEach(id=>{const el=$(id);if(el)el.addEventListener('input',atualizarResumoEscritor)});
 
 function deletarLivroEscrito(btn){
   doisToques(btn, () => {
