@@ -127,12 +127,12 @@ select {
             <div class="mb-5">
                 <h2 class="text-base font-bold text-white font-serif">Extrair do Skoob</h2>
                 <p class="mt-1 text-xs text-gray-400 leading-relaxed">
-                    Insira o seu usuário (@username) ou o ID do seu perfil no Skoob para extrair os seus livros
+                    Insira o seu usuário (@username) ou ID do seu perfil no Skoob para extrair os seus livros
                 </p>
             </div>
 
             <form onsubmit="event.preventDefault(); processarSkoob();" class="space-y-4">
-                <!-- Usuário / ID -->
+                <!-- Usuário / ID do Usuário -->
                 <div>
                     <label for="userId" class="block text-xs font-medium text-gray-300 mb-1">
                         Usuário ou ID do Skoob
@@ -204,14 +204,11 @@ select {
 
         function extrairIdentificadorUsuario(inputVal) {
             let clean = inputVal.trim();
-            // Se o usuário colou a URL completa do perfil (ex: skoob.com.br/usuario/nomedeusuario)
             if (clean.includes("skoob.com.br")) {
                 const parts = clean.split('/').filter(Boolean);
                 clean = parts[parts.length - 1];
             }
-            // Remove o '@' caso tenha sido informado (ex: @usuario -> usuario)
-            clean = clean.replace(/^@/, '');
-            return encodeURIComponent(clean);
+            return clean.replace(/^@/, '');
         }
 
         async function processarSkoob() {
@@ -231,7 +228,6 @@ select {
             let pagina = 1;
             let todosLivros = [];
             
-            const proxyUrl = "https://api.allorigins.win/get?url=";
             const statusMap = { "1": "lendo", "2": "lido", "3": "quero_ler", "4": "relendo", "5": "abandonei" };
             const statusLeituraSelecionado = statusMap[tipoEstante] || "lido";
 
@@ -239,21 +235,21 @@ select {
                 statusDiv.innerHTML = `<span class="inline-flex items-center space-x-2 text-amber-400"><i data-lucide="loader-2" class="h-3.5 w-3.5 animate-spin"></i><span>Buscando página ${pagina}...</span></span>`;
                 lucide.createIcons();
 
-                // Aceita tanto ID numérico quanto username/slug na URL da estante v1
                 const targetUrl = `https://www.skoob.com.br/estante/v1/${tipoEstante}/${userId}/page:${pagina}`;
-                const fetchUrl = `${proxyUrl}${encodeURIComponent(targetUrl)}`;
+                const fetchUrl = `https://corsproxy.io/?` + encodeURIComponent(targetUrl);
                 
                 try {
                     const response = await fetch(fetchUrl);
-                    if (!response.ok) throw new Error("Erro de conexão na rede");
+                    if (!response.ok) throw new Error("Erro de conexão ou perfil privado");
                     
-                    const data = await response.json();
-                    if (!data.contents) throw new Error("Conteúdo não retornado");
+                    const htmlText = await response.text();
+                    if (!htmlText || htmlText.includes("cloudflare") || htmlText.includes("Access Denied")) {
+                        throw new Error("O Skoob bloqueou temporariamente a requisição automatizada.");
+                    }
 
                     const parser = new DOMParser();
-                    const doc = parser.parseFromString(data.contents, 'text/html');
+                    const doc = parser.parseFromString(htmlText, 'text/html');
                     
-                    // Suporte broad a seletores de livros na estante
                     let livrosHtml = doc.querySelectorAll("div[id^='livro_estante_']");
                     if (livrosHtml.length === 0) {
                         livrosHtml = doc.querySelectorAll(".estante-livro, .livro-item, .livro-card");
@@ -270,7 +266,7 @@ select {
                             titulo = titulo.replace(/^Livro\s+/i, "").trim();
                             
                             const idAttr = livroEl.getAttribute('id');
-                            const idSkoob = idAttr ? idAttr.split('_').pop() : (Math.random().toString(36).substring(2, 9));
+                            const idSkoob = idAttr ? idAttr.split('_').pop() : Math.random().toString(36).substring(2, 9);
                             const capaUrl = imgCapa.getAttribute('src') || "";
                             
                             if (titulo) {
@@ -286,11 +282,11 @@ select {
                     });
                     
                     pagina++;
-                    await new Promise(resolve => setTimeout(resolve, 350));
+                    await new Promise(resolve => setTimeout(resolve, 400));
                     
                 } catch (error) {
                     console.error(error);
-                    statusDiv.innerHTML = `<span class="text-rose-400 font-semibold">Erro na extração. Verifique o usuário/ID ou tente novamente.</span>`;
+                    statusDiv.innerHTML = `<span class="text-rose-400 font-semibold">Erro: Verifique se o perfil é público e se o usuário está correto.</span>`;
                     btn.disabled = false;
                     btn.classList.remove('opacity-75');
                     return;
@@ -298,14 +294,12 @@ select {
             }
 
             if (todosLivros.length === 0) {
-                statusDiv.innerHTML = `<span class="text-rose-400 font-semibold">Nenhum livro localizado. O perfil pode ser privado ou o usuário está incorreto.</span>`;
+                statusDiv.innerHTML = `<span class="text-rose-400 font-semibold">Nenhum livro encontrado. O perfil pode ser privado.</span>`;
                 btn.disabled = false;
                 btn.classList.remove('opacity-75');
             } else {
                 statusDiv.innerHTML = `<span class="text-emerald-400 font-semibold">Sucesso! ${todosLivros.length} livro(s) extraído(s). Redirecionando...</span>`;
-                
                 sessionStorage.setItem('dados_importados_skoob', JSON.stringify(todosLivros));
-                
                 setTimeout(() => {
                     window.location.href = "index.html";
                 }, 1000);
