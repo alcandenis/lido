@@ -1,49 +1,206 @@
-
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importar do Skoob — Meu App de Leitura</title>
-    <style>
-        body { font-family: system-ui, -apple-system, sans-serif; max-width: 500px; margin: 60px auto; padding: 0 20px; color: #333; background-color: #f9f9f9; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        h2 { margin-top: 0; color: #111; }
-        label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: 500; font-size: 14px; }
-        input, select, button { padding: 12px; font-size: 16px; margin: 5px 0 15px 0; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
-        input:focus, select:focus { border-color: #007bff; outline: none; }
-        button { background-color: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; }
-        button:hover { background-color: #0056b3; }
-        button:disabled { background-color: #ccc; cursor: not-allowed; }
-        #status { font-weight: 500; text-align: center; color: #666; margin-top: 10px; }
-        .voltar { text-align: center; display: block; margin-top: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Importar do Skoob — Lili (LIDOLIVROS)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { serif: ['Inter', 'sans-serif'], sans: ['Inter', 'sans-serif'] }
+      }
+    }
+  }
+</script>
+<style>
+html, body {
+  background: #000000;
+  color: #f3f4f6;
+  font-family: 'Inter', sans-serif;
+  height: 100%;
+  margin: 0;
+}
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px) saturate(1.2) brightness(.4);
+  transform: scale(1.3);
+  transition: opacity .9s ease;
+  z-index: 0;
+}
+.bg-layer-custom {
+  filter: none !important;
+  transform: none !important;
+}
+.o-filled-yellow-orange {
+  display: inline-block;
+  width: .75em;
+  height: 1.09em;
+  border-radius: .12em;
+  background: linear-gradient(135deg, #facc15 0%, #fb923c 100%);
+  margin: 0 .1em 0 0;
+  vertical-align: -.2em;
+  flex-shrink: 0;
+}
+.logo-lili {
+  font-family: 'Nunito', 'Varela Round', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+.frosted-card {
+  background: rgba(16, 16, 16, 0.72) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(.85) !important;
+  backdrop-filter: blur(24px) saturate(.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4) !important;
+  border-radius: 1rem !important;
+}
+.glass-input {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(250, 204, 21, 0.6);
+  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.15);
+  outline: none;
+}
+select {
+  color-scheme: dark;
+}
+.btn-gold-degrade {
+  background: linear-gradient(90deg, #facc15 0%, #fbbf24 52%, #fb923c 100%);
+  color: #000;
+  font-weight: 700;
+  transition: all 0.2s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+.btn-gold-degrade:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+</style>
 </head>
-<body>
+<body class="flex items-center justify-center p-4 relative select-none overflow-y-auto">
 
-    <div class="card">
-        <h2>Importar do Skoob</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Insira o ID do seu perfil público do Skoob para extrair os livros direto para o seu app.</p>
+    <!-- Camadas de Fundo / Wallpaper (Igual ao Index) -->
+    <div id="bg-layer-a" class="bg-layer" style="opacity:1"></div>
+    <div class="fixed inset-0 bg-gradient-to-t from-[#000000]/95 via-[#000000]/30 to-[#000000]/70 z-0 pointer-events-none"></div>
 
-        <label for="userId">ID do Usuário Skoob:</label>
-        <input type="text" id="userId" placeholder="Ex: 123456" required>
-
-        <label for="tipoEstante">Escolha a Estante:</label>
-        <select id="tipoEstante">
-            <option value="2">Livros Lidos</option>
-            <option value="1">Lendo Atualmente</option>
-            <option value="3">Quero Ler</option>
-            <option value="4">Relendo</option>
-            <option value="5">Abandonei</option>
-        </select>
-
-        <button id="btnImportar" onclick="processarSkoob()">Extrair e Enviar para o App</button>
-        <div id="status"></div>
+    <!-- Card Principal -->
+    <main class="frosted-card relative z-10 w-full max-w-md overflow-hidden p-6 sm:p-8 my-auto">
         
-        <a href="index.html" class="voltar">← Cancelar e voltar ao App</a>
-    </div>
+        <!-- Header com Logo Oficial do Lili e Botão Fechar -->
+        <header class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+            <div class="flex items-center space-x-3">
+                <h1 class="text-xl font-serif font-semibold tracking-widest leading-none">
+                    <span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span>
+                </h1>
+            </div>
+
+            <!-- Botão Fechar e Voltar ao Index -->
+            <a href="index.html" title="Fechar e voltar" class="group flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-gray-300 backdrop-blur-md transition-all duration-200 hover:bg-white/20 hover:text-white hover:shadow-md active:scale-95">
+                <i data-lucide="x" class="h-5 w-5 transition-transform group-hover:rotate-90"></i>
+            </a>
+        </header>
+
+        <!-- Conteúdo do Formulário -->
+        <section>
+            <div class="mb-5">
+                <h2 class="text-base font-bold text-white font-serif">Importar do Skoob</h2>
+                <p class="mt-1 text-xs text-gray-400 leading-relaxed">
+                    Insira o ID do seu perfil público do Skoob para extrair os livros direto para o seu app.
+                </p>
+            </div>
+
+            <form onsubmit="event.preventDefault(); processarSkoob();" class="space-y-4">
+                <!-- ID do Usuário -->
+                <div>
+                    <label for="userId" class="block text-xs font-medium text-gray-300 mb-1">
+                        ID do Usuário Skoob
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="userId" placeholder="Ex: 123456" required
+                               class="glass-input w-full rounded-lg px-4 py-2.5 text-sm placeholder-gray-500">
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400">
+                            <i data-lucide="user" class="h-4 w-4"></i>
+                        </div>
+                    </div>
+                    <p class="mt-1 text-[11px] text-gray-500">O número de identificação do seu perfil na URL do Skoob.</p>
+                </div>
+
+                <!-- Tipo de Estante -->
+                <div>
+                    <label for="tipoEstante" class="block text-xs font-medium text-gray-300 mb-1">
+                        Escolha a Estante
+                    </label>
+                    <div class="relative">
+                        <select id="tipoEstante" class="glass-input w-full appearance-none rounded-lg px-4 py-2.5 text-sm pr-10">
+                            <option value="2">Livros Lidos</option>
+                            <option value="1">Lendo Atualmente</option>
+                            <option value="3">Quero Ler</option>
+                            <option value="4">Relendo</option>
+                            <option value="5">Abandonei</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400">
+                            <i data-lucide="chevron-down" class="h-4 w-4"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão de Ação -->
+                <button type="submit" id="btnImportar" 
+                        class="w-full btn-gold-degrade py-3 rounded-lg text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i data-lucide="download" class="h-4 w-4"></i>
+                    <span>Extrair e Enviar para o App</span>
+                </button>
+            </form>
+
+            <!-- Div de Status/Feedback -->
+            <div id="status" class="mt-4 text-center text-xs font-medium text-gray-300 min-h-[20px]"></div>
+
+            <!-- Botão Secundário Voltar -->
+            <div class="mt-5 border-t border-white/10 pt-4 text-center">
+                <a href="index.html" class="inline-flex items-center space-x-1.5 text-xs text-gray-400 hover:text-amber-400 transition-colors">
+                    <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>
+                    <span>Cancelar e voltar ao App</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
 
     <script>
+        lucide.createIcons();
+
+        // Carregar papel de parede definido pelo usuário ou o padrão da aplicação
+        const BG_PADRAO = "https://wallpaper.forfun.com/fetch/d1/d11b37523005f6dfe77d151ee2872b7c";
+        const bgCustomizado = localStorage.getItem('lido_bg_customizado') || '';
+        const bgAtivo = bgCustomizado || BG_PADRAO;
+        
+        const layerA = document.getElementById('bg-layer-a');
+        if (bgCustomizado) {
+            layerA.classList.add('bg-layer-custom');
+        }
+        layerA.style.backgroundImage = `url('${bgAtivo}')`;
+
         async function processarSkoob() {
             const userId = document.getElementById('userId').value.trim();
             const tipoEstante = document.getElementById('tipoEstante').value;
@@ -51,43 +208,47 @@
             const btn = document.getElementById('btnImportar');
 
             if (!userId) {
-                alert("Por favor, informe o ID do usuário Skoob.");
+                statusDiv.innerHTML = `<span class="text-amber-400 font-semibold">Por favor, informe o ID do usuário Skoob.</span>`;
                 return;
             }
 
             btn.disabled = true;
+            btn.classList.add('opacity-75');
             let pagina = 1;
             let todosLivros = [];
-            const proxyUrl = "https://allorigins.win";
-
-            // Mapeia o ID do Skoob para uma label amigável de status no seu app
+            
+            const proxyUrl = "https://api.allorigins.win/get?url=";
             const statusMap = { "1": "lendo", "2": "lido", "3": "quero_ler", "4": "relendo", "5": "abandonei" };
             const statusLeituraSelecionado = statusMap[tipoEstante] || "lido";
 
             while (true) {
-                statusDiv.innerText = `Buscando página ${pagina}...`;
-                
-                const urlSkoob = encodeURIComponent(`https://skoob.com.br{tipoEstante}/${userId}/page:${pagina}`);
+                statusDiv.innerHTML = `<span class="inline-flex items-center space-x-2 text-amber-400"><i data-lucide="loader-2" class="h-3.5 w-3.5 animate-spin"></i><span>Buscando página ${pagina}...</span></span>`;
+                lucide.createIcons();
+
+                const targetUrl = `https://www.skoob.com.br/estante/v1/${tipoEstante}/${userId}/page:${pagina}`;
+                const fetchUrl = `${proxyUrl}${encodeURIComponent(targetUrl)}`;
                 
                 try {
-                    const response = await fetch(`${proxyUrl}${urlSkoob}`);
-                    if (!response.ok) throw new Error("Erro na rede");
+                    const response = await fetch(fetchUrl);
+                    if (!response.ok) throw new Error("Erro de conexão na rede");
                     
                     const data = await response.json();
+                    if (!data.contents) throw new Error("Conteúdo não retornado");
+
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data.contents, 'text/html');
                     
                     const livrosHtml = doc.querySelectorAll("div[id^='livro_estante_']");
                     
                     if (livrosHtml.length === 0) {
-                        break; // Fim das páginas da estante
+                        break; 
                     }
                     
                     livrosHtml.forEach(livroEl => {
                         const imgCapa = livroEl.querySelector('img.capa');
                         if (imgCapa) {
                             let titulo = imgCapa.getAttribute('alt') || "";
-                            titulo = titulo.replace(/^Livro\s+/i, ""); // Limpa o "Livro " extra do Skoob
+                            titulo = titulo.replace(/^Livro\s+/i, "");
                             
                             const idSkoob = livroEl.getAttribute('id').split('_').pop();
                             
@@ -101,27 +262,29 @@
                     });
                     
                     pagina++;
-                    await new Promise(resolve => setTimeout(resolve, 300)); // Evita block do proxy
+                    await new Promise(resolve => setTimeout(resolve, 350));
                     
                 } catch (error) {
                     console.error(error);
-                    statusDiv.innerHTML = `<span style="color:red;">Erro na extração. Verifique o ID ou tente de novo.</span>`;
+                    statusDiv.innerHTML = `<span class="text-rose-400 font-semibold">Erro na extração. Verifique o ID ou tente novamente.</span>`;
                     btn.disabled = false;
+                    btn.classList.remove('opacity-75');
                     return;
                 }
             }
 
             if (todosLivros.length === 0) {
-                statusDiv.innerHTML = `<span style="color:red;">Nenhum livro localizado. O perfil pode ser privado.</span>`;
+                statusDiv.innerHTML = `<span class="text-rose-400 font-semibold">Nenhum livro localizado. O perfil pode ser privado.</span>`;
                 btn.disabled = false;
+                btn.classList.remove('opacity-75');
             } else {
-                statusDiv.innerText = `Sucesso! Redirecionando...`;
+                statusDiv.innerHTML = `<span class="text-emerald-400 font-semibold">Sucesso! ${todosLivros.length} livro(s) extraído(s). Redirecionando...</span>`;
                 
-                // Salva temporariamente no sessionStorage para a index.html capturar
                 sessionStorage.setItem('dados_importados_skoob', JSON.stringify(todosLivros));
                 
-                // Redireciona de volta para o seu app principal
-                window.location.href = "index.html";
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 1000);
             }
         }
     </script>
