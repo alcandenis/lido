@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar do Skoob — Meu App de Leitura</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 500px; margin: 60px auto; padding: 0 20px; color: #333; background-color: #f9f9f9; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; color: #111; }
+        label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: 500; font-size: 14px; }
+        input, select, button { padding: 12px; font-size: 16px; margin: 5px 0 15px 0; width: 100%; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+        input:focus, select:focus { border-color: #007bff; outline: none; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s; }
+        button:hover { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #status { font-weight: 500; text-align: center; color: #666; margin-top: 10px; }
+        .voltar { text-align: center; display: block; margin-top: 20px; color: #007bff; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Importar do Skoob</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Insira o ID do seu perfil público do Skoob para extrair os livros direto para o seu app.</p>
+
+        <label for="userId">ID do Usuário Skoob:</label>
+        <input type="text" id="userId" placeholder="Ex: 123456" required>
+
+        <label for="tipoEstante">Escolha a Estante:</label>
+        <select id="tipoEstante">
+            <option value="2">Livros Lidos</option>
+            <option value="1">Lendo Atualmente</option>
+            <option value="3">Quero Ler</option>
+            <option value="4">Relendo</option>
+            <option value="5">Abandonei</option>
+        </select>
+
+        <button id="btnImportar" onclick="processarSkoob()">Extrair e Enviar para o App</button>
+        <div id="status"></div>
+        
+        <a href="index.html" class="voltar">← Cancelar e voltar ao App</a>
+    </div>
+
+    <script>
+        async function processarSkoob() {
+            const userId = document.getElementById('userId').value.trim();
+            const tipoEstante = document.getElementById('tipoEstante').value;
+            const statusDiv = document.getElementById('status');
+            const btn = document.getElementById('btnImportar');
+
+            if (!userId) {
+                alert("Por favor, informe o ID do usuário Skoob.");
+                return;
+            }
+
+            btn.disabled = true;
+            let pagina = 1;
+            let todosLivros = [];
+            const proxyUrl = "https://allorigins.win";
+
+            // Mapeia o ID do Skoob para uma label amigável de status no seu app
+            const statusMap = { "1": "lendo", "2": "lido", "3": "quero_ler", "4": "relendo", "5": "abandonei" };
+            const statusLeituraSelecionado = statusMap[tipoEstante] || "lido";
+
+            while (true) {
+                statusDiv.innerText = `Buscando página ${pagina}...`;
+                
+                const urlSkoob = encodeURIComponent(`https://skoob.com.br{tipoEstante}/${userId}/page:${pagina}`);
+                
+                try {
+                    const response = await fetch(`${proxyUrl}${urlSkoob}`);
+                    if (!response.ok) throw new Error("Erro na rede");
+                    
+                    const data = await response.json();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data.contents, 'text/html');
+                    
+                    const livrosHtml = doc.querySelectorAll("div[id^='livro_estante_']");
+                    
+                    if (livrosHtml.length === 0) {
+                        break; // Fim das páginas da estante
+                    }
+                    
+                    livrosHtml.forEach(livroEl => {
+                        const imgCapa = livroEl.querySelector('img.capa');
+                        if (imgCapa) {
+                            let titulo = imgCapa.getAttribute('alt') || "";
+                            titulo = titulo.replace(/^Livro\s+/i, ""); // Limpa o "Livro " extra do Skoob
+                            
+                            const idSkoob = livroEl.getAttribute('id').split('_').pop();
+                            
+                            todosLivros.push({
+                                titulo: titulo,
+                                idSkoob: idSkoob,
+                                statusLeitura: statusLeituraSelecionado,
+                                dataImportacao: new Date().toISOString()
+                            });
+                        }
+                    });
+                    
+                    pagina++;
+                    await new Promise(resolve => setTimeout(resolve, 300)); // Evita block do proxy
+                    
+                } catch (error) {
+                    console.error(error);
+                    statusDiv.innerHTML = `<span style="color:red;">Erro na extração. Verifique o ID ou tente de novo.</span>`;
+                    btn.disabled = false;
+                    return;
+                }
+            }
+
+            if (todosLivros.length === 0) {
+                statusDiv.innerHTML = `<span style="color:red;">Nenhum livro localizado. O perfil pode ser privado.</span>`;
+                btn.disabled = false;
+            } else {
+                statusDiv.innerText = `Sucesso! Redirecionando...`;
+                
+                // Salva temporariamente no sessionStorage para a index.html capturar
+                sessionStorage.setItem('dados_importados_skoob', JSON.stringify(todosLivros));
+                
+                // Redireciona de volta para o seu app principal
+                window.location.href = "index.html";
+            }
+        }
+    </script>
+</body>
+</html>
