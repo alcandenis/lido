@@ -1,13 +1,8 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "COLOQUE_AQUI_O_PACKAGE_NAME_DO_SEU_APP",
-      "sha256_cert_fingerprints": [
-        "COLOQUE_AQUI_A_SUA_IMPRESSAO_DIGITAL_SHA256"
-      ]
-    }
-  }
-]
-
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.lidolivros.twa",
+        "sha256_cert_fingerprints": ["9D:0C:2F:A6:74:E5:50:AE:05:A0:82:4B:44:BF:EE:19:D1:5B:DC:1F:A4:98:B1:DF:32:57:16:0D:D4:21:30:BB"]
+      }
+    }]
