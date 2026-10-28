@@ -2111,9 +2111,9 @@ if(abaAtual==='inicio'){
   feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col justify-end pb-20 page-transition'+(modoSel?' modo-sel':'');
   feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
 } else {
-  if(subBar) subBar.classList.remove('hidden');
+  if(subBar) subBar.classList.add('hidden');
   feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pb-16 page-transition'+(modoSel?' modo-sel':'');
-  feed.style.paddingTop = 'calc(7.8rem + env(safe-area-inset-top,0px))';
+  feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
 
   if(abaAtual==='todos'){
     subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
@@ -2130,6 +2130,7 @@ if(abaAtual==='inicio'){
 
 const fn={todos:renderizarAbaTodos,buscar:renderizarAbaBusca,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
+if((abaAtual==='todos'||abaAtual==='lidos'||abaAtual==='observacoes')&&subContent&&subContent.innerHTML){const t=document.createElement('div');t.className='w-full mb-3';t.innerHTML=subContent.innerHTML;feed.insertBefore(t,feed.firstChild)}
 mostrarRetangulo();
 handleFeedScroll();
 }
