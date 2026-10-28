@@ -1797,6 +1797,13 @@ w.innerHTML=`<svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full text
 box.appendChild(w);
 }
 }
+async function copiarNota(id){
+const n=notas.find(x=>x.id===id);if(!n)return;
+const texto=n.texto;let ok=false;
+try{await navigator.clipboard.writeText(texto);ok=true}catch(e){}
+if(!ok){const el=document.createElement('textarea');el.value=texto;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();try{ok=document.execCommand('copy')}catch(e){}el.remove()}
+aviso(ok?'Nota copiada.':'Não foi possível copiar. Tente novamente.');
+}
 function editarNota(id,btn){
 const n=notas.find(x=>x.id===id);if(!n)return;
 const card=btn.closest('[data-nota]');if(!card)return;
@@ -2293,7 +2300,7 @@ ${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2
 <div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
 }
 function htmlNota(n){
-return `<div data-nota="${n.id}" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="nota-texto font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div data-nota="${n.id}" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="nota-texto font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
