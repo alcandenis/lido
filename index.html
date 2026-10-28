@@ -543,7 +543,7 @@ textarea{
 <label class="block text-xs font-medium text-gray-300 mb-1">Título</label>
 <div class="flex gap-2">
   <div class="relative flex-1">
-    <input type="text" id="titulo" oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar na Open Library..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+    <input type="text" id="titulo" oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar no Google Livros..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
     <div id="skel-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg shadow-2xl z-50 hidden p-3"><div class="flex items-center gap-3"><div class="w-8 h-12 rounded skeleton-shimmer"></div><div class="flex-1 space-y-1.5"><div class="h-3 w-3/4 rounded skeleton-shimmer"></div><div class="h-2.5 w-1/2 rounded skeleton-shimmer"></div></div></div></div>
     <div id="res-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-56 overflow-y-auto"></div>
   </div>
@@ -714,7 +714,7 @@ textarea{
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
 <button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Lista de Desejos</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
-<button onclick="recarregarBancoOpenLibrary(true)" class="opt-row"><span>Recarregar banco de dados dos livros</span><span class="opt-chev">›</span></button>
+<button onclick="recarregarBancoLivros(true)" class="opt-row"><span>Recarregar banco de dados dos livros</span><span class="opt-chev">›</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
 <button onclick="window.location.href='import.html'" class="opt-row"><span>Importar do Skoob</span><span class="opt-chev">›</span></button>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
@@ -1851,64 +1851,167 @@ $('btn-salvar-modal').innerText='Atualizar';
 toggleModalNovoRegistro();
 }
 
-/* Open Library API Otimizada para Português (com Fallback) */
+/* Google Books API — preferência por português, com contingências */
+const GB_KEY='AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
+const GB_URL='https://www.googleapis.com/books/v1/volumes';
+const GB_CAMPOS='items(id,volumeInfo(title,authors,categories,pageCount,imageLinks,language))';
 const seqBusca={};
-async function buscarOpenLibrary(q, limit = 5) {
-  let resultados = await fetchOpenLibraryAPI(`${q} language:por`, limit);
-  if (resultados.length > 0) return resultados;
-  return await fetchOpenLibraryAPI(q, limit);
+const gbCache=new Map();
+let gbPausaAte=0;
+
+const GB_GENEROS={
+'fiction':'Ficção','science fiction':'Ficção científica','fantasy':'Fantasia','biography & autobiography':'Biografia',
+'history':'História','juvenile fiction':'Infantojuvenil','juvenile nonfiction':'Infantojuvenil','young adult fiction':'Jovem adulto',
+'literary criticism':'Crítica literária','literary collections':'Coletânea literária','poetry':'Poesia','drama':'Teatro',
+'comics & graphic novels':'Quadrinhos','self-help':'Autoajuda','business & economics':'Negócios e economia','philosophy':'Filosofia',
+'psychology':'Psicologia','religion':'Religião','body, mind & spirit':'Corpo, mente e espírito','social science':'Ciências sociais',
+'science':'Ciência','political science':'Ciência política','computers':'Computação','education':'Educação','art':'Arte',
+'cooking':'Culinária','travel':'Viagem','true crime':'Crimes reais','humor':'Humor','mystery & detective':'Mistério e policial',
+'thrillers':'Suspense','romance':'Romance','horror':'Terror','historical':'Histórico','classics':'Clássicos',
+'family & relationships':'Família e relacionamentos','health & fitness':'Saúde e bem-estar','music':'Música',
+'language arts & disciplines':'Linguagem e letras','foreign language study':'Estudo de idiomas','reference':'Referência',
+'nature':'Natureza','technology & engineering':'Tecnologia e engenharia','mathematics':'Matemática','law':'Direito',
+'sports & recreation':'Esportes e lazer','performing arts':'Artes cênicas','photography':'Fotografia','architecture':'Arquitetura',
+'medical':'Medicina','essays':'Ensaios','short stories':'Contos','literary':'Literário','general':''
+};
+function gbGenero(cats){
+  if(!Array.isArray(cats)||!cats.length)return '';
+  const partes=String(cats[0]).split('/').map(x=>x.trim()).filter(Boolean);
+  const tr=x=>{const k=x.toLowerCase();return k in GB_GENEROS?GB_GENEROS[k]:x};
+  if(partes[0]&&partes[0].toLowerCase()==='fiction'&&partes[1]){const t=tr(partes[1]);if(t)return t}
+  return tr(partes[0]||'')||'';
 }
+function gbCapa(il){
+  if(!il)return '';
+  const base=il.thumbnail||il.smallThumbnail||'';
+  let u=il.extraLarge||il.large||il.medium||il.small||base;
+  if(!u)return '';
+  const ehBase=(u===base);
+  u=u.replace(/^http:/,'https:').replace(/&edge=curl/g,'');
+  if(ehBase)u=u.replace(/zoom=\d+/,'zoom=2');
+  return u;
+}
+function gbMapear(it){
+  const v=(it&&it.volumeInfo)||{};
+  return {
+    id:it&&it.id||'',
+    titulo:(v.title||'').trim(),
+    autor:Array.isArray(v.authors)&&v.authors.length?v.authors.join(', '):'Autor desconhecido',
+    capa:gbCapa(v.imageLinks),
+    paginas:v.pageCount>0?v.pageCount:0,
+    genero:gbGenero(v.categories),
+    idioma:(v.language||'').toLowerCase()
+  };
+}
+const gbNorm=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+const gbEspera=ms=>new Promise(z=>setTimeout(z,ms));
 
-async function fetchOpenLibraryAPI(queryStr, limit) {
-  const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(queryStr)}&limit=${limit}`;
-  try {
-    let r = await fetch(url);
-    if (!r.ok) return [];
-    let d = await r.json();
-
-    return (d.docs || []).map(item => {
-      const titulo = item.title || '';
-      const autor = Array.isArray(item.author_name) && item.author_name.length ? item.author_name.join(', ') : 'Autor desconhecido';
-      
-      let cover = '';
-      if (item.cover_i) {
-        cover = `https://covers.openlibrary.org/b/id/${item.cover_i}-L.jpg`;
-      } else if (Array.isArray(item.isbn) && item.isbn.length > 0) {
-        cover = `https://covers.openlibrary.org/b/isbn/${item.isbn[0]}-L.jpg`;
-      }
-
-      const paginas = item.number_of_pages_median || 0;
-      const subjects = item.subject || [];
-      const genero = subjects.length ? subjects[0] : '';
-
-      return {
-        titulo,
-        autor,
-        capa: cover,
-        paginas,
-        genero
-      };
-    }).filter(x => x.titulo);
-  } catch (e) {
-    return [];
+/* Requisição com timeout, tentativas e contingências (chave inválida, cota, erro de rede/servidor) */
+async function gbFetch(params){
+  if(Date.now()<gbPausaAte)return {ok:false,status:429};
+  let comChave=!!GB_KEY,status=0;
+  for(let t=0;t<4;t++){
+    const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),8000);
+    try{
+      const r=await fetch(`${GB_URL}?${params}${comChave?`&key=${GB_KEY}`:''}`,{signal:ctl.signal});
+      clearTimeout(to);
+      if(r.ok)return {ok:true,data:await r.json()};
+      status=r.status;
+      if((status===400||status===401||status===403||status===429)&&comChave){comChave=false;continue}
+      if(status===429){gbPausaAte=Date.now()+60000;return {ok:false,status}}
+      if(status>=500){await gbEspera(500*(t+1));continue}
+      return {ok:false,status};
+    }catch(e){
+      clearTimeout(to);
+      status=0;
+      if(t<3){await gbEspera(500*(t+1));continue}
+    }
   }
+  return {ok:false,status};
 }
 
+async function gbBuscar(q,lang,max){
+  const chave=`${lang||'*'}|${max}|${q}`;
+  if(gbCache.has(chave))return gbCache.get(chave);
+  const p=new URLSearchParams({q,printType:'books',maxResults:String(max),orderBy:'relevance',fields:GB_CAMPOS});
+  if(lang)p.set('langRestrict',lang);
+  const r=await gbFetch(p.toString());
+  const out={ok:r.ok,itens:r.ok?((r.data&&r.data.items)||[]).map(gbMapear).filter(x=>x.titulo):[]};
+  if(r.ok)gbCache.set(chave,out);
+  return out;
+}
+
+const gbPontos=x=>(x.capa?3:0)+(x.paginas?2:0)+(x.genero?1:0);
+
+/* Busca: português primeiro; se faltar resultado, amplia para qualquer idioma */
+async function buscarGoogleBooks(q,limit=5){
+  const max=Math.min(40,Math.max(limit*4,12));
+  let falhas=0;
+  const r1=await gbBuscar(q,'pt',max);
+  if(!r1.ok)falhas++;
+  let todos=r1.itens.slice();
+  if(todos.length<limit){
+    const r2=await gbBuscar(q,null,max);
+    if(!r2.ok)falhas++;
+    todos=todos.concat(r2.itens);
+  }
+  if(!todos.length&&falhas)throw new Error('Google Livros indisponível');
+  const mapa=new Map();
+  todos.forEach(x=>{
+    const k=gbNorm(x.titulo)+'|'+gbNorm(x.autor.split(',')[0]);
+    const a=mapa.get(k);
+    if(!a){mapa.set(k,{...x});return}
+    const [m,o]=gbPontos(x)>gbPontos(a)?[{...x},a]:[a,x];
+    ['capa','paginas','genero'].forEach(c=>{if(!m[c])m[c]=o[c]});
+    if(o.idioma.startsWith('pt')&&!m.idioma.startsWith('pt'))m.idioma=o.idioma;
+    mapa.set(k,m);
+  });
+  const lista=[...mapa.values()];
+  lista.sort((a,b)=>(b.idioma.startsWith('pt')?1:0)-(a.idioma.startsWith('pt')?1:0));
+  return lista.slice(0,limit);
+}
+
+/* Detalhes de um livro (capa, páginas, gênero, autor), completando lacunas com várias consultas */
 async function buscarDetalhesLivro(titulo,autor){
-const query = autor && !/desconhecido/i.test(autor) ? `${titulo} ${autor}` : titulo;
-let lista = await buscarOpenLibrary(query, 3);
-let item = (lista.find(x => x.capa) || lista[0]);
-return item || { capa: '', paginas: 0, genero: '' };
+  const res={capa:'',paginas:0,genero:'',autor:''};
+  try{
+    const t=(titulo||'').replace(/"/g,' ').trim();
+    if(!t)return res;
+    const a=autor&&!/desconhecido/i.test(autor)?autor.replace(/"/g,' ').split(',')[0].trim():'';
+    const consultas=[];
+    if(a)consultas.push(`intitle:"${t}" inauthor:"${a}"`);
+    consultas.push(a?`${t} ${a}`:t);
+    const tn=gbNorm(t);
+    const completo=()=>res.capa&&res.paginas>0&&res.genero&&(res.autor||a);
+    for(const q of consultas){
+      for(const lang of ['pt',null]){
+        if(completo())return res;
+        const r=await gbBuscar(q,lang,10);
+        const cand=r.itens.filter(x=>{const cn=gbNorm(x.titulo);return cn&&(cn.includes(tn)||tn.includes(cn))});
+        cand.sort((x,y)=>(y.idioma.startsWith('pt')?1:0)-(x.idioma.startsWith('pt')?1:0)||gbPontos(y)-gbPontos(x));
+        for(const x of cand){
+          if(!res.capa&&x.capa)res.capa=x.capa;
+          if(!res.paginas&&x.paginas)res.paginas=x.paginas;
+          if(!res.genero&&x.genero)res.genero=x.genero;
+          if(!res.autor&&x.autor&&!/desconhecido/i.test(x.autor))res.autor=x.autor;
+        }
+      }
+    }
+  }catch(e){}
+  return res;
 }
 
 async function atualizarCapasFaltantes(manual=false){
 let alterado=false;
-const semCapa=biblioteca.filter(l=>!l.capa||l.capa.includes('placehold.co')||!l.genero);
+const semCapa=biblioteca.filter(l=>!l.capa||l.capa.includes('placehold.co')||!l.genero||!l.autor||/desconhecido/i.test(l.autor));
 if(manual&&!semCapa.length)return aviso('Todos os livros já têm capas e gêneros salvos.');
 if(manual)aviso(`Buscando informações para ${semCapa.length} livros...`);
 for(const l of semCapa){
+ if(Date.now()<gbPausaAte){if(manual)aviso('Limite do Google Livros atingido. Tente novamente em instantes.');break}
  try{
   const b=await buscarDetalhesLivro(l.titulo,l.autor);
+  await gbEspera(120);
+  if(b.autor&&(!l.autor||/desconhecido/i.test(l.autor))){l.autor=b.autor;alterado=true;}
   if(b.capa&&(!l.capa||l.capa.includes('placehold.co'))){l.capa=b.capa;alterado=true;}
   if(b.genero&&!l.genero){l.genero=b.genero;alterado=true;}
   if(b.paginas&&(!l.paginas||l.paginas<=0)){l.paginas=b.paginas;alterado=true;}
@@ -1921,16 +2024,19 @@ if(alterado){
 }
 }
 
-async function recarregarBancoOpenLibrary(manual=true){
+async function recarregarBancoLivros(manual=true){
 let alterado=false;
-const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co')||!l.genero);
+const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co')||!l.genero||!l.autor||/desconhecido/i.test(l.autor));
 if(manual&&!alvos.length)return aviso('Todos os livros já possuem capas, páginas e gêneros atualizados.');
 if(manual)aviso(`Atualizando dados para ${alvos.length} livros...`);
 
 for(const l of alvos){
+ if(Date.now()<gbPausaAte){if(manual)aviso('Limite do Google Livros atingido. Tente novamente em instantes.');break}
  try{
   const b=await buscarDetalhesLivro(l.titulo,l.autor);
+  await gbEspera(120);
   if(b){
+   if(b.autor && (!l.autor || /desconhecido/i.test(l.autor))){ l.autor = b.autor; alterado = true; }
    if(b.capa && (!l.capa || l.capa.includes('placehold.co'))){ l.capa = b.capa; alterado = true; }
    if(b.paginas && b.paginas > 0 && (!l.paginas || l.paginas <= 0)){ l.paginas = b.paginas; alterado = true; }
    if(b.genero && !l.genero){ l.genero = b.genero; alterado = true; }
@@ -1941,7 +2047,7 @@ for(const l of alvos){
 if(alterado){
  salvarLocal();
  renderizarFeed();
- if(manual)aviso('Banco de dados atualizado com sucesso via Open Library!');
+ if(manual)aviso('Banco de dados atualizado com sucesso via Google Livros!');
 }else if(manual){
  aviso('Nenhuma nova alteração encontrada.');
 }
@@ -1953,17 +2059,17 @@ seqBusca[tipo]=(seqBusca[tipo]||0)+1;
 const skel=$('skel-'+tipo),res=$('res-'+tipo);
 if(!q||q.trim().length<2){skel.classList.add('hidden');res.classList.add('hidden');return}
 skel.classList.remove('hidden');res.classList.add('hidden');
-timers[tipo]=setTimeout(()=>buscarLivrosOpenLibrary(q.trim(),tipo),350);
+timers[tipo]=setTimeout(()=>buscarLivrosGoogle(q.trim(),tipo),350);
 }
 
-function buscarLivrosOpenLibrary(q,tipo){
+function buscarLivrosGoogle(q,tipo){
 const skel=$('skel-'+tipo),res=$('res-'+tipo),meu=seqBusca[tipo];
 const alvo=tipo==='modal'?['titulo','autor','capa_url','paginas']:['pergunta_titulo','pergunta_autor','pergunta_capa'];
-buscarOpenLibrary(q,6).then(lista=>{
+buscarGoogleBooks(q,6).then(lista=>{
 if(meu!==seqBusca[tipo])return;
 skel.classList.add('hidden');
 res.innerHTML='';res.classList.remove('hidden');
-if(!lista.length){res.innerHTML='<div class="p-3 text-xs text-gray-400">Nenhum livro encontrado na Open Library.</div>';return}
+if(!lista.length){res.innerHTML='<div class="p-3 text-xs text-gray-400">Nenhum livro encontrado no Google Livros.</div>';return}
 lista.forEach(b=>{
 const capa=b.capa||'https://placehold.co/300x450/111/fff?text=Sem+Capa';
 const row=document.createElement('div');
@@ -1982,8 +2088,8 @@ res.appendChild(row);
 }).catch(e=>{
 if(meu!==seqBusca[tipo])return;
 skel.classList.add('hidden');res.classList.add('hidden');
-console.error('Open Library:',e);
-aviso('Sem conexão com a Open Library.');
+console.error('Google Livros:',e);
+aviso('Não foi possível buscar no Google Livros. Tente novamente.');
 });
 }
 
