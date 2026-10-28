@@ -311,6 +311,12 @@ textarea{
   color:#111;
   border-color:rgba(255,255,255,.7);
 }
+
+/* Cabeçalho: sombra suave que desce até as abas e o conteúdo */
+#app-header{background-image:none!important}
+#app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 4.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.94) 0%,rgba(0,0,0,.88) 25%,rgba(0,0,0,.72) 45%,rgba(0,0,0,.48) 62%,rgba(0,0,0,.24) 78%,rgba(0,0,0,.08) 91%,rgba(0,0,0,0) 100%)}
+#feed-container .tab-reg{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.8)}
+#feed-container .tab-reg.ativo{text-shadow:0 1px 8px rgba(0,0,0,.95)!important}
 /* Sem brilho/reflexo nos estados ativos das abas */
 .tab-reg.ativo,.dock-tab.ativo{
   text-shadow:none!important;
@@ -1787,6 +1793,20 @@ w.innerHTML=`<svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full text
 box.appendChild(w);
 }
 }
+function editarNota(id,btn){
+const n=notas.find(x=>x.id===id);if(!n)return;
+const card=btn.closest('[data-nota]');if(!card)return;
+const p=card.querySelector('.nota-texto'),ac=card.querySelector('.nota-acoes');
+const ta=document.createElement('textarea');
+ta.value=n.texto;ta.rows=4;
+ta.className='w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-base text-white font-obs focus:outline-none focus:border-gold-400 resize-none';
+p.replaceWith(ta);
+ac.innerHTML=`<button type="button" class="nota-cancelar text-xs text-gray-300 hover:text-white px-3 py-1.5">Cancelar</button><button type="button" class="nota-salvar text-xs bg-gold-400 text-black font-semibold px-3 py-1.5 rounded-lg">Salvar</button>`;
+ac.querySelector('.nota-cancelar').onclick=()=>rerenderMantendoScroll();
+ac.querySelector('.nota-salvar').onclick=()=>{const t=ta.value.trim();if(!t){aviso('A nota não pode ficar vazia');return}n.texto=t;salvarLocal();rerenderMantendoScroll()};
+ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+}
+function rerenderMantendoScroll(){const f=$('feed-container'),y=f.scrollTop;renderizarFeed();f.style.scrollBehavior='auto';f.scrollTop=y;requestAnimationFrame(()=>{f.style.scrollBehavior=''})}
 function deletarNota(id,btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
 function paraBR(v){if(!v)return '';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}
 function paraISO(br){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(br||'');return m?`${m[3]}-${m[2]}-${m[1]}`:''}
@@ -2268,7 +2288,7 @@ ${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2
 <div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
 }
 function htmlNota(n){
-return `<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="flex justify-end pt-2 border-t border-white/10"><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div data-nota="${n.id}" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="nota-texto font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
