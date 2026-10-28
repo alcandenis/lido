@@ -1795,10 +1795,8 @@ function gerarEstrelasStr(n){
 if(!n)return '<span class="text-xs text-gray-400">Em leitura</span>';
 let html='<span class="inline-flex items-center gap-0.5 align-middle">';
 for(let i=1;i<=5;i++){
-  const filled=i<=Math.floor(n);
-  const half=!filled&&i===Math.ceil(n)&&(n%1!==0);
-  const color=(filled||half)?'text-gold-400':'text-white/20';
-  html+=`<svg viewBox="0 0 24 24" class="w-4 h-4 ${color} inline-block"><path fill="currentColor" d="${STAR_PATH}"/></svg>`;
+  const fr=Math.max(0,Math.min(1,n-(i-1)));
+  html+=`<span class="relative inline-block w-4 h-4"><svg viewBox="0 0 24 24" class="absolute inset-0 w-4 h-4 text-white/20"><path fill="currentColor" d="${STAR_PATH}"/></svg><span class="absolute inset-0 overflow-hidden" style="width:${fr*100}%"><svg viewBox="0 0 24 24" class="w-4 h-4 text-gold-400 max-w-none"><path fill="currentColor" d="${STAR_PATH}"/></svg></span></span>`;
 }
 html+='</span>';
 return html;
