@@ -86,6 +86,15 @@ body{background:#000000;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hi
 .skeleton-shimmer{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
 .page-transition{animation:fadeUp .38s cubic-bezier(.16,1,.3,1) forwards}
 .frosted-modal-container.hidden{display:none}
+@keyframes slideInR{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes slideOutR{from{opacity:1;transform:none}to{opacity:0;transform:translateX(36px)}}
+@keyframes fadeDown{from{opacity:1;transform:none}to{opacity:0;transform:translateY(16px)}}
+#modal-opcoes.anim-in{animation:slideInR .34s cubic-bezier(.16,1,.3,1) both}
+#modal-opcoes.anim-out{animation:slideOutR .22s ease-in both;pointer-events:none}
+#modal-registro.anim-in{animation:fadeUp .38s cubic-bezier(.16,1,.3,1) both}
+#modal-registro.anim-out{animation:fadeDown .22s ease-in both;pointer-events:none}
+@media (prefers-reduced-motion:reduce){#modal-opcoes.anim-in,#modal-registro.anim-in,#modal-opcoes.anim-out,#modal-registro.anim-out{animation-duration:.01s}}
+
 .frosted-modal-container{background:rgba(0,0,0,.6)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 #modal-opcoes,#tela-lidos{background:rgba(0,0,0,.85)!important;backdrop-filter:blur(30px) saturate(1.2);-webkit-backdrop-filter:blur(30px) saturate(1.2)}
 select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
@@ -500,7 +509,7 @@ textarea{
       <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
     </svg>
   </button>
-  <button onclick="toggleModalOpcoes()" class="self-start h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Configurações" title="Configurações"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button>
+  <button onclick="toggleModalOpcoes()" class="self-start h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Configurações" title="Configurações"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9h16M4 15h16"/></svg></button>
 </div>
 </header>
 
@@ -1360,12 +1369,25 @@ function fecharBoasVindas(){const m=$('welcome-modal');if(m)m.style.display='non
 function concluirBoasVindasAposConteudo(){fecharBoasVindas();lsSet('lido_boas_vindas_vista','1')}
 function cancelarNovaPassagem(){toggleModalNovoRegistro();if(lsGet('lido_boas_vindas_vista')!=='1')mostrarBoasVindas()}
 function atualizarIconeDockNovaPassagem(){const modal=$('modal-registro'),aberto=!!(modal&&!modal.classList.contains('hidden')),btn=$('dock-add-button'),path=$('dock-add-icon-path');if(path)path.setAttribute('d',aberto?'M6 6l12 12M18 6L6 18':'M12 5v14m7-7H5');if(btn){btn.title=aberto?'Fechar Nova passagem':'Nova passagem';btn.setAttribute('aria-label',aberto?'Fechar Nova passagem':'Abrir Nova passagem')}}
-function toggleModalNovoRegistro(){const modal=$('modal-registro');modal.classList.toggle('hidden');document.body.classList.toggle('registro-aberto',!modal.classList.contains('hidden'));atualizarIconeDockNovaPassagem()}
+function toggleModalNovoRegistro(){const modal=$('modal-registro');if(modal.dataset.anim)return;const abrir=modal.classList.contains('hidden');document.body.classList.toggle('registro-aberto',abrir);if(abrir){animarModal(modal,true);atualizarIconeDockNovaPassagem()}else{animarModal(modal,false,atualizarIconeDockNovaPassagem);atualizarIconeDockNovaPassagem()}}
 function alternarNovaPassagemDock(){const modal=$('modal-registro');if(modal&&!modal.classList.contains('hidden')){toggleModalNovoRegistro();return}if($('welcome-modal')&&$('welcome-modal').style.display!=='none')fecharBoasVindas();prepararNovoRegistro();atualizarIconeDockNovaPassagem()}
 function toggleDetalhesRegistro(){const box=$('registro-detalhes'),btn=$('registro-detalhes-toggle'),chevron=$('registro-detalhes-chevron');if(!box||!btn)return;const abrir=box.classList.contains('hidden');box.classList.toggle('hidden',!abrir);btn.setAttribute('aria-expanded',String(abrir));if(chevron)chevron.style.transform=abrir?'rotate(180deg)':'rotate(0deg)'}
+function animarModal(m,abrir,depois){
+m.dataset.anim='1';
+m.classList.remove('anim-in','anim-out');
+let fim=false;
+const terminar=()=>{if(fim)return;fim=true;delete m.dataset.anim;m.classList.remove('anim-in','anim-out');if(!abrir)m.classList.add('hidden');if(depois)depois()};
+if(abrir){m.classList.remove('hidden');void m.offsetWidth;m.classList.add('anim-in')}
+else{m.classList.add('anim-out')}
+m.addEventListener('animationend',terminar,{once:true});
+setTimeout(terminar,abrir?450:350);
+}
 function toggleModalOpcoes(){
-const m=$('modal-opcoes');m.classList.toggle('hidden');
-if(!m.classList.contains('hidden')){m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();}
+const m=$('modal-opcoes');if(m.dataset.anim)return;
+if(m.classList.contains('hidden')){
+m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();
+animarModal(m,true);
+}else animarModal(m,false);
 }
 
 /* Página Bloco do Editor */
