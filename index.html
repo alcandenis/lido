@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
-html, body { overscroll-behavior-y: none; }
 <head>
 <script>
+<body class="overscroll-none">
+  <!-- Conteúdo do seu app -->
+</body>
+
+
 (function(){
   var erros=[];
   function nosso(f){return !f||f.indexOf(location.origin)===0||f===location.href}
