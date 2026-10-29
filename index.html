@@ -1663,8 +1663,19 @@ function definirAnoStats(a){anoStats=a;renderizarFeed()}
 function renderizarAbaLidos(feed){
 const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
 if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,0,false);
+else if(abaLidos==='ranking')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlRanking(lidos)}</div>`,BG_PADRAO,0,false);
 else addSecao(feed,htmlStats(lidos),BG_PADRAO,0,false);
 transicionarFundo(BG_PADRAO);
+}
+function htmlRanking(lidos){
+const av=lidos.filter(x=>(parseFloat(x.nota)||0)>0).sort((a,b)=>(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR'));
+if(!av.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado ainda.</p>';
+let pos=0,ant=null;
+return `<div class="w-full">${av.map((x,i)=>{
+const n=parseFloat(x.nota)||0;
+if(n!==ant){pos=i+1;ant=n}
+const topo=pos<=3;
+return `<button onclick="abrirPassagem(${x.id})" class="flex items-center gap-3 w-full text-left py-2 border-b border-white/5 last:border-0" aria-label="${esc(x.titulo)}"><span class="w-6 flex-shrink-0 text-center text-sm font-semibold tabular-nums ${topo?'text-gold-400':'text-gray-400'}">${pos}</span><span class="relative w-9 h-[3.4rem] flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(x.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block text-sm font-semibold text-white truncate">${esc(x.titulo)}</span><span class="block text-[11px] text-gray-400 truncate">${esc(x.autor||'')}</span></span><span class="flex-shrink-0 text-right">${gerarEstrelasStr(n)}<span class="block text-[11px] text-gray-300 tabular-nums mt-0.5">${String(n).replace('.',',')}</span></span></button>`}).join('')}</div>`;
 }
 function htmlCapasLidos(l){
 if(!l.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro concluído ainda.</p>';
@@ -2294,7 +2305,7 @@ if(abaAtual==='inicio'){
   if(abaAtual==='todos'){
     subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='lidos'){
-    subContent.innerHTML = `<div class="grid grid-cols-2 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+    subContent.innerHTML = `<div class="grid grid-cols-3 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas'],['ranking','Ranking']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='observacoes'){
     subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['todos','Todos'],['notas','Notas'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroSoTextos('${k}')" class="tab-reg sm${filtroSoTextos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='buscar'){
