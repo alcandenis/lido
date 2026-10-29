@@ -564,7 +564,7 @@ textarea{
 </div>
 </div>
 <div class="grid grid-cols-[minmax(0,1fr)_6.5rem] gap-2 items-end"><div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><div><label class="block text-xs font-medium text-gray-300 mb-1">Páginas</label><input type="number" id="paginas" min="1" step="1" inputmode="numeric" placeholder="Nº" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div></div>
-<input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url"><input type="hidden" id="genero" value="">
+<input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url"><input type="hidden" id="genero" value=""><input type="hidden" id="isbn" value="">
 <button type="button" id="registro-detalhes-toggle" aria-expanded="false" aria-controls="registro-detalhes" onclick="toggleDetalhesRegistro()" class="inline-flex items-center gap-1.5 text-[11px] text-gold-400 hover:underline transition-colors"><span>Detalhes da leitura</span><span id="registro-detalhes-chevron" aria-hidden="true" class="transition-transform">⌄</span></button>
 <div id="registro-detalhes" class="hidden space-y-3 rounded-lg border border-white/10 bg-black/10 p-3">
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Tipo de leitura</label>
@@ -1863,7 +1863,7 @@ function editarLivro(id){
 const l=biblioteca.find(x=>x.id===id);if(!l)return;
 $('edit_id').value=l.id;$('titulo').value=l.titulo;$('autor').value=l.autor;$('paginas').value=l.paginas||'';
 $('formato').value=l.formato||'Kindle';$('nota').value=l.nota||0;$('status').value=statusDe(l);
-$('observacao').value=l.observacao||'';$('capa_url').value=l.capa||'';$('genero').value=l.genero||'';
+$('observacao').value=l.observacao||'';$('capa_url').value=l.capa||'';$('genero').value=l.genero||'';if($('isbn'))$('isbn').value=l.isbn||'';
 mostrarPeriodo(!!l.data_inicio);
 if(l.data_inicio){$('periodo-inicio').value=paraISO(l.data_inicio);$('periodo-fim').value=paraISO(l.data_fim)}
 renderSeletores();
@@ -1874,7 +1874,7 @@ toggleModalNovoRegistro();
 /* Google Books API — preferência por português, com contingências */
 const GB_KEY='AIzaSyAYPPcCflXVECrsacdBCbp-ih-mm9rCPMQ';
 const GB_URL='https://www.googleapis.com/books/v1/volumes';
-const GB_CAMPOS='items(id,volumeInfo(title,authors,categories,pageCount,imageLinks,language))';
+const GB_CAMPOS='items(id,volumeInfo(title,authors,categories,pageCount,imageLinks,language,industryIdentifiers))';
 const seqBusca={};
 const gbCache=new Map();
 let gbPausaAte=0;
@@ -1911,6 +1911,11 @@ function gbCapa(il){
   if(ehBase)u=u.replace(/zoom=\d+/,'zoom=2');
   return u;
 }
+function gbIsbn(ids){
+  if(!Array.isArray(ids))return '';
+  const lim=t=>{const x=ids.find(i=>i&&i.type===t&&i.identifier);return x?String(x.identifier).replace(/[^0-9Xx]/g,'').toUpperCase():''};
+  return lim('ISBN_13')||lim('ISBN_10')||'';
+}
 function gbMapear(it){
   const v=(it&&it.volumeInfo)||{};
   return {
@@ -1920,6 +1925,7 @@ function gbMapear(it){
     capa:gbCapa(v.imageLinks),
     paginas:v.pageCount>0?v.pageCount:0,
     genero:gbGenero(v.categories),
+    isbn:gbIsbn(v.industryIdentifiers),
     idioma:(v.language||'').toLowerCase()
   };
 }
@@ -1982,7 +1988,7 @@ async function buscarGoogleBooks(q,limit=5){
     const a=mapa.get(k);
     if(!a){mapa.set(k,{...x});return}
     const [m,o]=gbPontos(x)>gbPontos(a)?[{...x},a]:[a,x];
-    ['capa','paginas','genero'].forEach(c=>{if(!m[c])m[c]=o[c]});
+    ['capa','paginas','genero','isbn'].forEach(c=>{if(!m[c])m[c]=o[c]});
     if(o.idioma.startsWith('pt')&&!m.idioma.startsWith('pt'))m.idioma=o.idioma;
     mapa.set(k,m);
   });
@@ -1993,7 +1999,7 @@ async function buscarGoogleBooks(q,limit=5){
 
 /* Detalhes de um livro (capa, páginas, gênero, autor), completando lacunas com várias consultas */
 async function buscarDetalhesLivro(titulo,autor){
-  const res={capa:'',paginas:0,genero:'',autor:''};
+  const res={capa:'',paginas:0,genero:'',autor:'',isbn:'',falhou:false};
   try{
     const t=(titulo||'').replace(/"/g,' ').trim();
     if(!t)return res;
@@ -2007,12 +2013,14 @@ async function buscarDetalhesLivro(titulo,autor){
       for(const lang of ['pt',null]){
         if(completo())return res;
         const r=await gbBuscar(q,lang,10);
+        if(!r.ok)res.falhou=true;
         const cand=r.itens.filter(x=>{const cn=gbNorm(x.titulo);return cn&&(cn.includes(tn)||tn.includes(cn))});
         cand.sort((x,y)=>(y.idioma.startsWith('pt')?1:0)-(x.idioma.startsWith('pt')?1:0)||gbPontos(y)-gbPontos(x));
         for(const x of cand){
           if(!res.capa&&x.capa)res.capa=x.capa;
           if(!res.paginas&&x.paginas)res.paginas=x.paginas;
           if(!res.genero&&x.genero)res.genero=x.genero;
+          if(!res.isbn&&x.isbn)res.isbn=x.isbn;
           if(!res.autor&&x.autor&&!/desconhecido/i.test(x.autor))res.autor=x.autor;
         }
       }
@@ -2023,7 +2031,7 @@ async function buscarDetalhesLivro(titulo,autor){
 
 async function atualizarCapasFaltantes(manual=false){
 let alterado=false;
-const semCapa=biblioteca.filter(l=>!l.capa||l.capa.includes('placehold.co')||!l.genero||!l.autor||/desconhecido/i.test(l.autor));
+const semCapa=biblioteca.filter(l=>!l.capa||l.capa.includes('placehold.co')||!l.genero||!l.autor||/desconhecido/i.test(l.autor)||(!l.isbn&&!l.isbnTentado));
 if(manual&&!semCapa.length)return aviso('Todos os livros já têm capas e gêneros salvos.');
 if(manual)aviso(`Buscando informações para ${semCapa.length} livros...`);
 for(const l of semCapa){
@@ -2034,6 +2042,8 @@ for(const l of semCapa){
   if(b.autor&&(!l.autor||/desconhecido/i.test(l.autor))){l.autor=b.autor;alterado=true;}
   if(b.capa&&(!l.capa||l.capa.includes('placehold.co'))){l.capa=b.capa;alterado=true;}
   if(b.genero&&!l.genero){l.genero=b.genero;alterado=true;}
+  if(b.isbn&&!l.isbn){l.isbn=b.isbn;alterado=true;}
+  if(!l.isbn&&!l.isbnTentado&&!b.falhou){l.isbnTentado=true;alterado=true;}
   if(b.paginas&&(!l.paginas||l.paginas<=0)){l.paginas=b.paginas;alterado=true;}
  }catch(e){}
 }
@@ -2046,7 +2056,7 @@ if(alterado){
 
 async function recarregarBancoLivros(manual=true){
 let alterado=false;
-const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co')||!l.genero||!l.autor||/desconhecido/i.test(l.autor));
+const alvos=biblioteca.filter(l=>!l.paginas||l.paginas<=0||!l.capa||l.capa.includes('placehold.co')||!l.genero||!l.autor||/desconhecido/i.test(l.autor)||(!l.isbn&&!l.isbnTentado));
 if(manual&&!alvos.length)return aviso('Todos os livros já possuem capas, páginas e gêneros atualizados.');
 if(manual)aviso(`Atualizando dados para ${alvos.length} livros...`);
 
@@ -2060,6 +2070,8 @@ for(const l of alvos){
    if(b.capa && (!l.capa || l.capa.includes('placehold.co'))){ l.capa = b.capa; alterado = true; }
    if(b.paginas && b.paginas > 0 && (!l.paginas || l.paginas <= 0)){ l.paginas = b.paginas; alterado = true; }
    if(b.genero && !l.genero){ l.genero = b.genero; alterado = true; }
+   if(b.isbn && !l.isbn){ l.isbn = b.isbn; alterado = true; }
+   if(!l.isbn && !l.isbnTentado && !b.falhou){ l.isbnTentado = true; alterado = true; }
   }
  }catch(e){}
 }
@@ -2074,6 +2086,7 @@ if(alterado){
 }
 
 function buscaDebounce(q,tipo){
+if(tipo==='modal'&&$('isbn'))$('isbn').value='';
 clearTimeout(timers[tipo]);
 seqBusca[tipo]=(seqBusca[tipo]||0)+1;
 const skel=$('skel-'+tipo),res=$('res-'+tipo);
@@ -2101,6 +2114,7 @@ row.onclick=()=>{
   $(alvo[2]).value=b.capa||'';
   if(alvo[3]&&$(alvo[3])){$('paginas').value=b.paginas>0?b.paginas:''};
   if($('genero'))$('genero').value=b.genero||'';
+  if($('isbn'))$('isbn').value=b.isbn||'';
   res.classList.add('hidden')
 };
 res.appendChild(row);
@@ -2130,12 +2144,12 @@ reader.readAsDataURL(file);
 function salvarLivro(e){
 e.preventDefault();
 const editId=$('edit_id').value;
-const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim(),genero=$('genero').value.trim();
+const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim(),genero=$('genero').value.trim(),isbn=($('isbn')&&$('isbn').value||'').trim();
 if(!editId&&!titulo&&!autor){
  if(!observacao)return aviso('Escreva uma observação ou informe o título de um livro.');
  notas.unshift({id:Date.now(),texto:observacao,musica:'',data:new Date().toLocaleDateString('pt-BR')});
  salvarLocal();
- $('bookForm').reset();['capa_url','edit_id','genero'].forEach(i=>$(i).value='');
+ $('bookForm').reset();['capa_url','edit_id','genero','isbn'].forEach(i=>{const e=$(i);if(e)e.value=''});
  toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed();return;
 }
 if(!titulo&&!observacao)return aviso('Informe ao menos o título do livro ou escreva uma observação.');
@@ -2158,15 +2172,17 @@ const d={
   nota,
   observacao,
   capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo||'Nota')}`,
-  genero:genero||generoAntigo
+  genero:genero||generoAntigo,
+  isbn
 };
-if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero)){
+if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero||!d.isbn)){
  buscarDetalhesLivro(d.titulo,d.autor).then(b=>{
   if(b){
     const target=biblioteca.find(x=>x.id==targetId);
     if(target){
       if(b.capa&&(!target.capa||target.capa.includes('placehold.co')))target.capa=b.capa;
       if(b.genero&&!target.genero)target.genero=b.genero;
+      if(b.isbn&&!target.isbn)target.isbn=b.isbn;
       if(b.paginas&&(!target.paginas||target.paginas<=0))target.paginas=b.paginas;
       salvarLocal();renderizarFeed();
     }
@@ -2176,14 +2192,14 @@ if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero)){
 if(idx!==-1)biblioteca[idx]={...biblioteca[idx],...d};
 else{targetId=Date.now();biblioteca.unshift({id:targetId,...d})}
 salvarLocal();
-$('bookForm').reset();['capa_url','edit_id','genero'].forEach(i=>$(i).value='');
+$('bookForm').reset();['capa_url','edit_id','genero','isbn'].forEach(i=>{const e=$(i);if(e)e.value=''});
 toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed(targetId);
 }
 
 function salvarLivroDesejado(e){
 e.preventDefault();
 const editId=$('edit_id').value;
-const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim(),genero=$('genero').value.trim();
+const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim(),genero=$('genero').value.trim(),isbn=($('isbn')&&$('isbn').value||'').trim();
 if(!titulo&&!autor&&!observacao)return aviso('Informe ao menos o título do livro.');
 const idx=editId?biblioteca.findIndex(l=>l.id==editId):-1;
 let targetId=editId,generoAntigo=idx!==-1?biblioteca[idx].genero||'':'';
@@ -2200,15 +2216,17 @@ const d={
   nota:0,
   observacao,
   capa:$('capa_url').value||`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo||'Desejo')}`,
-  genero:genero||generoAntigo
+  genero:genero||generoAntigo,
+  isbn
 };
-if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero)){
+if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero||!d.isbn)){
  buscarDetalhesLivro(d.titulo,d.autor).then(b=>{
   if(b){
     const target=biblioteca.find(x=>x.id==targetId);
     if(target){
       if(b.capa&&(!target.capa||target.capa.includes('placehold.co')))target.capa=b.capa;
       if(b.genero&&!target.genero)target.genero=b.genero;
+      if(b.isbn&&!target.isbn)target.isbn=b.isbn;
       if(b.paginas&&(!target.paginas||target.paginas<=0))target.paginas=b.paginas;
       salvarLocal();renderizarFeed();
     }
@@ -2218,7 +2236,7 @@ if(titulo&&(!d.capa||d.capa.includes('placehold.co')||!d.genero)){
 if(idx!==-1)biblioteca[idx]={...biblioteca[idx],...d};
 else{targetId=Date.now();biblioteca.unshift({id:targetId,...d})}
 salvarLocal();
-$('bookForm').reset();['capa_url','edit_id','genero'].forEach(i=>$(i).value='');
+$('bookForm').reset();['capa_url','edit_id','genero','isbn'].forEach(i=>{const e=$(i);if(e)e.value=''});
 toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed(targetId);
 }
 
