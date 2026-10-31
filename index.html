@@ -1669,8 +1669,8 @@ function definirAbaLidos(a){abaLidos=a;renderizarFeed();voltarAoTopo()}
 function definirAnoStats(a){anoStats=a;renderizarFeed()}
 function renderizarAbaLidos(feed){
 const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
-if(abaLidos==='capas')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,0,false);
-else if(abaLidos==='ranking')addSecao(feed,`<div class="frosted-card p-3 w-full shadow-2xl">${htmlRanking(lidos)}</div>`,BG_PADRAO,0,false);
+if(abaLidos==='capas')addSecao(feed,`<div class="p-1 w-full">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,0,false);
+else if(abaLidos==='ranking')addSecao(feed,`<div class="p-1 w-full">${htmlRanking(lidos)}</div>`,BG_PADRAO,0,false);
 else addSecao(feed,htmlStats(lidos),BG_PADRAO,0,false);
 transicionarFundo(BG_PADRAO);
 }
@@ -2514,7 +2514,7 @@ transicionarFundo(bgCustomizado || BG_PADRAO);
 }
 function abrirPassagem(id){
 const l=biblioteca.find(x=>x.id===id);if(!l)return;
-$('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
+$('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex justify-center text-xl"><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span></div><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
 <div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
 ${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
 <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/10 flex-wrap"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div>`;
