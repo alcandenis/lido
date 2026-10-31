@@ -501,7 +501,7 @@ textarea{
 </div>
 
 <header id="app-header" class="fixed top-0 left-0 right-0 z-40 pb-4 px-6 flex justify-between items-center bg-gradient-to-b from-[#000000] via-[#000000]/90 to-transparent pointer-events-none" style="padding-top:calc(1.25rem + env(safe-area-inset-top,0px))">
-<div class="pointer-events-auto cursor-pointer" onclick="mudarAba('inicio')" title="Tela inicial">
+<div class="pointer-events-auto cursor-pointer" onclick="mostrarBoasVindas(true)" title="Boas-vindas">
 <h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
 </div>
 <div class="flex items-center gap-3 pointer-events-auto">
@@ -527,8 +527,6 @@ textarea{
 
 <main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-16 page-transition"></main>
 
-<div id="scroll-arrow" onclick="proximoItemFeed()" class="fixed bottom-16 left-6 z-40 cursor-pointer opacity-80 hover:opacity-100 transition-opacity animate-bounce-slow" title="Descer"><svg class="w-6 h-6 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg></div>
-<div id="top-btn" onclick="voltarAoTopo()" class="fixed bottom-16 right-4 md:right-6 z-40 cursor-pointer hidden frosted-card px-4 py-2.5 items-center gap-2 text-gold-400 text-xs font-semibold hover:bg-gold-400 hover:text-black transition-all shadow-2xl"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg><span>Voltar ao topo</span></div>
 
 <div id="sel-bar" class="fixed bottom-0 inset-x-0 z-50 hidden items-center justify-between gap-2 px-4 py-3 bg-[#000000]/95 backdrop-blur-xl border-t border-white/10">
 <span id="sel-count" class="text-xs text-gray-300 font-medium">0 selecionadas</span>
@@ -2585,10 +2583,6 @@ else{a.style.backgroundImage=`url('${targetBg}')`;a.style.opacity='1';b.style.op
 }
 function handleFeedScroll(){
 const feed=$('feed-container'),items=document.querySelectorAll('.snap-item'),pos=feed.scrollTop+feed.clientHeight/2;
-const noFim=feed.scrollTop+feed.clientHeight>=feed.scrollHeight-50,arrow=$('scroll-arrow'),top=$('top-btn');
-arrow.classList.toggle('hidden',items.length<=1||noFim);
-const mostra=items.length>1&&noFim&&feed.scrollTop>200;
-top.classList.toggle('hidden',!mostra);top.classList.toggle('flex',mostra);
 items.forEach(it=>{if(pos>=it.offsetTop&&pos<=it.offsetTop+it.clientHeight&&it.dataset.capa)transicionarFundo(bgCustomizado || it.dataset.capa)});
 }
 function voltarAoTopo(){$('feed-container').scrollTo({top:0,behavior:'smooth'})}
