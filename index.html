@@ -2667,7 +2667,7 @@ ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=
 const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(5,7,12,.55)');g.addColorStop(.45,'rgba(5,7,12,.62)');g.addColorStop(1,'rgba(5,7,12,.95)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 ctx.textBaseline='alphabetic';ctx.textAlign='left';
-desenharLogoLili(ctx,W,150,60,60);
+desenharLogoLili(ctx,W,150,60);
 const cw=obs?560:680,ch=obs?840:1020,cx=(W-cw)/2,cy=235;
 ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=70;ctx.shadowOffsetY=28;
 rrPath(ctx,cx,cy,cw,ch,28);ctx.fillStyle='#1b2230';ctx.fill();ctx.restore();
@@ -2742,7 +2742,7 @@ if(loadedImgs.length>0){
   }
 }
 const g=ctx.createLinearGradient(0,0,0,H);
-g.addColorStop(0,'rgba(0,0,0,0.38)');g.addColorStop(0.5,'rgba(0,0,0,0.22)');g.addColorStop(1,'rgba(0,0,0,0.5)');
+g.addColorStop(0,'rgba(0,0,0,0.62)');g.addColorStop(0.5,'rgba(0,0,0,0.5)');g.addColorStop(1,'rgba(0,0,0,0.72)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 
 ctx.textBaseline='alphabetic';
