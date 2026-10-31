@@ -2626,7 +2626,21 @@ salvarLocal();sairSelecao();renderizarFeed();
 }
 
 /* story */
-function carregarImg(url){return new Promise(res=>{if(!url)return res(null);const im=new Image();im.crossOrigin='anonymous';im.onload=()=>res(im);im.onerror=()=>res(null);im.src=url;setTimeout(()=>res(null),6000)})}
+const _imgCache={};
+function _tentarImg(url,cors){return new Promise(res=>{const im=new Image();if(cors)im.crossOrigin='anonymous';let fim=false;const f=v=>{if(!fim){fim=true;res(v)}};im.onload=()=>f(im);im.onerror=()=>f(null);setTimeout(()=>f(null),6000);im.src=url})}
+async function carregarImg(url){
+if(!url)return null;
+if(_imgCache[url])return _imgCache[url];
+let im=null;
+if(/^(data|blob):/.test(url))im=await _tentarImg(url,false);
+else{
+im=await _tentarImg(url,true);
+if(!im)im=await _tentarImg('https://images.weserv.nl/?url='+encodeURIComponent(url.replace(/^https?:\/\//,''))+'&w=900',true);
+if(!im)im=await _tentarImg(url,false);
+}
+if(im)_imgCache[url]=im;
+return im;
+}
 
 function quebrarTexto(ctx,texto,largura){
 const lin=[];let at='';
@@ -2687,34 +2701,31 @@ y+=22;ctx.font='600 34px "Inter",sans-serif';ctx.fillStyle='#FACC15';
 ctx.fillText(cortarLinha(ctx,String(l.autor||'').toUpperCase(),900),W/2,y);
 if(obs){
 y+=60;ctx.fillStyle='rgba(250,204,21,.7)';ctx.fillRect(W/2-40,y,80,3);
-y+=105;const esp=1790-y;let t=46,ol;
+y+=75;const esp=1790-y;let t=46,ol;
 for(;t>=26;t-=2){ctx.font=`italic 400 ${t}px "Inter",sans-serif`;ol=quebrarTexto(ctx,obs,840);if(ol.length*t*1.35<=esp)break}
 const max=Math.max(1,Math.floor(esp/(t*1.35)));
 if(ol.length>max){ol=ol.slice(0,max);ol[max-1]=cortarLinha(ctx,ol[max-1]+' …',840)}
-ctx.fillStyle='rgba(250,204,21,.35)';ctx.font='800 150px Georgia,serif';ctx.fillText('“',W/2,y-35);
 ctx.font=`italic 400 ${t}px "Inter",sans-serif`;ctx.fillStyle='rgba(255,255,255,.92)';
 ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.35});
 }
 ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='600 24px "Inter",sans-serif';
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
-ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1872);
+ctx.fillText('LILI - LIDOLIVROS',W/2,1872);
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
-storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
+try{storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'))}catch(e){storyBlob=null}
 }
 
 async function renderizarStoryStats(ano){
 storyNome='story_estatisticas';
 const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
-try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','900 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
+try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','800 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
 ctx.clearRect(0,0,W,H);ctx.fillStyle='#000000';ctx.fillRect(0,0,W,H);
 
 const doAno=biblioteca.filter(l=>{const p=parseData(l.data_fim);return statusDe(l)==='lido'&&p&&p.a===ano});
-const covers=doAno.map(l=>l.capa).filter(c=>c&&!c.includes('placehold.co'));
-const loadedImgs=[];
-for(const url of covers.slice(0,24)){
-  const img=await carregarImg(url);
-  if(img)loadedImgs.push(img);
-}
+const top3=doAno.filter(l=>(parseFloat(l.nota)||0)>0).sort((a,b)=>(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR')).slice(0,3);
+const covers=doAno.map(l=>l.capa).filter(c=>c&&!c.includes('placehold.co')).slice(0,24);
+const loadedImgs=(await Promise.all(covers.map(carregarImg))).filter(Boolean);
+const topImgs=await Promise.all(top3.map(l=>carregarImg(l.capa)));
 
 if(loadedImgs.length>0){
   const cols=4,rows=6,cellW=W/cols,cellH=H/rows;
@@ -2737,26 +2748,64 @@ g.addColorStop(0,'rgba(0,0,0,0.85)');g.addColorStop(0.5,'rgba(0,0,0,0.78)');g.ad
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 
 ctx.textBaseline='alphabetic';ctx.textAlign='center';
-desenharLogoLili(ctx,W,160);
+desenharLogoLili(ctx,W,140);
 
 ctx.font='800 60px "Inter",sans-serif';ctx.fillStyle='#ffffff';
-ctx.fillText(`RETROSPECTIVA ${ano}`,W/2,260);
+ctx.fillText(`RETROSPECTIVA ${ano}`,W/2,235);
 
 const totalLivros=doAno.length;
 const totalPaginas=doAno.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
 const notasValidas=doAno.filter(l=>l.nota>0);
 const mediaNota=notasValidas.length?(notasValidas.reduce((s,l)=>s+l.nota,0)/notasValidas.length).toFixed(1):'-';
 
-const boxY=360,boxH=230;
+const boxY=290,boxH=190,passo=215;
 drawStatCard(ctx,W/2-460,boxY,920,boxH,`${totalLivros}`,totalLivros===1?'Livro Lido':'Livros Lidos');
-drawStatCard(ctx,W/2-460,boxY+270,920,boxH,`${totalPaginas.toLocaleString('pt-BR')}`,'Páginas Lidas');
-drawStatCard(ctx,W/2-460,boxY+540,920,boxH,`${String(mediaNota).replace('.',',')}`,'Média de Avaliação');
+drawStatCard(ctx,W/2-460,boxY+passo,920,boxH,`${totalPaginas.toLocaleString('pt-BR')}`,'Páginas Lidas');
+drawStatCard(ctx,W/2-460,boxY+passo*2,920,boxH,`${String(mediaNota).replace('.',',')}`,'Média de Avaliação');
 
-ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1780,600,2);
-ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='400 26px "Inter",sans-serif';
-ctx.fillText('ALCAN DIÁRIO DE LEITURA',W/2,1834);
+if(top3.length){
+  ctx.textAlign='center';ctx.font='800 40px "Inter",sans-serif';ctx.fillStyle='#FACC15';
+  if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
+  ctx.fillText(top3.length===1?'TOP 1 DO ANO':`TOP ${top3.length} DO ANO`,W/2,1010);
+  if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
+  const cw=270,ch=405,gap=45,total=top3.length*cw+(top3.length-1)*gap,x0=(W-total)/2,cy=1060;
+  top3.forEach((l,i)=>{
+    const x=x0+i*(cw+gap),img=topImgs[i];
+    ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=40;ctx.shadowOffsetY=16;
+    rrPath(ctx,x,cy,cw,ch,18);ctx.fillStyle='#1b2230';ctx.fill();ctx.restore();
+    if(img){
+      ctx.save();rrPath(ctx,x,cy,cw,ch,18);ctx.clip();
+      const cr=cw/ch,ir=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;
+      if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
+      ctx.drawImage(img,sx,sy,sw,sh,x,cy,cw,ch);ctx.restore();
+    }else{
+      ctx.font='500 26px "Inter",sans-serif';ctx.fillStyle='rgba(255,255,255,.55)';
+      const tl=quebrarTexto(ctx,l.titulo,cw-40).slice(0,5);
+      tl.forEach((t,k)=>ctx.fillText(cortarLinha(ctx,t,cw-40),x+cw/2,cy+ch/2-(tl.length-1)*17+k*34));
+    }
+    rrPath(ctx,x,cy,cw,ch,18);ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(x+4,cy+4,36,0,Math.PI*2);ctx.fillStyle='#FACC15';ctx.fill();
+    ctx.fillStyle='#000';ctx.font='800 40px "Inter",sans-serif';ctx.textAlign='center';ctx.fillText(String(i+1),x+4,cy+18);
+    ctx.font='700 28px "Inter",sans-serif';ctx.fillStyle='#fff';
+    let ty=cy+ch+50;
+    quebrarTexto(ctx,l.titulo,cw+20).slice(0,2).forEach((t,k,a)=>{ctx.fillText(k===a.length-1&&a.length===2?cortarLinha(ctx,t,cw+20):t,x+cw/2,ty);ty+=34});
+    const nt=parseFloat(l.nota)||0,r=15,sg=36,s0=x+cw/2-sg*2,sy2=cy+ch+50+34*2+24;
+    for(let k=0;k<5;k++){
+      const sx2=s0+k*sg;pathEstrela(ctx,sx2,sy2,r);ctx.fillStyle='rgba(250,204,21,.22)';ctx.fill();
+      const fr=Math.max(0,Math.min(1,nt-k));
+      if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx2-r,sy2-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx2,sy2,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
+    }
+  });
+}
 
-storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'));
+ctx.textAlign='center';
+ctx.fillStyle='rgba(255,255,255,.18)';ctx.fillRect(W/2-300,1790,600,2);
+ctx.fillStyle='rgba(255,255,255,.55)';ctx.font='600 24px "Inter",sans-serif';
+if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
+ctx.fillText('LILI - LIDOLIVROS',W/2,1850);
+if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
+
+try{storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'))}catch(e){storyBlob=null}
 }
 
 function drawStatCard(ctx,x,y,w,h,value,label){
@@ -2768,17 +2817,17 @@ ctx.beginPath();ctx.roundRect(x,y,w,h,24);ctx.fill();ctx.stroke();
 
 ctx.textAlign='center';
 ctx.font='800 72px "Inter",sans-serif';ctx.fillStyle='#FACC15';
-ctx.fillText(value,x+w/2,y+95);
+ctx.fillText(value,x+w/2,y+h*.45);
 
 ctx.font='600 30px "Inter",sans-serif';ctx.fillStyle='#e5e7eb';
-ctx.fillText(label.toUpperCase(),x+w/2,y+165);
+ctx.fillText(label.toUpperCase(),x+w/2,y+h*.8);
 ctx.restore();
 }
 
 async function abrirInstaModal(id){const l=biblioteca.find(x=>x.id===id);if(!l)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStory(l)}
 async function abrirInstaModalStats(ano){storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStoryStats(ano)}
 function fecharInstaModal(){$('insta-modal').classList.add('hidden')}
-async function baixarImagemStory(){if(storyBlob)await baixarArquivo(storyBlob,`${storyNome}_${Date.now()}.png`,'image/png')}
+async function baixarImagemStory(){if(!storyBlob)return aviso('Não deu pra gerar a imagem. A capa bloqueou o download.');await baixarArquivo(storyBlob,`${storyNome}_${Date.now()}.png`,'image/png')}
 
 /* arquivos */
 try{if(window.claude&&claude.use)claude.use('downloads').then(d=>{dlCap=d}).catch(()=>{})}catch(e){}
