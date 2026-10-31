@@ -727,6 +727,7 @@ textarea{
 <span class="flex items-center gap-3"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/10"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
 </button></section>
 <section><h3 class="opt-sec">Leitura</h3>
+<button onclick="toggleModalOpcoes();mudarAba('lendo')" class="opt-row"><span>Em leitura</span><span class="opt-chev">›</span></button>
 <button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
 <button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Lista de Desejos</span><span class="opt-chev">›</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
@@ -2273,15 +2274,17 @@ function imgCapa(url,cls,id,tipo){
 const clk=id!=null?` onclick="capaClick(event,${id},'${tipo}')" style="cursor:pointer"`:'';
 return `<img src="${esc(url)}"${clk} class="${cls} object-cover rounded shadow-lg border border-white/10 flex-shrink-0" onerror="this.src='https://placehold.co/400x600/111/fff?text=Sem+Capa'">`;
 }
+let amazonBusca='';
 function capaClick(ev,id,tipo){
 if(modoSel)return;
 ev.stopPropagation();
 const l=(tipo==='kindle'?notasKindle:biblioteca).find(x=>x.id===id);if(!l)return;
+amazonBusca=[l.titulo,/desconhecido/i.test(l.autor||'')?'':l.autor].filter(Boolean).join(' ');
 $('amazon-titulo').textContent=`${l.titulo} · ${l.autor}`;
 $('modal-amazon').classList.remove('hidden');
 }
 function fecharAmazon(){$('modal-amazon').classList.add('hidden')}
-function confirmarAmazon(){fecharAmazon();aviso('Busca na Amazon em breve.')}
+function confirmarAmazon(){fecharAmazon();if(!amazonBusca)return;window.open('https://www.amazon.com.br/s?i=stripbooks&k='+encodeURIComponent(amazonBusca),'_blank','noopener')}
 function atualizarTitulo(){
  const h=$('titulo-app');
  h.innerHTML=`<span class="logo-lili"><span id="header-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span>`;
@@ -2322,7 +2325,7 @@ if(abaAtual==='inicio'){
   }
 }
 
-const fn={todos:renderizarAbaTodos,buscar:renderizarAbaBusca,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados}[abaAtual];
+const fn={todos:renderizarAbaTodos,buscar:renderizarAbaBusca,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados,lendo:renderizarAbaLendo}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
 if((abaAtual==='todos'||abaAtual==='lidos'||abaAtual==='observacoes')&&subContent&&subContent.innerHTML){const t=document.createElement('div');t.className='w-full mb-3';t.innerHTML=subContent.innerHTML;feed.insertBefore(t,feed.firstChild)}
 mostrarRetangulo();
@@ -2342,7 +2345,7 @@ if(livroEscrito){
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
-if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="editarLivro(${lendo.id})" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4,false);
+if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="mudarAba('lendo')" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4,false);
 feed.appendChild(wrap);
 homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(bgCustomizado || (homeSemCapa?BG_PADRAO:l.capa));
@@ -2484,6 +2487,16 @@ else addSecao(feed,htmlKindle(d),bgCustomizado || BG_PADRAO,i+1,false);
 });
 transicionarFundo(bgCustomizado || BG_PADRAO);
 if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
+}
+function renderizarAbaLendo(feed){
+const lendo=biblioteca.filter(l=>statusDe(l)==='lendo');
+addSecao(feed,`<div class="px-1"><h2 class="text-lg font-bold text-white font-serif mb-1">Em leitura</h2></div>`,bgCustomizado || BG_PADRAO,0,false);
+if(!lendo.length){
+  addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro em leitura.</p></div>`,bgCustomizado || BG_PADRAO,1,false);
+}else{
+  addSecao(feed,`<div class="w-full">${lendo.map(l=>`<button onclick="editarLivro(${l.id})" class="flex items-center gap-4 w-full text-left py-3 border-b border-white/10 last:border-0" aria-label="${esc(l.titulo)}"><span class="relative w-14 h-20 flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(l.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block font-serif text-base font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</span><span class="block text-sm text-gold-400 truncate mt-0.5">${esc(l.autor||'')}</span></span><span class="opt-chev">›</span></button>`).join('')}</div>`,bgCustomizado || BG_PADRAO,1,false);
+}
+transicionarFundo(bgCustomizado || BG_PADRAO);
 }
 function renderizarAbaDesejados(feed){
 const desejados=biblioteca.filter(l=>statusDe(l)==='desejado');
