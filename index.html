@@ -41,6 +41,8 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<style>html,body,main{touch-action:pan-x pan-y}</style>
+<script>["gesturestart","gesturechange","gestureend"].forEach(function(e){document.addEventListener(e,function(ev){ev.preventDefault()})})</script>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1681,17 +1683,24 @@ else if(abaLidos==='ranking')addSecao(feed,`<div class="p-1 w-full">${htmlRankin
 else addSecao(feed,htmlStats(lidos),BG_PADRAO,0,false);
 transicionarFundo(BG_PADRAO);
 }
-let rankModo='geral',rankAno=new Date().getFullYear(),rankMes=new Date().getMonth()+1;
+let rankModo='geral',rankAno=new Date().getFullYear(),rankMes=new Date().getMonth()+1,rankMenu=false;
 const MESES_RK=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-function definirRankModo(m){rankModo=m;renderizarFeed()}
-function moverRank(d){if(rankModo==='ano')rankAno+=d;else{rankMes+=d;if(rankMes>12){rankMes=1;rankAno++}if(rankMes<1){rankMes=12;rankAno--}}renderizarFeed()}
+function toggleRankMenu(){rankMenu=!rankMenu;renderizarFeed()}
+function definirRankModo(m){rankModo=m;if(m==='geral')rankMenu=false;renderizarFeed()}
+function definirRankMes(v){rankMes=+v;renderizarFeed()}
+function definirRankAno(v){rankAno=+v;renderizarFeed()}
 function htmlRankingTela(lidos){
 let f=lidos;
 if(rankModo!=='geral')f=lidos.filter(l=>{const p=parseData(l.data_fim);return p&&p.a===rankAno&&(rankModo==='ano'||p.m===rankMes)});
-const seg=`<div class="grid grid-cols-3 gap-1 w-full mb-1">${[['geral','Geral'],['mes','Mês'],['ano','Ano']].map(([k,r])=>`<button onclick="definirRankModo('${k}')" class="tab-reg sm${rankModo===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
-const nav=rankModo==='geral'?'':`<div class="flex items-center justify-between px-1 py-2"><button onclick="moverRank(-1)" class="px-4 py-1 text-xl text-white" aria-label="Anterior">‹</button><span class="text-sm font-semibold text-white">${rankModo==='ano'?rankAno:MESES_RK[rankMes-1]+' '+rankAno}</span><button onclick="moverRank(1)" class="px-4 py-1 text-xl text-white" aria-label="Próximo">›</button></div>`;
+const rot=rankModo==='geral'?'Geral':rankModo==='ano'?String(rankAno):MESES_RK[rankMes-1]+' '+rankAno;
+const anos=[...new Set([...lidos.map(l=>parseData(l.data_fim)).filter(Boolean).map(p=>p.a),new Date().getFullYear(),rankAno])].sort((a,b)=>b-a);
+const selCls='bg-black/40 border border-white/15 rounded-lg text-sm text-white px-2 py-1.5';
+const optAno=`<select onchange="definirRankAno(this.value)" class="${selCls}">${anos.map(a=>`<option value="${a}"${a===rankAno?' selected':''}>${a}</option>`).join('')}</select>`;
+const optMes=`<select onchange="definirRankMes(this.value)" class="${selCls}">${MESES_RK.map((m,k)=>`<option value="${k+1}"${k+1===rankMes?' selected':''}>${m}</option>`).join('')}</select>`;
+const menu=rankMenu?`<div class="frosted-card p-3 w-full max-w-xs mt-2 space-y-3 shadow-2xl"><div class="grid grid-cols-3 gap-1">${[['geral','Geral'],['mes','Mês'],['ano','Ano']].map(([k,r])=>`<button onclick="definirRankModo('${k}')" class="tab-reg sm${rankModo===k?' ativo':''} text-center">${r}</button>`).join('')}</div>${rankModo==='mes'?`<div class="flex gap-2">${optMes}${optAno}</div>`:rankModo==='ano'?`<div class="flex gap-2">${optAno}</div>`:''}</div>`:'';
+const btn=`<div class="px-1 pb-2"><button onclick="toggleRankMenu()" class="tab-reg sm ativo inline-flex items-center gap-2" aria-expanded="${rankMenu}"><span>${rot}</span><span aria-hidden="true">${rankMenu?'▴':'▾'}</span></button>${menu}</div>`;
 const corpo=(rankModo!=='geral'&&!f.some(x=>(parseFloat(x.nota)||0)>0))?'<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado neste período.</p>':htmlRanking(f);
-return seg+nav+corpo;
+return btn+corpo;
 }
 function htmlRanking(lidos){
 const av=lidos.filter(x=>(parseFloat(x.nota)||0)>0).sort((a,b)=>(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR'));
@@ -2184,7 +2193,7 @@ const editId=$('edit_id').value;
 const titulo=$('titulo').value.trim(),autor=$('autor').value.trim(),observacao=$('observacao').value.trim(),genero=$('genero').value.trim(),isbn=($('isbn')&&$('isbn').value||'').trim();
 if(!editId&&!titulo&&!autor){
  if(!observacao)return aviso('Escreva uma observação ou informe o título de um livro.');
- notas.unshift({id:Date.now(),texto:observacao,musica:'',data:new Date().toLocaleDateString('pt-BR')});
+ notas.unshift({id:Date.now(),texto:observacao,data:new Date().toLocaleDateString('pt-BR')});
  salvarLocal();
  $('bookForm').reset();['capa_url','edit_id','genero','isbn'].forEach(i=>{const e=$(i);if(e)e.value=''});
  toggleModalNovoRegistro();concluirBoasVindasAposConteudo();renderizarFeed();return;
@@ -2361,7 +2370,7 @@ if(livroEscrito){
 }
 
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
-if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
+if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
 const lendo=biblioteca.find(x=>statusDe(x)==='lendo'),maisLendo=biblioteca.filter(x=>statusDe(x)==='lendo').length-1;
 if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="mudarAba('lendo')" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span>${maisLendo>0?`<span class="text-sm font-bold text-gold-400 shrink-0">+${maisLendo}</span>`:''}</button></div>`,lendo.capa,4,false);
 feed.appendChild(wrap);
@@ -2483,7 +2492,7 @@ ${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2
 <div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
 }
 function htmlNota(n){
-return `<div data-nota="${n.id}" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="nota-texto font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p>${n.musica?`<p class="text-xs text-gold-400">♪ ${esc(n.musica)}</p>`:''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div data-nota="${n.id}" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="nota-texto font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p><div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
@@ -2535,7 +2544,7 @@ transicionarFundo(bgCustomizado || BG_PADRAO);
 }
 function renderizarAbaObservacoes(feed){
 const itens=[
-...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}${n.musica?' · ♪ '+n.musica:''}`,capa:BG_PADRAO})):[]),
+...(filtroSoTextos==='todos'||filtroSoTextos==='notas'?notas.map(n=>({id:n.id,nota:true,tipo:'notas',obs:n.texto,rot:`Nota · ${n.data}`,capa:BG_PADRAO})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='livros'?biblioteca.filter(l=>statusDe(l)!=='desejado'&&(l.observacao||'').trim()).map(l=>({tipo:'livros',obs:l.observacao,rot:`${l.titulo} · ${l.autor}`,capa:l.capa})):[]),
 ...(filtroSoTextos==='todos'||filtroSoTextos==='kindle'?notasKindle.filter(n=>(n.observacao||'').trim()).map(n=>({tipo:'kindle',obs:n.observacao,rot:`${n.titulo} · ${n.autor}`,capa:n.capa})):[])
 ];
