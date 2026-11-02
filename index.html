@@ -96,6 +96,15 @@ body{background:#000000;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hi
 #modal-opcoes.anim-out{animation:slideOutR .22s ease-in both;pointer-events:none}
 #modal-registro.anim-in{animation:fadeUp .38s cubic-bezier(.16,1,.3,1) both}
 #modal-registro.anim-out{animation:fadeDown .22s ease-in both;pointer-events:none}
+@keyframes popIn{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes popOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-8px) scale(.98)}}
+#modal-opcoes.pop,#modal-opcoes.pop.hidden{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#modal-opcoes.pop.hidden{display:none}
+#modal-opcoes.pop.anim-in{animation:popIn .18s cubic-bezier(.16,1,.3,1) both}
+#modal-opcoes.pop.anim-out{animation:popOut .14s ease-in both;pointer-events:none}
+#opcoes-painel{transform-origin:top right;overscroll-behavior:contain}
+#opcoes-painel .opt-row{padding:.55rem 0;font-size:.82rem}
+#opcoes-painel .opt-sec{margin-bottom:0}
 @media (prefers-reduced-motion:reduce){#modal-opcoes.anim-in,#modal-registro.anim-in,#modal-opcoes.anim-out,#modal-registro.anim-out{animation-duration:.01s}}
 
 .frosted-modal-container{background:rgba(0,0,0,.6)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
@@ -710,43 +719,41 @@ textarea{
 </div>
 
 <!-- Modal Principal de Configurações -->
-<div id="modal-opcoes" class="frosted-modal-container fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden">
-<div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10"><div class="max-w-2xl mx-auto px-5 py-4 flex items-center gap-3">
-<button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-<h2 class="text-base font-bold text-white font-serif">Configurações</h2>
-</div></div>
-<div class="max-w-2xl mx-auto px-5 pt-4 pb-20 space-y-4">
+<div id="modal-opcoes" onclick="if(event.target===this)toggleModalOpcoes()" class="pop fixed inset-0 z-50 hidden">
+<div id="opcoes-painel" class="absolute right-3 w-[min(92vw,21rem)] max-h-[78vh] overflow-y-auto rounded-2xl border border-white/10 bg-black/85 backdrop-blur-xl p-4 space-y-3 shadow-2xl" style="top:calc(env(safe-area-inset-top,0px) + 3.4rem)">
 <section><h3 class="opt-sec">Perfil</h3>
 <div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div>
 <div class="flex items-center justify-between opt-row mt-1">
 <button onclick="conectarGoogleDrive()" class="text-left flex-1"><span class="font-semibold text-white">Google Drive</span></button>
 <span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
 </div>
-<button onclick="abrirModalEscrevendoLivro()" class="opt-row"><span>Bloco do Editor</span><span class="opt-chev">›</span></button>
+<button onclick="abrirModalEscrevendoLivro()" class="opt-row"><span>Bloco do Editor</span></button>
 <button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="w-full mt-2 flex items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-3 text-left text-sm font-extrabold text-[#211707] shadow-lg shadow-amber-500/20 transition-transform active:scale-[0.99]">
 <span class="flex items-center gap-3"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/10"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
 </button></section>
 <section><h3 class="opt-sec">Leitura</h3>
-<button onclick="toggleModalOpcoes();mudarAba('lendo')" class="opt-row"><span>Em leitura</span><span class="opt-chev">›</span></button>
-<button onclick="toggleModalOpcoes();mudarAba('observacoes')" class="opt-row"><span>Aprecie a sua escrita</span><span class="opt-chev">›</span></button>
-<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Lista de Desejos</span><span class="opt-chev">›</span></button>
-<button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span><span class="opt-chev">›</span></button>
-<button onclick="recarregarBancoLivros(true)" class="opt-row"><span>Recarregar banco de dados dos livros</span><span class="opt-chev">›</span></button>
-<button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev">›</span></button>
-<button onclick="window.location.href='import.html'" class="opt-row"><span>Importar do Skoob</span><span class="opt-chev">›</span></button>
-<button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span><span class="opt-chev">›</span></button></section>
+<button onclick="toggleModalOpcoes();mudarAba('lendo')" class="opt-row"><span>Em leitura</span></button>
+<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Lista de Desejos</span></button>
+<button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span></button>
+<button onclick="recarregarBancoLivros(true)" class="opt-row"><span>Recarregar banco de dados dos livros</span></button>
+<button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span></button>
+<button onclick="window.location.href='import.html'" class="opt-row"><span>Importar do Skoob</span></button>
+<button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span></button></section>
 
 <!-- Sub-Menu Gerenciamento de Backup -->
 <section><h3 class="opt-sec">Gerenciamento de Backup</h3>
-<button onclick="abrirSubMenuBackup()" class="opt-row"><span class="font-semibold text-white">Backup Local & Nuvem</span><span class="opt-chev">›</span></button>
+<button onclick="abrirSubMenuBackup()" class="opt-row"><span class="font-semibold text-white">Backup Local & Nuvem</span></button>
 </section>
 
 <section><h3 class="opt-sec">Exibição</h3>
-<label for="input-bg-customizado" class="opt-row cursor-pointer"><span>Trocar plano de fundo</span><span class="opt-chev">›</span></label>
+<button onclick="$('sub-bg').classList.toggle('hidden')" class="opt-row"><span>Plano de fundo</span></button>
+<div id="sub-bg" class="hidden pl-4 border-l border-white/10 ml-1">
+<label for="input-bg-customizado" class="opt-row cursor-pointer"><span>Adicionar/trocar</span></label>
 <input type="file" id="input-bg-customizado" accept="image/*" onchange="tratarUploadBgCustomizado(this)" class="hidden">
-<button onclick="removerBgCustomizado()" class="opt-row"><span>Remover plano de fundo personalizado</span><span class="opt-chev">›</span></button>
-<button onclick="alternarTelaCheia()" class="opt-row"><span>Tela cheia</span><span class="opt-chev">›</span></button>
-<button type="button" onclick="toggleModalOpcoes();mostrarBoasVindas(true)" class="opt-row"><span>Visualizar Boas-vindas</span><span class="opt-chev">›</span></button></section>
+<button onclick="removerBgCustomizado()" class="opt-row"><span>Remover</span></button>
+</div>
+<button onclick="alternarTelaCheia()" class="opt-row"><span>Tela cheia</span></button>
+</section>
 <section><h3 class="opt-sec">versão v1.0.2</h3>
 <p class="text-gray-200 font-medium pt-1"><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span>Lili (LIDOLIVROS)</span> desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer" class="text-gold-gradient font-bold underline">@alcandenis</a></p></section>
 </div></div>
@@ -778,14 +785,14 @@ textarea{
   <div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-6">
     <input type="file" id="csv-file-input" onchange="processarCSV(this.files[0])" style="position:absolute;opacity:0;width:1px;height:1px;pointer-events:none">
     <section>
-      <button onclick="restaurarDoGoogleDrive()" class="opt-row"><span>Restaurar backup do Google Drive manualmente</span><span class="opt-chev">›</span></button>
-      <label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup (Local)</span><span class="opt-chev">›</span></label>
+      <button onclick="restaurarDoGoogleDrive()" class="opt-row"><span>Restaurar backup do Google Drive manualmente</span></button>
+      <label for="csv-file-input" class="opt-row cursor-pointer"><span>Restaure um LidosBackup (Local)</span></label>
       <div class="opt-block"><label>Se o seletor falhar, cole o conteúdo do backup</label><textarea id="csv-colado" rows="2" placeholder="Cole o texto do CSV ou JSON..." class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 resize-none focus:outline-none focus:border-gold-400"></textarea><button onclick="importarColado()" class="opt-act">Importar texto colado</button></div>
-      <button onclick="abrirEnviarIA()" class="opt-row"><span>Prompt para IA</span><span class="opt-chev">›</span></button>
+      <button onclick="abrirEnviarIA()" class="opt-row"><span>Prompt para IA</span></button>
       <p class="opt-desc">Copia um texto com seu histórico de livros para você colar na IA e receber indicações e estatísticas profundas.</p>
-      <button onclick="exportarCSV()" class="opt-row"><span>Exportar biblioteca (CSV)</span><span class="opt-chev">›</span></button>
-      <button onclick="exportarJSON()" class="opt-row"><span>Backup local completo (JSON)</span><span class="opt-chev">›</span></button>
-      <button onclick="enviarBackupPorEmail()" class="opt-row"><span>Enviar backup para meu e-mail</span><span class="opt-chev">›</span></button>
+      <button onclick="exportarCSV()" class="opt-row"><span>Exportar biblioteca (CSV)</span></button>
+      <button onclick="exportarJSON()" class="opt-row"><span>Backup local completo (JSON)</span></button>
+      <button onclick="enviarBackupPorEmail()" class="opt-row"><span>Enviar backup para meu e-mail</span></button>
       <p class="opt-desc">Abre o compartilhamento com o backup anexado. Assunto: "Backup do Lidos".</p>
       <label class="opt-row cursor-pointer"><span>Backup local automático ao adicionar anotação</span><input type="checkbox" id="chk-autobackup" onchange="alternarAutoBackup(this.checked)" class="accent-yellow-400 w-4 h-4"></label>
       <p class="opt-desc">O app oferece salvar um CSV no celular. Você confirma o salvamento.</p>
@@ -1401,7 +1408,7 @@ setTimeout(terminar,abrir?450:350);
 function toggleModalOpcoes(){
 const m=$('modal-opcoes');if(m.dataset.anim)return;
 if(m.classList.contains('hidden')){
-m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();
+$('opcoes-painel').scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();
 animarModal(m,true);
 }else animarModal(m,false);
 }
@@ -2521,7 +2528,7 @@ addSecao(feed,`<div class="px-1"><h2 class="text-lg font-bold text-white font-se
 if(!lendo.length){
   addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro em leitura.</p></div>`,bgCustomizado || BG_PADRAO,1,false);
 }else{
-  addSecao(feed,`<div class="w-full">${lendo.map(l=>`<button onclick="editarLivro(${l.id})" class="flex items-center gap-4 w-full text-left py-3 border-b border-white/10 last:border-0" aria-label="${esc(l.titulo)}"><span class="relative w-14 h-20 flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(l.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block font-serif text-base font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</span><span class="block text-sm text-gold-400 truncate mt-0.5">${esc(l.autor||'')}</span>${l.data_inicio?`<span class="block text-xs text-gray-400 mt-1">Desde ${esc(String(l.data_inicio).replace(/^(\d{4})-(\d{2})-(\d{2}).*$/,'$3/$2/$1'))}</span>`:''}</span><span class="opt-chev">›</span></button>`).join('')}</div>`,bgCustomizado || BG_PADRAO,1,false);
+  addSecao(feed,`<div class="w-full">${lendo.map(l=>`<button onclick="editarLivro(${l.id})" class="flex items-center gap-4 w-full text-left py-3 border-b border-white/10 last:border-0" aria-label="${esc(l.titulo)}"><span class="relative w-14 h-20 flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(l.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block font-serif text-base font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</span><span class="block text-sm text-gold-400 truncate mt-0.5">${esc(l.autor||'')}</span>${l.data_inicio?`<span class="block text-xs text-gray-400 mt-1">Desde ${esc(String(l.data_inicio).replace(/^(\d{4})-(\d{2})-(\d{2}).*$/,'$3/$2/$1'))}</span>`:''}</span></button>`).join('')}</div>`,bgCustomizado || BG_PADRAO,1,false);
 }
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
