@@ -96,15 +96,6 @@ body{background:#000000;color:#f3f4f6;font-family:'Inter',sans-serif;overflow:hi
 #modal-opcoes.anim-out{animation:slideOutR .22s ease-in both;pointer-events:none}
 #modal-registro.anim-in{animation:fadeUp .38s cubic-bezier(.16,1,.3,1) both}
 #modal-registro.anim-out{animation:fadeDown .22s ease-in both;pointer-events:none}
-@keyframes popIn{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
-@keyframes popOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-8px) scale(.98)}}
-#modal-opcoes.pop,#modal-opcoes.pop.hidden{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-#modal-opcoes.pop.hidden{display:none}
-#modal-opcoes.pop.anim-in{animation:popIn .18s cubic-bezier(.16,1,.3,1) both}
-#modal-opcoes.pop.anim-out{animation:popOut .14s ease-in both;pointer-events:none}
-#opcoes-painel{transform-origin:top right;overscroll-behavior:contain}
-#opcoes-painel .opt-row{padding:.55rem 0;font-size:.82rem}
-#opcoes-painel .opt-sec{margin-bottom:0}
 @media (prefers-reduced-motion:reduce){#modal-opcoes.anim-in,#modal-registro.anim-in,#modal-opcoes.anim-out,#modal-registro.anim-out{animation-duration:.01s}}
 
 .frosted-modal-container{background:rgba(0,0,0,.6)!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
@@ -602,7 +593,7 @@ textarea{
 </div></div>
 
 <!-- Estou Criando um Livro -->
-<div id="tela-escrevendo-livro" class="fixed inset-0 z-50 bg-[#080808]/92 backdrop-blur-[28px] overflow-y-auto hidden">
+<div id="tela-escrevendo-livro" class="fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden">
   <div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10">
     <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -618,9 +609,9 @@ textarea{
   </div>
   <div class="max-w-4xl mx-auto px-5 pt-5 pb-24 space-y-5">
     <!-- Card de identidade do projeto -->
-    <section id="card-resumo-escritor" class="relative overflow-hidden rounded-2xl border border-amber-300/20 bg-gradient-to-br from-amber-300/10 via-white/[0.045] to-transparent p-4 sm:p-5 shadow-lg shadow-black/20">
+    <section id="card-resumo-escritor" class="relative">
       <div class="flex items-center gap-4 sm:gap-5">
-        <div class="shrink-0 w-[76px] h-[112px] sm:w-[92px] sm:h-[136px] rounded-lg overflow-hidden border border-white/10 bg-black/30 shadow-xl">
+        <div class="shrink-0 w-[76px] h-[112px] sm:w-[92px] sm:h-[136px] rounded-lg overflow-hidden">
           <img id="escrita-capa-preview" src="" alt="Capa do livro em desenvolvimento" class="w-full h-full object-cover hidden">
           <div id="escrita-capa-placeholder" class="w-full h-full flex flex-col items-center justify-center gap-2 text-amber-200/60 px-2 text-center">
             <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H20v17H6.5A1.5 1.5 0 0 0 5 21.5z"/><path d="M5 4.5v17M8 7h8M8 10h6"/></svg>
@@ -637,7 +628,7 @@ textarea{
         </div>
       </div>
     </section>
-    <form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-4 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 sm:p-5">
+    <form id="escritaLivroForm" onsubmit="salvarLivroEscrito(event)" class="space-y-4">
       <div>
         <label class="block text-xs font-medium text-gray-300 mb-1">Nome do Livro</label>
         <input type="text" id="escrita_titulo" required placeholder="Título do seu livro..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
@@ -681,7 +672,7 @@ textarea{
     <div id="painel-escritor-notas" class="space-y-4 hidden">
       <h3 class="text-sm font-bold uppercase tracking-wider text-gold-400">Notas do seu livro</h3>
       <p id="escritor-notas-aviso" class="text-xs text-gray-400 hidden">Salve o livro na aba Livro para adicionar notas.</p>
-      <div id="escritor-notas-form" class="space-y-3 rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4 sm:p-5">
+      <div id="escritor-notas-form" class="space-y-3">
         <label for="escrita_nota_categoria" class="block text-xs font-medium text-gray-300">Categoria <span class="text-gray-500">(opcional)</span></label>
         <select id="escrita_nota_categoria" class="w-full bg-[#171717] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-300/70">
           <option value="Ideia solta">Ideia solta</option><option value="Personagem">Personagem</option><option value="Enredo">Enredo</option><option value="Cenário">Cenário</option><option value="Diálogo">Diálogo</option><option value="Pesquisa">Pesquisa</option>
@@ -719,31 +710,30 @@ textarea{
 </div>
 
 <!-- Modal Principal de Configurações -->
-<div id="modal-opcoes" onclick="if(event.target===this)toggleModalOpcoes()" class="pop fixed inset-0 z-50 hidden">
-<div id="opcoes-painel" class="absolute right-3 w-[min(92vw,21rem)] max-h-[78vh] overflow-y-auto rounded-2xl border border-white/10 bg-black/85 backdrop-blur-xl p-4 space-y-3 shadow-2xl" style="top:calc(env(safe-area-inset-top,0px) + 3.4rem)">
+<div id="modal-opcoes" class="frosted-modal-container fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden">
+<div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10"><div class="max-w-2xl mx-auto px-5 py-4 flex items-center gap-3">
+<button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+<h2 class="text-base font-bold text-white font-serif">Configurações</h2>
+</div></div>
+<div class="max-w-2xl mx-auto px-5 pt-4 pb-20 space-y-4">
 <section><h3 class="opt-sec">Perfil</h3>
 <div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div>
 <div class="flex items-center justify-between opt-row mt-1">
 <button onclick="conectarGoogleDrive()" class="text-left flex-1"><span class="font-semibold text-white">Google Drive</span></button>
 <span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
+<button type="button" onclick="abrirSubMenuBackup()" class="ml-2 p-1 text-gray-300 hover:text-gold-400" aria-label="Backup local e nuvem" title="Backup local e nuvem"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
 </div>
 <button onclick="abrirModalEscrevendoLivro()" class="opt-row"><span>Bloco do Editor</span></button>
 <button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="w-full mt-2 flex items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-3 text-left text-sm font-extrabold text-[#211707] shadow-lg shadow-amber-500/20 transition-transform active:scale-[0.99]">
 <span class="flex items-center gap-3"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/10"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
 </button></section>
 <section><h3 class="opt-sec">Leitura</h3>
-<button onclick="toggleModalOpcoes();mudarAba('lendo')" class="opt-row"><span>Em leitura</span></button>
 <button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Lista de Desejos</span></button>
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span></button>
 <button onclick="recarregarBancoLivros(true)" class="opt-row"><span>Recarregar banco de dados dos livros</span></button>
 <button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span></button>
 <button onclick="window.location.href='import.html'" class="opt-row"><span>Importar do Skoob</span></button>
 <button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span></button></section>
-
-<!-- Sub-Menu Gerenciamento de Backup -->
-<section><h3 class="opt-sec">Gerenciamento de Backup</h3>
-<button onclick="abrirSubMenuBackup()" class="opt-row"><span class="font-semibold text-white">Backup Local & Nuvem</span></button>
-</section>
 
 <section><h3 class="opt-sec">Exibição</h3>
 <button onclick="$('sub-bg').classList.toggle('hidden')" class="opt-row"><span>Plano de fundo</span></button>
@@ -1408,7 +1398,7 @@ setTimeout(terminar,abrir?450:350);
 function toggleModalOpcoes(){
 const m=$('modal-opcoes');if(m.dataset.anim)return;
 if(m.classList.contains('hidden')){
-$('opcoes-painel').scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();
+m.scrollTop=0;$('input-usuario-nome').value=usuarioNome;atualizarStatusGoogleUI();
 animarModal(m,true);
 }else animarModal(m,false);
 }
@@ -1611,7 +1601,7 @@ function renderizarNotasLivroEscrito(){
     return;
   }
   container.innerHTML = notasLivroEscrito.map(n => `
-    <div class="p-4 bg-white/[0.035] rounded-xl border border-white/[0.08] space-y-3">
+    <div class="py-4 border-b border-white/10 space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="flex flex-wrap items-center gap-2"><span class="inline-flex rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] text-amber-200">${esc(n.categoria||'Ideia solta')}</span><span class="text-[10px] text-gray-500">${esc(n.dataHora||'Nota antiga')}</span></div>
         <div class="flex items-center gap-3">
