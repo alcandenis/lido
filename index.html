@@ -829,6 +829,14 @@ let estadoNuvem='',sincronizando=false,sincPendente=false,tSync=null,renovandoRe
 const BG_PADRAO="https://wallpaper.forfun.com/fetch/d1/d11b37523005f6dfe77d151ee2872b7c";
 const STAR_PATH='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z';
 const $=id=>document.getElementById(id);
+function desenharSubLogo(ctx,W,y,esq){
+ctx.save();ctx.textBaseline='alphabetic';
+ctx.font='400 24px "Inter",sans-serif';ctx.fillStyle='rgba(255,255,255,.55)';
+if(ctx.letterSpacing!==undefined)ctx.letterSpacing='5px';
+if(esq!=null){ctx.textAlign='left';ctx.fillText('REGISTRO DE LEITURA',esq,y)}
+else{ctx.textAlign='center';ctx.fillText('REGISTRO DE LEITURA',W/2+2,y)}
+ctx.restore();
+}
 function desenharLogoLili(ctx,W,y,tam,esq){
   tam=tam||46;
   const w=tam*.75,h=tam*1.09,r=tam*.12,gap=tam*.1,yb=y+tam*.2;
@@ -1669,9 +1677,21 @@ function definirAnoStats(a){anoStats=a;renderizarFeed()}
 function renderizarAbaLidos(feed){
 const lidos=biblioteca.filter(l=>statusDe(l)==='lido');
 if(abaLidos==='capas')addSecao(feed,`<div class="p-1 w-full">${htmlCapasLidos(lidos)}</div>`,BG_PADRAO,0,false);
-else if(abaLidos==='ranking')addSecao(feed,`<div class="p-1 w-full">${htmlRanking(lidos)}</div>`,BG_PADRAO,0,false);
+else if(abaLidos==='ranking')addSecao(feed,`<div class="p-1 w-full">${htmlRankingTela(lidos)}</div>`,BG_PADRAO,0,false);
 else addSecao(feed,htmlStats(lidos),BG_PADRAO,0,false);
 transicionarFundo(BG_PADRAO);
+}
+let rankModo='geral',rankAno=new Date().getFullYear(),rankMes=new Date().getMonth()+1;
+const MESES_RK=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+function definirRankModo(m){rankModo=m;renderizarFeed()}
+function moverRank(d){if(rankModo==='ano')rankAno+=d;else{rankMes+=d;if(rankMes>12){rankMes=1;rankAno++}if(rankMes<1){rankMes=12;rankAno--}}renderizarFeed()}
+function htmlRankingTela(lidos){
+let f=lidos;
+if(rankModo!=='geral')f=lidos.filter(l=>{const p=parseData(l.data_fim);return p&&p.a===rankAno&&(rankModo==='ano'||p.m===rankMes)});
+const seg=`<div class="grid grid-cols-3 gap-1 w-full mb-1">${[['geral','Geral'],['mes','Mês'],['ano','Ano']].map(([k,r])=>`<button onclick="definirRankModo('${k}')" class="tab-reg sm${rankModo===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+const nav=rankModo==='geral'?'':`<div class="flex items-center justify-between px-1 py-2"><button onclick="moverRank(-1)" class="px-4 py-1 text-xl text-white" aria-label="Anterior">‹</button><span class="text-sm font-semibold text-white">${rankModo==='ano'?rankAno:MESES_RK[rankMes-1]+' '+rankAno}</span><button onclick="moverRank(1)" class="px-4 py-1 text-xl text-white" aria-label="Próximo">›</button></div>`;
+const corpo=(rankModo!=='geral'&&!f.some(x=>(parseFloat(x.nota)||0)>0))?'<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado neste período.</p>':htmlRanking(f);
+return seg+nav+corpo;
 }
 function htmlRanking(lidos){
 const av=lidos.filter(x=>(parseFloat(x.nota)||0)>0).sort((a,b)=>(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR'));
@@ -2342,8 +2362,8 @@ if(livroEscrito){
 
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p>${notas[0].musica?`<p class="text-[11px] text-gold-400 mt-2 truncate">♪ ${esc(notas[0].musica)}</p>`:''}</div>`,l?l.capa:BG_PADRAO,3,false);
-const lendo=biblioteca.find(x=>statusDe(x)==='lendo');
-if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="mudarAba('lendo')" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span></button></div>`,lendo.capa,4,false);
+const lendo=biblioteca.find(x=>statusDe(x)==='lendo'),maisLendo=biblioteca.filter(x=>statusDe(x)==='lendo').length-1;
+if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="mudarAba('lendo')" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span>${maisLendo>0?`<span class="text-sm font-bold text-gold-400 shrink-0">+${maisLendo}</span>`:''}</button></div>`,lendo.capa,4,false);
 feed.appendChild(wrap);
 homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(bgCustomizado || (homeSemCapa?BG_PADRAO:l.capa));
@@ -2674,8 +2694,8 @@ ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=
 const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(5,7,12,.55)');g.addColorStop(.45,'rgba(5,7,12,.62)');g.addColorStop(1,'rgba(5,7,12,.95)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 ctx.textBaseline='alphabetic';ctx.textAlign='left';
-desenharLogoLili(ctx,W,150,60);
-const cw=obs?560:680,ch=obs?840:1020,cx=(W-cw)/2,cy=235;
+desenharLogoLili(ctx,W,150,60);desenharSubLogo(ctx,W,198);
+const cw=obs?560:680,ch=obs?840:1020,cx=(W-cw)/2,cy=290;
 ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=70;ctx.shadowOffsetY=28;
 rrPath(ctx,cx,cy,cw,ch,28);ctx.fillStyle='#1b2230';ctx.fill();ctx.restore();
 if(img){
@@ -2754,19 +2774,19 @@ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 
 ctx.textBaseline='alphabetic';
 ctx.save();ctx.shadowColor='rgba(0,0,0,.75)';ctx.shadowBlur=16;
-desenharLogoLili(ctx,W,130,56,60);
+desenharLogoLili(ctx,W,130,56,60);desenharSubLogo(ctx,W,180,60);
 ctx.textAlign='center';
 ctx.font='800 50px "Inter",sans-serif';ctx.fillStyle='#ffffff';
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='3px';
-ctx.fillText('RETROSPECTIVA LITERÁRIA',W/2,290);
+ctx.fillText('RETROSPECTIVA LITERÁRIA',W/2,325);
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
 ctx.font='800 150px "Inter",sans-serif';ctx.fillStyle='#FACC15';
-ctx.fillText(String(ano),W/2,430);
+ctx.fillText(String(ano),W/2,465);
 ctx.restore();
 
 const totalLivros=doAno.length;
 const totalPaginas=doAno.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
-const cy0=490,ch0=130,cw0=440;
+const cy0=525,ch0=130,cw0=440;
 drawStatCard(ctx,W/2-cw0-20,cy0,cw0,ch0,`${totalLivros}`,totalLivros===1?'Livro Lido':'Livros Lidos',56,22);
 drawStatCard(ctx,W/2+20,cy0,cw0,ch0,`${totalPaginas.toLocaleString('pt-BR')}`,'Páginas Lidas',56,22);
 
