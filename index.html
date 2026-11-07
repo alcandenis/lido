@@ -357,7 +357,7 @@ textarea{
 
 /* Cabeçalho: sombra suave que desce até as abas e o conteúdo */
 #app-header{background-image:none!important}
-#app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 2.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,rgba(0,0,0,.48) 25%,rgba(0,0,0,.32) 50%,rgba(0,0,0,.16) 72%,rgba(0,0,0,.05) 90%,rgba(0,0,0,0) 100%)}
+#app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 2.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,#000 0,#000 max(env(safe-area-inset-top,0px),.9rem),rgba(0,0,0,.55) calc(max(env(safe-area-inset-top,0px),.9rem) + 1rem),rgba(0,0,0,.34) calc(max(env(safe-area-inset-top,0px),.9rem) + 2.2rem),rgba(0,0,0,.16) calc(max(env(safe-area-inset-top,0px),.9rem) + 3.4rem),rgba(0,0,0,.05) calc(max(env(safe-area-inset-top,0px),.9rem) + 4.4rem),rgba(0,0,0,0) 100%)}
 #feed-container .tab-reg{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.8)}
 #feed-container .tab-reg.ativo{text-shadow:0 1px 8px rgba(0,0,0,.95)!important}
 /* Sem brilho/reflexo nos estados ativos das abas */
