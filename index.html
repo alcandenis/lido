@@ -152,16 +152,16 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .dock-glass{
   position:relative;display:flex;align-items:center;gap:.2rem;padding:.45rem;
   border-radius:1.8rem;
-  background:rgba(12,12,14,.55);
-  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(.7);
-  backdrop-filter:blur(10px) saturate(1.8) brightness(.7);
+  background:rgba(0,0,0,.03);
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(1);
+  backdrop-filter:blur(10px) saturate(1.8) brightness(1);
   border:1px solid rgba(255,255,255,.04);
   box-shadow:
     0 0 0 1px rgba(0,0,0,.5),
     inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),
     inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),
     inset 0 0 18px rgba(255,255,255,.03),
-    0 8px 28px rgba(0,0,0,.5);
+    0 8px 28px rgba(0,0,0,.35);
 }
 .dock-tab{
   width:3rem;height:3.1rem;border-radius:1.35rem;
@@ -518,9 +518,9 @@ textarea{
 
 /* Card de boas-vindas — mesmo vidro escuro da dock (teste) */
 #welcome-modal #welcome-card.frosted-card{
-  background:rgba(12,12,14,.55)!important;
-  -webkit-backdrop-filter:blur(28px) saturate(1.8) brightness(.7)!important;
-  backdrop-filter:blur(28px) saturate(1.8) brightness(.7)!important;
+  background:rgba(0,0,0,.03)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(1)!important;
+  backdrop-filter:blur(10px) saturate(1.8) brightness(1)!important;
   border:1px solid rgba(255,255,255,.04)!important;
   border-radius:1.6rem!important;
   box-shadow:
@@ -528,7 +528,7 @@ textarea{
     inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),
     inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),
     inset 0 0 18px rgba(255,255,255,.03),
-    0 8px 28px rgba(0,0,0,.5)!important;
+    0 8px 28px rgba(0,0,0,.35)!important;
 }
 
 /* Todos os cards e modais — vidro escuro da dock */
@@ -538,21 +538,21 @@ textarea{
 .frosted-modal,
 #registro-caixa,
 #modal-registro.registro-card-view #registro-caixa{
-  background:rgba(12,12,14,.55)!important;
-  -webkit-backdrop-filter:blur(28px) saturate(1.8) brightness(.7)!important;
-  backdrop-filter:blur(28px) saturate(1.8) brightness(.7)!important;
+  background:rgba(0,0,0,.03)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(1)!important;
+  backdrop-filter:blur(10px) saturate(1.8) brightness(1)!important;
   border:1px solid rgba(255,255,255,.04)!important;
   box-shadow:
     0 0 0 1px rgba(0,0,0,.5),
     inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),
     inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),
     inset 0 0 18px rgba(255,255,255,.03),
-    0 8px 28px rgba(0,0,0,.5)!important;
+    0 8px 28px rgba(0,0,0,.35)!important;
 }
 .frosted-card,.home-wrap .frosted-card,#tela-login-inicial .frosted-card{border-radius:1.4rem!important}
 .frosted-modal,#registro-caixa,#modal-registro.registro-card-view #registro-caixa{border-radius:1.6rem!important}
 .sel-ativo .frosted-card{
-  box-shadow:0 0 0 1px rgba(250,204,21,.65),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),0 8px 28px rgba(0,0,0,.5)!important;
+  box-shadow:0 0 0 1px rgba(250,204,21,.65),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),0 8px 28px rgba(0,0,0,.35)!important;
 }
 @media (prefers-reduced-transparency:reduce){
   .frosted-card,.frosted-modal,#registro-caixa,#welcome-modal #welcome-card.frosted-card{background:rgba(20,20,22,.94)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
@@ -609,11 +609,11 @@ textarea{
 /* Configurações: grupos em vidro escuro, setas e rodapé discreto */
 .opt-sec{margin:0 .35rem .5rem!important}
 .opt-group,#modal-sub-backup section{
-  background:rgba(12,12,14,.55);
-  -webkit-backdrop-filter:blur(28px) saturate(1.8) brightness(.7);
-  backdrop-filter:blur(28px) saturate(1.8) brightness(.7);
+  background:rgba(0,0,0,.03);
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(1);
+  backdrop-filter:blur(10px) saturate(1.8) brightness(1);
   border:1px solid rgba(255,255,255,.04);border-radius:1.4rem;padding:.15rem 1rem;
-  box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),0 8px 28px rgba(0,0,0,.5);
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),0 8px 28px rgba(0,0,0,.35);
 }
 .opt-group>.opt-row:last-child,.opt-group>.opt-block:last-child{border-bottom:0}
 .opt-group .opt-row{padding:.85rem 0}
@@ -629,6 +629,8 @@ textarea{
 .opt-rodape{text-align:center;font-size:.7rem;color:#6b7280;line-height:1.8;padding-top:.25rem}
 .opt-rodape .logo-lili{font-size:.8rem;color:#9ca3af}
 .opt-rodape a{color:#9ca3af;text-decoration:underline}
+
+.lendo-capa{box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.12)!important}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -865,7 +867,7 @@ textarea{
 <!-- Boas-vindas -->
 <div id="welcome-modal" class="fixed inset-0 z-[45] flex items-center justify-center p-3" style="display:none" aria-labelledby="welcome-title">
   <section id="welcome-card" class="frosted-card shadow-2xl relative mx-auto">
-    <button type="button" id="welcome-close" onclick="fecharBoasVindas()" aria-label="Fechar Boas-vindas" title="Fechar" style="display:none;position:absolute;top:.65rem;right:.65rem;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:9999px;color:#d1d5db;background:rgba(255,255,255,.07);font-size:1.35rem;line-height:1">×</button>
+    <button type="button" id="welcome-close" onclick="fecharBoasVindas()" aria-label="Fechar Boas-vindas" title="Fechar" style="display:none;position:absolute;top:.65rem;right:.65rem;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:9999px;color:#d1d5db;background:rgba(0,0,0,.03);font-size:1.35rem;line-height:1">×</button>
     <span id="welcome-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span>
     <h2 id="welcome-title" class="font-serif font-semibold text-white">Olá,</h2>
     <div id="welcome-copy">
@@ -2642,11 +2644,22 @@ mostrarRetangulo();
 handleFeedScroll();
 }
 
+function diasDesde(str){if(!str)return null;let d;const m=String(str).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);d=m?new Date(+m[3],+m[2]-1,+m[1]):new Date(str);if(isNaN(d))return null;const n=Math.floor((Date.now()-d.getTime())/864e5);return n<0?null:n}
 function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
 wrap.className='home-wrap space-y-3 pb-4 w-full my-auto';
 
+
+// Card "Em leitura" (destaque)
+const lendoLista=biblioteca.filter(x=>statusDe(x)==='lendo');
+if(lendoLista.length){
+const lendo=lendoLista[0],outros=lendoLista.slice(1),dias=diasDesde(lendo.data_inicio);
+const tempo=dias==null?'':dias===0?'Começou hoje':dias===1?'Começou ontem':dias<60?`Lendo há ${dias} dias`:`Lendo há ${Math.floor(dias/30)} meses`;
+const chips=[lendo.formato,lendo.paginas>0?`${lendo.paginas} págs`:''].filter(Boolean).map(c=>`<span class="px-2 py-0.5 rounded-full text-[10px] border border-white/15 text-gray-200">${esc(c)}</span>`).join('');
+const outrosHtml=outros.length?`<button onclick="event.stopPropagation();mudarAba('lendo')" class="flex items-center gap-2 mt-4 pt-3 border-t border-white/10 w-full text-left"><span class="flex -space-x-2 shrink-0">${outros.slice(0,4).map(o=>`<img src="${esc(o.capa||'')}" class="w-7 h-10 object-cover rounded border border-white/20 shadow" onerror="this.style.visibility='hidden'">`).join('')}</span><span class="text-xs text-gray-300 truncate min-w-0 flex-1">Também em leitura: ${outros.slice(0,2).map(o=>esc(o.titulo)).join(', ')}${outros.length>2?` e +${outros.length-2}`:''}</span><span class="text-gray-500 shrink-0">›</span></button>`:'';
+addSecao(wrap,`<div onclick="editarLivro(${lendo.id})" class="frosted-card lendo-hero p-5 w-full cursor-pointer shadow-2xl"><div class="mb-3"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Em leitura</span></div><div class="flex items-center gap-5">${imgCapa(lendo.capa,'lendo-capa w-28 h-40',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-2xl font-bold text-white leading-tight line-clamp-3">${esc(lendo.titulo)}</h3><p class="text-gold-400 text-sm truncate mt-1">${esc(lendo.autor||'')}</p>${chips?`<div class="flex flex-wrap gap-1.5 mt-3">${chips}</div>`:''}${tempo?`<p class="text-xs text-gray-400 mt-3">${tempo}</p>`:''}</div></div>${outrosHtml}</div>`,lendo.capa,0,false);
+}
 // Card do Livro Sendo Escrito ("BLOCO DO EDITOR")
 if(livroEscrito){
   addSecao(wrap, `<div onclick="abrirModalEscrevendoLivro()" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">SEU PRÓPRIO LIVRO</span><span class="text-[10px] text-gray-400">Acessar Bloco do Editor</span></div><div class="flex items-start gap-4">${imgCapa(livroEscrito.capa,'w-20 h-28',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(livroEscrito.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(usuarioNome||livroEscrito.autor)}</p><div class="text-gold-400 text-sm tracking-wide mt-1">Capítulo ${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</div><p class="text-gray-300 text-xs mt-1">${livroEscrito.paginas} páginas escritas até agora</p></div></div></div>`, livroEscrito.capa, 1, false);
@@ -2654,8 +2667,6 @@ if(livroEscrito){
 
 if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
-const lendo=biblioteca.find(x=>statusDe(x)==='lendo'),maisLendo=biblioteca.filter(x=>statusDe(x)==='lendo').length-1;
-if(lendo)addSecao(wrap,`<div class="frosted-card px-4 py-3 w-full shadow-2xl flex items-center"><button onclick="mudarAba('lendo')" class="flex items-center gap-3 w-full text-left"><span class="text-[13px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">Lendo</span><span class="text-base font-semibold text-white truncate">${esc(lendo.titulo)}</span>${maisLendo>0?`<span class="text-sm font-bold text-gold-400 shrink-0">+${maisLendo}</span>`:''}</button></div>`,lendo.capa,4,false);
 feed.appendChild(wrap);
 homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(bgCustomizado || (homeSemCapa?BG_PADRAO:l.capa));
