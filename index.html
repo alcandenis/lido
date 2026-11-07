@@ -240,7 +240,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   flex-direction:column!important;
   align-items:center!important;
   justify-content:flex-start!important;
-  padding:calc(5.5rem + env(safe-area-inset-top,0px)) 1rem calc(4.5rem + env(safe-area-inset-bottom,0px))!important;
+  padding:calc(5.5rem + env(safe-area-inset-top,0px)) 1rem calc(6.5rem + env(safe-area-inset-bottom,0px))!important;
   overflow-y:auto;
   background:transparent!important;
   -webkit-backdrop-filter:none!important;
@@ -270,19 +270,19 @@ body.welcome-menu-open #feed-container,
 body.welcome-menu-open #scroll-arrow,
 body.welcome-menu-open #top-btn{visibility:hidden!important;pointer-events:none!important}
 @media(max-height:700px){
-  #modal-registro.registro-card-view{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:4rem!important}
+  #modal-registro.registro-card-view{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:calc(6rem + env(safe-area-inset-bottom,0px))!important}
   #modal-registro.registro-card-view #registro-caixa{padding:1rem}
 }
 
 /* Boas-vindas */
-#welcome-modal{align-items:flex-end!important;justify-content:center!important;padding:calc(5.5rem + env(safe-area-inset-top,0px)) 1rem calc(4.5rem + env(safe-area-inset-bottom,0px))!important;overflow-y:auto;background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none!important}
+#welcome-modal{align-items:flex-end!important;justify-content:center!important;padding:calc(5.5rem + env(safe-area-inset-top,0px)) 1rem calc(6.5rem + env(safe-area-inset-bottom,0px))!important;overflow-y:auto;background:transparent!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;pointer-events:none!important}
 #welcome-card{pointer-events:auto;width:100%;max-width:42rem;max-height:none;overflow:visible;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:.45rem;padding:1.25rem;margin:auto auto 0;text-align:left;background:rgba(12,12,12,.65);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.09);border-radius:.875rem;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);animation:fadeUp .3s cubic-bezier(.16,1,.3,1) forwards}
 #welcome-logo-o{display:block;width:clamp(2.4rem,7vh,4rem);height:clamp(3.2rem,9vh,5rem);border-radius:.45rem;margin:.05rem 0 .15rem;flex-shrink:0}
 #welcome-title{font-size:clamp(1.2rem,3vh,1.6rem);line-height:1.05;margin:0;text-align:left}
 #welcome-copy{font-size:clamp(.62rem,1.45vh,.74rem);line-height:1.3;color:#e5e7eb;display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;max-width:31rem;text-align:left}
 #welcome-copy p{margin:0;text-align:left}
 #welcome-cta{font-size:clamp(.75rem,1.6vh,.9rem);font-weight:700;line-height:1.2;padding:.4rem 0 .1rem;background:linear-gradient(90deg,#facc15,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;flex-shrink:0;text-align:left}
-@media(max-height:700px){#welcome-modal{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:4rem!important}#welcome-card{padding:1rem;gap:.3rem}#welcome-copy{font-size:.6rem;line-height:1.2;gap:.25rem}#welcome-logo-o{width:2rem;height:2.7rem}#welcome-title{font-size:1.15rem}}
+@media(max-height:700px){#welcome-modal{padding-top:calc(5rem + env(safe-area-inset-top,0px))!important;padding-bottom:calc(6rem + env(safe-area-inset-bottom,0px))!important}#welcome-card{padding:1rem;gap:.3rem}#welcome-copy{font-size:.6rem;line-height:1.2;gap:.25rem}#welcome-logo-o{width:2rem;height:2.7rem}#welcome-title{font-size:1.15rem}}
 
 
 /* LIQUID GLASS DARK — camada visual neutra aplicada ao arquivo original */
@@ -357,7 +357,7 @@ textarea{
 
 /* Cabeçalho: sombra suave que desce até as abas e o conteúdo */
 #app-header{background-image:none!important}
-#app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 4.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.94) 0%,rgba(0,0,0,.88) 25%,rgba(0,0,0,.72) 45%,rgba(0,0,0,.48) 62%,rgba(0,0,0,.24) 78%,rgba(0,0,0,.08) 91%,rgba(0,0,0,0) 100%)}
+#app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 2.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.6) 0%,rgba(0,0,0,.48) 25%,rgba(0,0,0,.32) 50%,rgba(0,0,0,.16) 72%,rgba(0,0,0,.05) 90%,rgba(0,0,0,0) 100%)}
 #feed-container .tab-reg{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.8)}
 #feed-container .tab-reg.ativo{text-shadow:0 1px 8px rgba(0,0,0,.95)!important}
 /* Sem brilho/reflexo nos estados ativos das abas */
@@ -488,10 +488,14 @@ textarea{
 
 /* Dock: botão Nova passagem dentro do vidro */
 .dock-glass .dock-add{
-  width:3rem!important;height:3.1rem!important;min-width:3rem!important;
-  border-radius:1.35rem!important;margin:0 .1rem;
+  width:3.8rem!important;height:4rem!important;min-width:3.8rem!important;
+  border-radius:1.75rem!important;margin:-.45rem .1rem;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;filter:none!important;
 }
 .dock-tab.ativo{text-shadow:none!important}
+.dock-glass .dock-add svg{width:2.2rem!important;height:2.2rem!important}
+.dock-glass .dock-add:hover,.dock-glass .dock-add:active{background:rgba(255,255,255,.1)!important}
 @media (prefers-reduced-transparency:reduce){
   .dock-glass{background:rgba(30,30,30,.92);-webkit-backdrop-filter:none;backdrop-filter:none}
 }
@@ -509,6 +513,46 @@ textarea{
     inset 0 0 8px rgba(255,255,255,.18),
     0 3px 10px rgba(251,146,60,.28);
   box-sizing:border-box;
+}
+
+/* Card de boas-vindas — mesmo vidro escuro da dock (teste) */
+#welcome-modal #welcome-card.frosted-card{
+  background:rgba(12,12,14,.55)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
+  backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
+  border:1px solid rgba(255,255,255,.1)!important;
+  border-radius:1.6rem!important;
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.4),
+    inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.2),
+    inset 0 0 18px rgba(255,255,255,.03),
+    0 8px 28px rgba(0,0,0,.5)!important;
+}
+
+/* Todos os cards e modais — vidro escuro da dock */
+.frosted-card,
+.home-wrap .frosted-card,
+#tela-login-inicial .frosted-card,
+.frosted-modal,
+#registro-caixa,
+#modal-registro.registro-card-view #registro-caixa{
+  background:rgba(12,12,14,.55)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
+  backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
+  border:1px solid rgba(255,255,255,.1)!important;
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.4),
+    inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.2),
+    inset 0 0 18px rgba(255,255,255,.03),
+    0 8px 28px rgba(0,0,0,.5)!important;
+}
+.frosted-card,.home-wrap .frosted-card,#tela-login-inicial .frosted-card{border-radius:1.4rem!important}
+.frosted-modal,#registro-caixa,#modal-registro.registro-card-view #registro-caixa{border-radius:1.6rem!important}
+.sel-ativo .frosted-card{
+  box-shadow:0 0 0 1px rgba(250,204,21,.65),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.4),0 8px 28px rgba(0,0,0,.5)!important;
+}
+@media (prefers-reduced-transparency:reduce){
+  .frosted-card,.frosted-modal,#registro-caixa,#welcome-modal #welcome-card.frosted-card{background:rgba(20,20,22,.94)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
 </style>
 </head>
