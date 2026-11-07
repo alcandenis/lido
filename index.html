@@ -572,6 +572,25 @@ textarea{
 .nl-texto{max-width:42rem;margin:0 auto;color:#f3f4f6;font-size:1.1rem;line-height:1.8;font-weight:300;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;hyphens:none}
 .nl-edit{display:block;width:100%;max-width:42rem;min-height:65vh;margin:0 auto;padding:1rem;color:#fff;font-size:1.05rem;line-height:1.7;white-space:pre-wrap;tab-size:4;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:1rem;resize:none;outline:none}
 .nl-edit:focus{border-color:#FACC15}
+
+/* Nota: animação, formatação e rodapé */
+@keyframes nlIn{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes nlOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(20px) scale(.985)}}
+#nota-leitura.abrindo{animation:nlIn .32s cubic-bezier(.16,1,.3,1) both}
+#nota-leitura.fechando{animation:nlOut .2s ease-in both;pointer-events:none}
+@media (prefers-reduced-motion:reduce){#nota-leitura.abrindo,#nota-leitura.fechando{animation:none}}
+.nl-texto b,.nota-resumo b,.nl-edit b{font-weight:700;color:#fff}
+.nl-texto i,.nota-resumo i,.nl-edit i{font-style:italic}
+.nl-texto u,.nota-resumo u,.nl-edit u{text-decoration:underline;text-underline-offset:3px}
+#nl-fmt{background:rgba(12,12,14,.55);border-bottom:1px solid rgba(255,255,255,.06);padding:.4rem 1rem}
+#nl-fmt.hidden{display:none}
+.nl-fmt-in{max-width:42rem;margin:0 auto;display:flex;gap:.4rem}
+.nl-fmt-in button{width:2.5rem;height:2.2rem;border-radius:.8rem;color:#d1d5db;font-size:1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center}
+.nl-fmt-in button.on{background:rgba(250,204,21,.16);border-color:rgba(250,204,21,.45);color:#FACC15}
+.nl-edit{overflow-wrap:anywhere;-webkit-user-select:text;user-select:text;cursor:text}
+.nl-rodape{flex-shrink:0;display:flex;justify-content:center;padding:.7rem 1rem calc(.7rem + env(safe-area-inset-bottom,0px));background:rgba(12,12,14,.55);border-top:1px solid rgba(255,255,255,.06)}
+#nl-rodape.hidden{display:none}
+.nl-corpo{padding-bottom:1.5rem!important}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -830,7 +849,13 @@ textarea{
     <span id="nl-data" class="nl-data"></span>
     <div id="nl-acoes" class="nl-acoes"></div>
   </div></div>
+  <div id="nl-fmt" class="nl-fmt hidden"><div class="nl-fmt-in">
+    <button type="button" data-fmt="bold" tabindex="-1" onmousedown="event.preventDefault()" onclick="aplicarFmt('bold')" aria-label="Negrito"><b>B</b></button>
+    <button type="button" data-fmt="italic" tabindex="-1" onmousedown="event.preventDefault()" onclick="aplicarFmt('italic')" aria-label="Itálico"><i>I</i></button>
+    <button type="button" data-fmt="underline" tabindex="-1" onmousedown="event.preventDefault()" onclick="aplicarFmt('underline')" aria-label="Sublinhado"><u>U</u></button>
+  </div></div>
   <div id="nl-corpo" class="nl-corpo"></div>
+  <div id="nl-rodape" class="nl-rodape"><span class="logo-lili text-lg"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span></div>
 </div>
 
 <!-- Modal Principal de Configurações -->
@@ -1991,52 +2016,92 @@ try{await navigator.clipboard.writeText(texto);ok=true}catch(e){}
 if(!ok){const el=document.createElement('textarea');el.value=texto;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();try{ok=document.execCommand('copy')}catch(e){}el.remove()}
 aviso(ok?'Nota copiada.':'Não foi possível copiar. Tente novamente.');
 }
-function editarNota(id,btn){
-const n=notas.find(x=>x.id===id);if(!n)return;
-const card=btn.closest('[data-nota]');if(!card)return;
-const p=card.querySelector('.nota-texto'),ac=card.querySelector('.nota-acoes');const lr=card.querySelector('.nota-ler');if(lr)lr.remove();
-const ta=document.createElement('textarea');
-ta.value=n.texto;ta.rows=4;
-ta.className='w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-base text-white font-obs focus:outline-none focus:border-gold-400 resize-none';
-p.replaceWith(ta);
-ac.innerHTML=`<button type="button" class="nota-cancelar text-xs text-gray-300 hover:text-white px-3 py-1.5">Cancelar</button><button type="button" class="nota-salvar text-xs bg-gold-400 text-black font-semibold px-3 py-1.5 rounded-lg">Salvar</button>`;
-ac.querySelector('.nota-cancelar').onclick=()=>rerenderMantendoScroll();
-ac.querySelector('.nota-salvar').onclick=()=>{const t=ta.value.trim();if(!t){aviso('A nota não pode ficar vazia');return}n.texto=t;salvarLocal();rerenderMantendoScroll()};
-ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
-}
+function editarNota(id){abrirNotaLeitura(id,null,true)}
 function rerenderMantendoScroll(){const f=$('feed-container'),y=f.scrollTop;renderizarFeed();f.style.scrollBehavior='auto';f.scrollTop=y;requestAnimationFrame(()=>{f.style.scrollBehavior=''})}
 function deletarNota(id,btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
 
 /* tela dedicada de leitura de nota */
-let notaLeituraId=null,notaLeituraEdit=false;
-function abrirNotaLeitura(id,ev){
+let notaLeituraId=null,notaLeituraEdit=false,rtRange=null;
+/* texto rico: só <b>, <i>, <u> e quebras de linha */
+function rtSerializar(raiz){
+let html='',texto='';
+const wrap=(t,c)=>{if(!t)return '';let r=t;if(c.u)r='<u>'+r+'</u>';if(c.i)r='<i>'+r+'</i>';if(c.b)r='<b>'+r+'</b>';return r};
+const fim=()=>texto===''||texto.endsWith('\n');
+function walk(n,ctx){
+if(n.nodeType===3){const t=n.nodeValue.replace(/\u00a0/g,' ').replace(/\u200b/g,'');if(!t)return;html+=wrap(esc(t),ctx);texto+=t;return}
+if(n.nodeType!==1)return;
+const tag=n.tagName.toLowerCase();
+if(tag==='script'||tag==='style')return;
+if(tag==='br'){html+='\n';texto+='\n';return}
+const c={b:ctx.b,i:ctx.i,u:ctx.u},st=n.style||{};
+if(tag==='b'||tag==='strong'||st.fontWeight==='bold'||+st.fontWeight>=600)c.b=1;
+if(tag==='i'||tag==='em'||st.fontStyle==='italic')c.i=1;
+if(tag==='u'||/underline/.test(st.textDecorationLine||st.textDecoration||''))c.u=1;
+const bloco=tag==='div'||tag==='p'||tag==='li';
+if(bloco&&!fim()){html+='\n';texto+='\n'}
+n.childNodes.forEach(ch=>walk(ch,c));
+if(bloco&&!fim()){html+='\n';texto+='\n'}
+}
+walk(raiz,{b:0,i:0,u:0});
+return{html:html.replace(/\s+$/,''),texto:texto.replace(/\s+$/,'')};
+}
+function htmlSeguro(h){try{const d=new DOMParser().parseFromString('<body>'+h+'</body>','text/html');return rtSerializar(d.body).html}catch(e){return ''}}
+function htmlNotaRico(n){return n.html?htmlSeguro(n.html):esc(n.texto||'')}
+
+function mostrarNotaLeitura(){const el=$('nota-leitura');el.classList.remove('hidden','fechando','abrindo');void el.offsetWidth;el.classList.add('abrindo');$('nl-corpo').scrollTop=0}
+function abrirNotaLeitura(id,ev,editar){
 if(ev){if(modoSel)return;if(ev.target.closest('button,textarea,a'))return;if(ev.currentTarget&&ev.currentTarget.querySelector('textarea'))return}
 if(!notas.find(x=>x.id===id))return;
-notaLeituraId=id;notaLeituraEdit=false;renderizarNotaLeitura();
-$('nota-leitura').classList.remove('hidden');$('nl-corpo').scrollTop=0;
+notaLeituraId=id;notaLeituraEdit=!!editar;renderizarNotaLeitura();mostrarNotaLeitura();
+if(notaLeituraEdit)focarEditorNota();
 }
-function fecharNotaLeitura(){$('nota-leitura').classList.add('hidden');notaLeituraId=null;notaLeituraEdit=false}
+function fecharNotaLeitura(){
+const el=$('nota-leitura');if(!el||el.classList.contains('hidden'))return;
+el.classList.remove('abrindo');el.classList.add('fechando');
+notaLeituraId=null;notaLeituraEdit=false;
+setTimeout(()=>{if(el.classList.contains('fechando')){el.classList.add('hidden');el.classList.remove('fechando')}},200);
+}
+function focarEditorNota(){const ed=$('nl-edit');if(!ed)return;ed.focus();const rg=document.createRange();rg.selectNodeContents(ed);rg.collapse(false);const sl=getSelection();sl.removeAllRanges();sl.addRange(rg);rtRange=rg.cloneRange()}
 function renderizarNotaLeitura(){
 const n=notas.find(x=>x.id===notaLeituraId);if(!n){fecharNotaLeitura();return}
 $('nl-data').textContent='Nota · '+(n.data||'');
+$('nl-fmt').classList.toggle('hidden',!notaLeituraEdit);
+$('nl-rodape').classList.toggle('hidden',notaLeituraEdit);
 if(notaLeituraEdit){
-$('nl-corpo').innerHTML='<textarea id="nl-edit" class="nl-edit font-obs" spellcheck="true"></textarea>';
-const ta=$('nl-edit');ta.value=n.texto||'';
+$('nl-corpo').innerHTML='<div id="nl-edit" class="nl-edit font-obs" contenteditable="true" role="textbox" aria-multiline="true" spellcheck="true"></div>';
+const ed=$('nl-edit');ed.innerHTML=htmlNotaRico(n);
+ed.addEventListener('paste',e=>{e.preventDefault();const t=(e.clipboardData||window.clipboardData).getData('text/plain');document.execCommand('insertText',false,t)});
 $('nl-acoes').innerHTML='<button type="button" class="nl-btn" onclick="cancelarEdicaoNotaLeitura()">Cancelar</button><button type="button" class="nl-btn nl-gold" onclick="salvarNotaLeitura()">Salvar</button>';
-ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+atualizarBotoesFmt();
 }else{
-$('nl-corpo').innerHTML='<article class="nl-texto font-obs">'+esc(n.texto||'')+'</article>';
-$('nl-acoes').innerHTML=`<button type="button" class="nl-btn" onclick="copiarNota(${n.id})">Copiar</button><button type="button" class="nl-btn nl-gold" onclick="notaLeituraEdit=true;renderizarNotaLeitura()">Editar</button><button type="button" class="nl-btn nl-red" onclick="excluirNotaLeitura(this)">Excluir</button>`;
+$('nl-corpo').innerHTML='<article class="nl-texto font-obs">'+htmlNotaRico(n)+'</article>';
+$('nl-acoes').innerHTML=`<button type="button" class="nl-btn" onclick="copiarNota(${n.id})">Copiar</button><button type="button" class="nl-btn nl-gold" onclick="notaLeituraEdit=true;renderizarNotaLeitura();focarEditorNota()">Editar</button><button type="button" class="nl-btn nl-red" onclick="excluirNotaLeitura(this)">Excluir</button>`;
 }
 }
+function atualizarBotoesFmt(){['bold','italic','underline'].forEach(c=>{const b=document.querySelector('[data-fmt="'+c+'"]');if(b){let on=false;try{on=notaLeituraEdit&&document.queryCommandState(c)}catch(e){}b.classList.toggle('on',!!on)}})}
+function aplicarFmt(cmd){
+const ed=$('nl-edit');if(!ed)return;
+ed.focus();
+if(rtRange){const sl=getSelection();sl.removeAllRanges();sl.addRange(rtRange)}
+document.execCommand(cmd,false,null);
+const sl=getSelection();if(sl.rangeCount&&ed.contains(sl.anchorNode))rtRange=sl.getRangeAt(0).cloneRange();
+atualizarBotoesFmt();
+}
+document.addEventListener('selectionchange',()=>{
+if(!notaLeituraEdit)return;const ed=$('nl-edit');if(!ed)return;
+const sl=getSelection();if(sl.rangeCount&&ed.contains(sl.anchorNode)){rtRange=sl.getRangeAt(0).cloneRange();atualizarBotoesFmt()}
+});
 function cancelarEdicaoNotaLeitura(){notaLeituraEdit=false;renderizarNotaLeitura()}
 function salvarNotaLeitura(){
-const n=notas.find(x=>x.id===notaLeituraId),ta=$('nl-edit');if(!n||!ta)return;
-if(!ta.value.trim()){aviso('A nota não pode ficar vazia');return}
-n.texto=ta.value.replace(/\s+$/,'');salvarLocal();rerenderMantendoScroll();
+const n=notas.find(x=>x.id===notaLeituraId),ed=$('nl-edit');if(!n||!ed)return;
+const r=rtSerializar(ed);
+if(!r.texto.trim()){aviso('A nota não pode ficar vazia');return}
+n.texto=r.texto;
+if(/<(b|i|u)>/.test(r.html))n.html=r.html;else delete n.html;
+salvarLocal();rerenderMantendoScroll();
 notaLeituraEdit=false;renderizarNotaLeitura();
 }
-function excluirNotaLeitura(btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==notaLeituraId);salvarLocal();fecharNotaLeitura();renderizarFeed()})}
+function excluirNotaLeitura(btn){doisToques(btn,()=>{const id=notaLeituraId;notas=notas.filter(n=>n.id!==id);salvarLocal();fecharNotaLeitura();renderizarFeed()})}
 function paraBR(v){if(!v)return '';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}
 function paraISO(br){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(br||'');return m?`${m[3]}-${m[2]}-${m[1]}`:''}
 function mostrarPeriodo(show){
@@ -2645,7 +2710,7 @@ ${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2
 }
 function htmlNota(n){
 const tx=n.texto||'',longa=tx.length>160||tx.split('\n').length>4;
-return `<div data-nota="${n.id}" onclick="abrirNotaLeitura(${n.id},event)" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between cursor-pointer"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400 flex items-center gap-1.5">${esc(n.data)}<svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span></div><p class="nota-texto nota-resumo font-obs text-gray-100 text-lg md:text-xl font-light">${esc(tx)}</p>${longa?'<span class="nota-ler text-[11px] text-gold-400 font-semibold tracking-wide">Ler nota completa ›</span>':''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div data-nota="${n.id}" onclick="abrirNotaLeitura(${n.id},event)" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between cursor-pointer"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400 flex items-center gap-1.5">${esc(n.data)}<svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span></div><p class="nota-texto nota-resumo font-obs text-gray-100 text-lg md:text-xl font-light">${htmlNotaRico(n)}</p>${longa?'<span class="nota-ler text-[11px] text-gold-400 font-semibold tracking-wide">Ler nota completa ›</span>':''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
