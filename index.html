@@ -357,7 +357,7 @@ textarea{
 
 /* Cabeçalho: sombra suave que desce até as abas e o conteúdo */
 #app-header{background-image:none!important}
-#app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 2.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,#000 0,#000 max(env(safe-area-inset-top,0px),.9rem),rgba(0,0,0,.55) calc(max(env(safe-area-inset-top,0px),.9rem) + 1rem),rgba(0,0,0,.34) calc(max(env(safe-area-inset-top,0px),.9rem) + 2.2rem),rgba(0,0,0,.16) calc(max(env(safe-area-inset-top,0px),.9rem) + 3.4rem),rgba(0,0,0,.05) calc(max(env(safe-area-inset-top,0px),.9rem) + 4.4rem),rgba(0,0,0,0) 100%)}
+#app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 4.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,rgba(0,0,0,.75) 25%,rgba(0,0,0,.62) 45%,rgba(0,0,0,.4) 62%,rgba(0,0,0,.2) 78%,rgba(0,0,0,.07) 91%,rgba(0,0,0,0) 100%)}
 #feed-container .tab-reg{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.8)}
 #feed-container .tab-reg.ativo{text-shadow:0 1px 8px rgba(0,0,0,.95)!important}
 /* Sem brilho/reflexo nos estados ativos das abas */
@@ -554,6 +554,24 @@ textarea{
 @media (prefers-reduced-transparency:reduce){
   .frosted-card,.frosted-modal,#registro-caixa,#welcome-modal #welcome-card.frosted-card{background:rgba(20,20,22,.94)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
+
+/* Notas: resumo no card e tela de leitura */
+.nota-resumo{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap;overflow-wrap:anywhere}
+#nota-leitura{position:fixed;inset:0;z-index:55;display:flex;flex-direction:column;background:rgba(8,8,10,.82);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4)}
+#nota-leitura.hidden{display:none}
+.nl-barra{padding:calc(.6rem + env(safe-area-inset-top,0px)) 1rem .6rem;background:rgba(12,12,14,.55);border-bottom:1px solid rgba(255,255,255,.08)}
+.nl-barra-in{max-width:42rem;margin:0 auto;display:flex;align-items:center;gap:.5rem}
+.nl-data{flex:1;min-width:0;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nl-acoes{display:flex;gap:.25rem;flex-shrink:0}
+.nl-btn{font-size:.8rem;color:#d1d5db;padding:.45rem .7rem;border-radius:.9rem;background:transparent;border:0;display:inline-flex;align-items:center;justify-content:center}
+.nl-btn:active{background:rgba(255,255,255,.1)}
+.nl-voltar{padding:.45rem .55rem;margin-left:-.35rem}
+.nl-gold{color:#FACC15;font-weight:600}
+.nl-red{color:#f87171}
+.nl-corpo{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:1.5rem 1.25rem calc(2.5rem + env(safe-area-inset-bottom,0px))}
+.nl-texto{max-width:42rem;margin:0 auto;color:#f3f4f6;font-size:1.1rem;line-height:1.8;font-weight:300;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;hyphens:none}
+.nl-edit{display:block;width:100%;max-width:42rem;min-height:65vh;margin:0 auto;padding:1rem;color:#fff;font-size:1.05rem;line-height:1.7;white-space:pre-wrap;tab-size:4;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:1rem;resize:none;outline:none}
+.nl-edit:focus{border-color:#FACC15}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -803,6 +821,16 @@ textarea{
       <span>Instalar o Lili no Dispositivo</span>
     </button>
   </section>
+</div>
+
+<!-- Tela dedicada de leitura de nota -->
+<div id="nota-leitura" class="hidden" role="dialog" aria-modal="true" aria-label="Nota">
+  <div class="nl-barra"><div class="nl-barra-in">
+    <button type="button" class="nl-btn nl-voltar" onclick="fecharNotaLeitura()" aria-label="Voltar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <span id="nl-data" class="nl-data"></span>
+    <div id="nl-acoes" class="nl-acoes"></div>
+  </div></div>
+  <div id="nl-corpo" class="nl-corpo"></div>
 </div>
 
 <!-- Modal Principal de Configurações -->
@@ -1966,7 +1994,7 @@ aviso(ok?'Nota copiada.':'Não foi possível copiar. Tente novamente.');
 function editarNota(id,btn){
 const n=notas.find(x=>x.id===id);if(!n)return;
 const card=btn.closest('[data-nota]');if(!card)return;
-const p=card.querySelector('.nota-texto'),ac=card.querySelector('.nota-acoes');
+const p=card.querySelector('.nota-texto'),ac=card.querySelector('.nota-acoes');const lr=card.querySelector('.nota-ler');if(lr)lr.remove();
 const ta=document.createElement('textarea');
 ta.value=n.texto;ta.rows=4;
 ta.className='w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-base text-white font-obs focus:outline-none focus:border-gold-400 resize-none';
@@ -1978,6 +2006,37 @@ ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
 }
 function rerenderMantendoScroll(){const f=$('feed-container'),y=f.scrollTop;renderizarFeed();f.style.scrollBehavior='auto';f.scrollTop=y;requestAnimationFrame(()=>{f.style.scrollBehavior=''})}
 function deletarNota(id,btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==id);salvarLocal();renderizarFeed()})}
+
+/* tela dedicada de leitura de nota */
+let notaLeituraId=null,notaLeituraEdit=false;
+function abrirNotaLeitura(id,ev){
+if(ev){if(modoSel)return;if(ev.target.closest('button,textarea,a'))return;if(ev.currentTarget&&ev.currentTarget.querySelector('textarea'))return}
+if(!notas.find(x=>x.id===id))return;
+notaLeituraId=id;notaLeituraEdit=false;renderizarNotaLeitura();
+$('nota-leitura').classList.remove('hidden');$('nl-corpo').scrollTop=0;
+}
+function fecharNotaLeitura(){$('nota-leitura').classList.add('hidden');notaLeituraId=null;notaLeituraEdit=false}
+function renderizarNotaLeitura(){
+const n=notas.find(x=>x.id===notaLeituraId);if(!n){fecharNotaLeitura();return}
+$('nl-data').textContent='Nota · '+(n.data||'');
+if(notaLeituraEdit){
+$('nl-corpo').innerHTML='<textarea id="nl-edit" class="nl-edit font-obs" spellcheck="true"></textarea>';
+const ta=$('nl-edit');ta.value=n.texto||'';
+$('nl-acoes').innerHTML='<button type="button" class="nl-btn" onclick="cancelarEdicaoNotaLeitura()">Cancelar</button><button type="button" class="nl-btn nl-gold" onclick="salvarNotaLeitura()">Salvar</button>';
+ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);
+}else{
+$('nl-corpo').innerHTML='<article class="nl-texto font-obs">'+esc(n.texto||'')+'</article>';
+$('nl-acoes').innerHTML=`<button type="button" class="nl-btn" onclick="copiarNota(${n.id})">Copiar</button><button type="button" class="nl-btn nl-gold" onclick="notaLeituraEdit=true;renderizarNotaLeitura()">Editar</button><button type="button" class="nl-btn nl-red" onclick="excluirNotaLeitura(this)">Excluir</button>`;
+}
+}
+function cancelarEdicaoNotaLeitura(){notaLeituraEdit=false;renderizarNotaLeitura()}
+function salvarNotaLeitura(){
+const n=notas.find(x=>x.id===notaLeituraId),ta=$('nl-edit');if(!n||!ta)return;
+if(!ta.value.trim()){aviso('A nota não pode ficar vazia');return}
+n.texto=ta.value.replace(/\s+$/,'');salvarLocal();rerenderMantendoScroll();
+notaLeituraEdit=false;renderizarNotaLeitura();
+}
+function excluirNotaLeitura(btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==notaLeituraId);salvarLocal();fecharNotaLeitura();renderizarFeed()})}
 function paraBR(v){if(!v)return '';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}
 function paraISO(br){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(br||'');return m?`${m[3]}-${m[2]}-${m[1]}`:''}
 function mostrarPeriodo(show){
@@ -2585,7 +2644,8 @@ ${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2
 <div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
 }
 function htmlNota(n){
-return `<div data-nota="${n.id}" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400">${esc(n.data)}</span></div><p class="nota-texto font-obs text-gray-100 text-lg md:text-xl font-light">${esc(n.texto)}</p><div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+const tx=n.texto||'',longa=tx.length>160||tx.split('\n').length>4;
+return `<div data-nota="${n.id}" onclick="abrirNotaLeitura(${n.id},event)" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between cursor-pointer"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400 flex items-center gap-1.5">${esc(n.data)}<svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span></div><p class="nota-texto nota-resumo font-obs text-gray-100 text-lg md:text-xl font-light">${esc(tx)}</p>${longa?'<span class="nota-ler text-[11px] text-gold-400 font-semibold tracking-wide">Ler nota completa ›</span>':''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
@@ -3110,6 +3170,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (modalVisivel('insta-modal')) { fecharInstaModal(); return true; }
     if (modalVisivel('modal-ia')) { fecharEnviarIA(); return true; }
     if (modalVisivel('modal-amazon')) { fecharAmazon(); return true; }
+    if (modalVisivel('nota-leitura')) { fecharNotaLeitura(); return true; }
     if (modalVisivel('modal-passagem')) { fecharPassagem(); return true; }
     if (modalVisivel('modal-kindle')) { fecharKindle(); return true; }
     if (modalVisivel('modal-sub-backup')) { fecharSubMenuBackup(); return true; }
