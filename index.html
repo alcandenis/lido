@@ -147,9 +147,36 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .logo-lili{font-family:'Nunito','Varela Round',ui-rounded,'SF Pro Rounded',system-ui,sans-serif;font-weight:800;letter-spacing:.02em}
 .logo-lili .o-filled-yellow-orange{width:.75em;height:1.09em;border-radius:.12em;margin:0 .1em 0 0;vertical-align:-.2em}
 
-.dock-tab{font-size:.75rem;padding:.25rem .5rem;color:#9ca3af;position:relative;transition:color .2s;font-weight:500}
-.dock-tab:hover{color:#e5e7eb}
-.dock-tab.ativo{color:#FACC15;font-weight:700;text-shadow:0 0 12px rgba(250,204,21,0.4)}
+/* Dock suspensa — Liquid Glass */
+.dock-wrap{display:flex;justify-content:center;padding:0 1rem}
+.dock-glass{
+  position:relative;display:flex;align-items:center;gap:.2rem;padding:.45rem;
+  border-radius:1.8rem;
+  background:rgba(255,255,255,.06);
+  -webkit-backdrop-filter:blur(10px) saturate(2) brightness(1.1);
+  backdrop-filter:blur(10px) saturate(2) brightness(1.1);
+  border:1px solid rgba(255,255,255,.14);
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.55),
+    inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.3),
+    inset 0 0 18px rgba(255,255,255,.05),
+    0 8px 28px rgba(0,0,0,.35);
+}
+.dock-tab{
+  width:3rem;height:3.1rem;border-radius:1.35rem;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.7);background:transparent;border:0;
+  position:relative;transition:color .2s,background .25s,box-shadow .25s,transform .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.dock-tab svg{width:1.5rem;height:1.5rem}
+.dock-tab:hover{color:#fff}
+.dock-tab:active{transform:scale(.92)}
+.dock-tab.ativo{
+  color:#FACC15;
+  background:rgba(255,255,255,.12);
+  box-shadow:inset 1px 1px 1px -.5px rgba(255,255,255,.5),inset -1px -1px 1px -.5px rgba(255,255,255,.25);
+}
 
 /* Botão Nova passagem com estilo Liquid Glass Amarelo (sem glow) */
 .dock-add{
@@ -458,6 +485,31 @@ textarea{
   cursor: pointer;
 }
 
+
+/* Dock: botão Nova passagem dentro do vidro */
+.dock-glass .dock-add{
+  width:3rem!important;height:3.1rem!important;min-width:3rem!important;
+  border-radius:1.35rem!important;margin:0 .1rem;
+}
+.dock-tab.ativo{text-shadow:none!important}
+@media (prefers-reduced-transparency:reduce){
+  .dock-glass{background:rgba(30,30,30,.92);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+
+/* Logo "o" — Liquid Glass (mantém o degradê amarelo→laranja) */
+.o-filled-yellow-orange{
+  position:relative;
+  background:linear-gradient(135deg,rgba(250,204,21,.78) 0%,rgba(251,146,60,.78) 100%);
+  -webkit-backdrop-filter:blur(8px) saturate(1.9) brightness(1.1);
+  backdrop-filter:blur(8px) saturate(1.9) brightness(1.1);
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:
+    inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.75),
+    inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.4),
+    inset 0 0 8px rgba(255,255,255,.18),
+    0 3px 10px rgba(251,146,60,.28);
+  box-sizing:border-box;
+}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -527,7 +579,7 @@ textarea{
   <div id="sub-tabs-content" class="max-w-2xl mx-auto flex items-center justify-center"></div>
 </div>
 
-<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-16 page-transition"></main>
+<main id="feed-container" onscroll="handleFeedScroll()" class="snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pt-20 pb-28 page-transition"></main>
 
 
 <div id="sel-bar" class="fixed bottom-0 inset-x-0 z-50 hidden items-center justify-between gap-2 px-4 py-3 bg-[#000000]/95 backdrop-blur-xl border-t border-white/10">
@@ -540,14 +592,14 @@ textarea{
 </div>
 
 <!-- Dock  -->
-<nav id="nav-principal" class="fixed bottom-0 inset-x-0 z-40 pointer-events-none">
-<div class="pointer-events-auto bg-gradient-to-t from-[#000000] via-[#000000]/85 to-transparent pt-6 pb-2.5 px-6" style="padding-bottom:calc(0.5rem + env(safe-area-inset-bottom,0px))">
-<div class="max-w-md mx-auto flex items-center justify-between">
-<button onclick="mudarAba('inicio')" id="btn-tab-inicio" class="dock-tab">Início</button>
-<button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab">Textos</button>
+<nav id="nav-principal" class="fixed bottom-0 inset-x-0 z-40 pointer-events-none" aria-label="Navegação principal">
+<div class="dock-wrap" style="padding-bottom:calc(.75rem + env(safe-area-inset-bottom,0px))">
+<div class="dock-glass pointer-events-auto">
+<button onclick="mudarAba('inicio')" id="btn-tab-inicio" class="dock-tab" title="Início" aria-label="Início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></button>
+<button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab" title="Textos" aria-label="Textos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></button>
 <button id="dock-add-button" onclick="alternarNovaPassagemDock()" class="dock-add" title="Nova passagem" aria-label="Abrir Nova passagem"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="dock-add-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.75" d="M12 5v14m7-7H5"/></svg></button>
-<button onclick="mudarAba('buscar')" id="btn-tab-buscar" class="dock-tab">Buscar</button>
-<button onclick="mudarAba('lidos')" id="btn-tab-lidos" class="dock-tab">Lidos</button>
+<button onclick="mudarAba('buscar')" id="btn-tab-buscar" class="dock-tab" title="Buscar" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></button>
+<button onclick="mudarAba('lidos')" id="btn-tab-lidos" class="dock-tab" title="Lidos" aria-label="Lidos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></svg></button>
 </div></div>
 </nav>
 
@@ -2329,11 +2381,11 @@ const subContent = $('sub-tabs-content');
 
 if(abaAtual==='inicio'){
   if(subBar) subBar.classList.add('hidden');
-  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col justify-end pb-20 page-transition'+(modoSel?' modo-sel':'');
+  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col justify-end pb-28 page-transition'+(modoSel?' modo-sel':'');
   feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
 } else {
   if(subBar) subBar.classList.add('hidden');
-  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pb-16 page-transition'+(modoSel?' modo-sel':'');
+  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 pb-28 page-transition'+(modoSel?' modo-sel':'');
   feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
 
   if(abaAtual==='todos'){
@@ -2560,30 +2612,73 @@ $('modal-passagem').classList.remove('hidden');
 function fecharPassagem(){$('modal-passagem').classList.add('hidden')}
 
 /* kindle */
+function normKindle(s){return(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
+function interpretarTituloKindle(bruto){
+let linha=String(bruto||'').replace(/\ufeff/g,'').trim(),autorPar='',autor='';
+const par=linha.match(/\(([^()]+)\)\s*$/);
+if(par){autorPar=par[1].trim();linha=linha.slice(0,par.index).trim()}
+let titulo=linha;
+if(/\s--\s/.test(linha)){const p=linha.split(/\s+--\s+/).map(x=>x.trim()).filter(Boolean);titulo=p[0]||linha;autor=p[1]||''}
+if(!autor)autor=autorPar;
+const mm=titulo.match(/^(.*\S)\s+[-–—]\s+([^-–—]+)$/);
+if(mm){const suf=normKindle(mm[2]);if(suf.length>=4&&[autor,autorPar].map(normKindle).some(r=>r&&(r===suf||r.includes(suf)||suf.includes(r))))titulo=mm[1].trim()}
+return{titulo:titulo||String(bruto||'').trim(),autor:autor||'Autor Desconhecido'}
+}
+function capaPlaceholderKindle(t){return `https://placehold.co/400x600/111/fff?text=${encodeURIComponent(t)}`}
+function repararNotasKindleExistentes(){
+const titulos=new Set();let corrigidos=0,removidos=0;
+notasKindle.forEach(n=>{
+const t=n.titulo||'',sujo=/\s--\s/.test(t),tem=n.autor&&n.autor!=='Autor Desconhecido';
+const r=interpretarTituloKindle(sujo||!tem?t:`${t} (${n.autor})`);
+if(r.titulo!==t){n.titulo=r.titulo;if(sujo||!tem)n.autor=r.autor;n.capa=capaPlaceholderKindle(r.titulo);titulos.add(r.titulo);corrigidos++}
+});
+const drop=new Set();
+notasKindle.forEach(a=>{const ta=normKindle(a.observacao),ba=normKindle(a.titulo);if(!ta)return;
+notasKindle.forEach(b=>{if(a===b||drop.has(b.id))return;if(normKindle(b.titulo)!==ba)return;const tb=normKindle(b.observacao);
+if(ta.length>=20&&tb.length>ta.length&&tb.includes(ta))drop.add(a.id);
+else if(ta===tb&&notasKindle.indexOf(b)<notasKindle.indexOf(a))drop.add(a.id)})});
+if(drop.size){notasKindle=notasKindle.filter(n=>!drop.has(n.id));removidos=drop.size}
+return{corrigidos,removidos,titulos}
+}
 function processarKindleClippings(file){
 if(!file)return;
 fecharKindle();
 const r=new FileReader();
 r.onerror=()=>aviso('Não foi possível ler o arquivo.');
 r.onload=e=>{
-const blocos=e.target.result.replace(/^\ufeff/,'').split('==========').map(b=>b.trim()).filter(Boolean);
-const vistos=new Set(notasKindle.map(n=>(n.titulo+'|'+n.observacao).toLowerCase())),novas=[];
-blocos.forEach((b,idx)=>{
+const blocos=e.target.result.replace(/\ufeff/g,'').split('==========').map(b=>b.trim()).filter(Boolean);
+const rep=repararNotasKindleExistentes();
+const brutas=[];
+blocos.forEach(b=>{
 const lin=b.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 if(lin.length<3)return;
-let titulo=lin[0],autor='Autor Desconhecido';
-const m=lin[0].match(/\(([^)]+)\)[^()]*$/);
-if(m){autor=m[1].trim();titulo=lin[0].replace(m[0],'').trim()}
-const cit=lin.slice(2).join(' ').trim(),k=(titulo+'|'+cit).toLowerCase();
-if(!titulo||!cit||vistos.has(k))return;
-vistos.add(k);novas.push({id:Date.now()+idx,titulo,autor,observacao:cit,capa:`https://placehold.co/400x600/111/fff?text=${encodeURIComponent(titulo)}`});
+const {titulo,autor}=interpretarTituloKindle(lin[0]);
+const cit=lin.slice(2).join(' ').trim();
+if(!titulo||!cit)return;
+const lm=lin[1].match(/(?:location|posi[cç][aã]o|local)\s+(\d+)(?:\s*-\s*(\d+))?/i);
+const ini=lm?+lm[1]:null,fim=lm?+(lm[2]||lm[1]):null;
+brutas.push({titulo,autor,cit,ini,fim,nb:normKindle(titulo),nt:normKindle(cit)});
 });
-if(!novas.length)return aviso('Nenhum marcador novo encontrado.');
+const perto=(a,b)=>(a.ini!=null&&b.ini!=null)?(a.ini<=b.fim&&b.ini<=a.fim):a.nt.length>=20;
+const manter=brutas.filter((a,i)=>a.nt&&!brutas.some((b,j)=>j!==i&&b.nb===a.nb&&b.nt.includes(a.nt)&&(b.nt.length>a.nt.length||j<i)&&perto(a,b)));
+const novas=[],remover=new Set();
+manter.forEach((a,idx)=>{
+const mesmas=notasKindle.filter(x=>normKindle(x.titulo)===a.nb);
+if(mesmas.some(x=>{const t=normKindle(x.observacao);return t===a.nt||(a.nt.length>=20&&t.includes(a.nt))}))return;
+mesmas.forEach(x=>{const t=normKindle(x.observacao);if(t.length>=20&&a.nt.includes(t))remover.add(x.id)});
+novas.push({id:Date.now()+idx,titulo:a.titulo,autor:a.autor,observacao:a.cit,capa:capaPlaceholderKindle(a.titulo)});
+});
+if(!novas.length&&!rep.corrigidos&&!rep.removidos){$('kindle-file-input').value='';return aviso('Nenhum marcador novo encontrado.')}
+const titulosCapa=new Set([...rep.titulos,...novas.map(n=>n.titulo)]);
+const autorDe=t=>(novas.find(n=>n.titulo===t)||notasKindle.find(n=>n.titulo===t)||{}).autor;
 const caps={};
-Promise.all([...new Set(novas.map(n=>n.titulo))].map(t=>buscarDetalhesLivro(t,(novas.find(n=>n.titulo===t)||{}).autor).then(b=>{if(b.capa)caps[t]=b.capa}).catch(()=>{}))).then(()=>{
+Promise.all([...titulosCapa].map(t=>buscarDetalhesLivro(t,autorDe(t)).then(b=>{if(b.capa)caps[t]=b.capa}).catch(()=>{}))).then(()=>{
 novas.forEach(n=>{if(caps[n.titulo])n.capa=caps[n.titulo]});
-notasKindle=[...novas,...notasKindle];salvarLocal();renderizarFeed();
-aviso(`${novas.length} marcadores importados.`);$('kindle-file-input').value='';
+notasKindle.forEach(n=>{if(rep.titulos.has(n.titulo)&&caps[n.titulo])n.capa=caps[n.titulo]});
+notasKindle=[...novas,...notasKindle.filter(n=>!remover.has(n.id))];
+salvarLocal();renderizarFeed();
+const extra=[rep.corrigidos?`${rep.corrigidos} corrigidos`:'',(rep.removidos+remover.size)?`${rep.removidos+remover.size} duplicados removidos`:''].filter(Boolean).join(', ');
+aviso(`${novas.length} marcadores importados${extra?' ('+extra+')':''}.`);$('kindle-file-input').value='';
 });
 };
 r.readAsText(file,'UTF-8');
