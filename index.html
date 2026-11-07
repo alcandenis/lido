@@ -605,6 +605,30 @@ textarea{
   background:rgba(255,255,255,.07)!important;
   box-shadow:inset 1px 1px 1px -.5px rgba(255,255,255,.3),inset -1px -1px 1px -.5px rgba(255,255,255,.12)!important;
 }
+
+/* Configurações: grupos em vidro escuro, setas e rodapé discreto */
+.opt-sec{margin:0 .35rem .5rem!important}
+.opt-group,#modal-sub-backup section{
+  background:rgba(12,12,14,.55);
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(.7);
+  backdrop-filter:blur(10px) saturate(1.8) brightness(.7);
+  border:1px solid rgba(255,255,255,.04);border-radius:1.4rem;padding:.15rem 1rem;
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),0 8px 28px rgba(0,0,0,.5);
+}
+.opt-group>.opt-row:last-child,.opt-group>.opt-block:last-child{border-bottom:0}
+.opt-group .opt-row{padding:.85rem 0}
+.opt-chev{flex-shrink:0;color:#6b7280;font-size:1.3rem;line-height:1;transition:transform .2s}
+.opt-row.aberto .opt-gira{transform:rotate(90deg)}
+.opt-dois{display:flex;flex-direction:column;gap:.1rem;min-width:0;flex:1}
+.opt-dois small{font-size:.7rem;color:#6b7280}
+.opt-danger,.opt-danger:hover{color:#f87171}
+.opt-instalar{justify-content:flex-start}
+.opt-instalar .opt-chev{margin-left:auto}
+#btn-instalar-lili.hidden{display:none}
+.opt-icone{width:2rem;height:2rem;border-radius:.7rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FACC15;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.25)}
+.opt-rodape{text-align:center;font-size:.7rem;color:#6b7280;line-height:1.8;padding-top:.25rem}
+.opt-rodape .logo-lili{font-size:.8rem;color:#9ca3af}
+.opt-rodape a{color:#9ca3af;text-decoration:underline}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -878,37 +902,45 @@ textarea{
 <button onclick="toggleModalOpcoes()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
 <h2 class="text-base font-bold text-white font-serif">Configurações</h2>
 </div></div>
-<div class="max-w-2xl mx-auto px-5 pt-4 pb-20 space-y-4">
+<div class="max-w-2xl mx-auto px-5 pt-5 pb-20 space-y-6">
+
 <section><h3 class="opt-sec">Perfil</h3>
-<div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div>
-<div class="flex items-center justify-between opt-row mt-1">
-<button onclick="conectarGoogleDrive()" class="text-left flex-1"><span class="font-semibold text-white">Google Drive</span></button>
-<span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400 ml-2">Desconectado</span>
-<button type="button" onclick="abrirSubMenuBackup()" class="ml-2 p-1 text-gray-300 hover:text-gold-400" aria-label="Backup local e nuvem" title="Backup local e nuvem"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-</div>
-<button onclick="abrirModalEscrevendoLivro()" class="opt-row"><span>Bloco do Editor</span></button>
-<button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="w-full mt-2 flex items-center justify-between gap-3 rounded-xl border border-amber-200/70 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-3 text-left text-sm font-extrabold text-[#211707] shadow-lg shadow-amber-500/20 transition-transform active:scale-[0.99]">
-<span class="flex items-center gap-3"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/10"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span>Instalar app do LiLi</span></span><span aria-hidden="true" class="text-xl leading-none">›</span>
-</button></section>
-<section><h3 class="opt-sec">Leitura</h3>
-<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Lista de Desejos</span></button>
+<div class="opt-group"><div class="opt-block"><label>Seu nome</label><input type="text" id="input-usuario-nome" maxlength="40" placeholder="ou apelido" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-400"><button onclick="salvarNomeUsuario()" class="opt-act">Salvar perfil</button></div></div></section>
+
+<section><h3 class="opt-sec">Dados</h3>
+<div class="opt-group">
+<div class="opt-row"><button onclick="conectarGoogleDrive()" class="text-left flex-1"><span>Google Drive</span></button><span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400">Desconectado</span></div>
+<button type="button" onclick="abrirSubMenuBackup()" class="opt-row"><span>Backup e nuvem</span><span class="opt-chev" aria-hidden="true">›</span></button>
+</div></section>
+
+<section><h3 class="opt-sec">Leitura e escrita</h3>
+<div class="opt-group">
+<button onclick="toggleModalOpcoes();mudarAba('desejados')" class="opt-row"><span>Lista de Desejos</span><span class="opt-chev" aria-hidden="true">›</span></button>
+<button onclick="abrirModalEscrevendoLivro()" class="opt-row"><span class="opt-dois"><span>Bloco do Editor</span><small>Acompanhe a escrita do seu livro</small></span><span class="opt-chev" aria-hidden="true">›</span></button>
+<button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span><span class="opt-chev" aria-hidden="true">›</span></button>
+<button onclick="window.location.href='import.html'" class="opt-row"><span>Importar do Skoob</span><span class="opt-chev" aria-hidden="true">›</span></button>
+</div></section>
+
+<section><h3 class="opt-sec">Manutenção</h3>
+<div class="opt-group">
 <button onclick="atualizarCapasFaltantes(true)" class="opt-row"><span>Recarregar capas</span></button>
 <button onclick="recarregarBancoLivros(true)" class="opt-row"><span>Recarregar banco de dados dos livros</span></button>
-<button onclick="abrirKindle()" class="opt-row"><span>Importar marcadores do Kindle</span></button>
-<button onclick="window.location.href='import.html'" class="opt-row"><span>Importar do Skoob</span></button>
-<button onclick="iniciarSelecao()" class="opt-row"><span>Selecionar e excluir passagens</span></button></section>
+<button onclick="iniciarSelecao()" class="opt-row opt-danger"><span>Selecionar e excluir passagens</span></button>
+</div></section>
 
-<section><h3 class="opt-sec">Exibição</h3>
-<button onclick="$('sub-bg').classList.toggle('hidden')" class="opt-row"><span>Plano de fundo</span></button>
+<section><h3 class="opt-sec">Aplicativo</h3>
+<div class="opt-group">
+<button onclick="$('sub-bg').classList.toggle('hidden');this.classList.toggle('aberto')" class="opt-row"><span>Plano de fundo</span><span class="opt-chev opt-gira" aria-hidden="true">›</span></button>
 <div id="sub-bg" class="hidden pl-4 border-l border-white/10 ml-1">
 <label for="input-bg-customizado" class="opt-row cursor-pointer"><span>Adicionar/trocar</span></label>
 <input type="file" id="input-bg-customizado" accept="image/*" onchange="tratarUploadBgCustomizado(this)" class="hidden">
 <button onclick="removerBgCustomizado()" class="opt-row"><span>Remover</span></button>
 </div>
 <button onclick="alternarTelaCheia()" class="opt-row"><span>Tela cheia</span></button>
-</section>
-<section><h3 class="opt-sec">versão v1.0.2</h3>
-<p class="text-gray-200 font-medium pt-1"><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span>Lili (LIDOLIVROS)</span> desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer" class="text-gold-gradient font-bold underline">@alcandenis</a></p></section>
+<button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="opt-row opt-instalar"><span class="opt-icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span class="opt-dois"><span>Instalar o app</span><small>Use o Lili como aplicativo no celular</small></span><span class="opt-chev" aria-hidden="true">›</span></button>
+</div></section>
+
+<footer class="opt-rodape"><p><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span>Lili</span> · LIDOLIVROS · v1.0.2</p><p>Desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer">@alcandenis</a></p></footer>
 </div></div>
 
 <!-- Pop-up Status da Nuvem (Google Drive) -->
