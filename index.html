@@ -564,7 +564,7 @@ textarea{
 #nota-leitura.hidden{display:none}
 .nl-barra{padding:calc(.6rem + env(safe-area-inset-top,0px)) 1rem .6rem;background:rgba(12,12,14,.55);border-bottom:1px solid rgba(255,255,255,.08)}
 .nl-barra-in{max-width:42rem;margin:0 auto;display:flex;align-items:center;gap:.5rem}
-.nl-data{flex:1;min-width:0;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nl-data{flex:1;min-width:0;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nl-acoes{display:flex;gap:.25rem;flex-shrink:0}
 .nl-btn{font-size:.8rem;color:#d1d5db;padding:.45rem .7rem;border-radius:.9rem;background:transparent;border:0;display:inline-flex;align-items:center;justify-content:center}
 .nl-btn:active{background:rgba(255,255,255,.1)}
@@ -596,6 +596,15 @@ textarea{
 .nl-corpo{padding-bottom:1.5rem!important}
 
 .dock-glass{touch-action:none;-webkit-user-select:none;user-select:none}
+
+/* Correções da análise visual */
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
+#registro-detalhes-toggle{border:0!important;background:transparent!important;padding:0!important;box-shadow:none!important}
+.tab-reg.ativo{color:#FACC15!important;opacity:1!important}
+.dock-tab.ativo{
+  background:rgba(255,255,255,.07)!important;
+  box-shadow:inset 1px 1px 1px -.5px rgba(255,255,255,.3),inset -1px -1px 1px -.5px rgba(255,255,255,.12)!important;
+}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -2069,7 +2078,7 @@ setTimeout(()=>{if(el.classList.contains('fechando')){el.classList.add('hidden')
 function focarEditorNota(){const ed=$('nl-edit');if(!ed)return;ed.focus();const rg=document.createRange();rg.selectNodeContents(ed);rg.collapse(false);const sl=getSelection();sl.removeAllRanges();sl.addRange(rg);rtRange=rg.cloneRange()}
 function renderizarNotaLeitura(){
 const n=notas.find(x=>x.id===notaLeituraId);if(!n){fecharNotaLeitura();return}
-$('nl-data').textContent='Nota · '+(n.data||'');
+$('nl-data').textContent=n.data||'Nota';
 $('nl-fmt').classList.toggle('hidden',!notaLeituraEdit);
 $('nl-rodape').classList.toggle('hidden',notaLeituraEdit);
 if(notaLeituraEdit){
@@ -2582,7 +2591,7 @@ if(abaAtual==='inicio'){
   feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
 
   if(abaAtual==='todos'){
-    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','do Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='lidos'){
     subContent.innerHTML = `<div class="grid grid-cols-3 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas'],['ranking','Ranking']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='observacoes'){
@@ -2604,7 +2613,7 @@ handleFeedScroll();
 function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
-wrap.className='home-wrap space-y-3 pb-4 w-full mt-auto';
+wrap.className='home-wrap space-y-3 pb-4 w-full my-auto';
 
 // Card do Livro Sendo Escrito ("BLOCO DO EDITOR")
 if(livroEscrito){
@@ -2738,7 +2747,7 @@ const tx=n.texto||'',longa=tx.length>160||tx.split('\n').length>4;
 return `<div data-nota="${n.id}" onclick="abrirNotaLeitura(${n.id},event)" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between cursor-pointer"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400 flex items-center gap-1.5">${esc(n.data)}<svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span></div><p class="nota-texto nota-resumo font-obs text-gray-100 text-lg md:text-xl font-light">${htmlNotaRico(n)}</p>${longa?'<span class="nota-ler text-[11px] text-gold-400 font-semibold tracking-wide">Ler nota completa ›</span>':''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
-return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="text-[10px] text-gold-400 uppercase tracking-widest font-bold truncate">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><button onclick="abrirInstaModalKindle(${k.id})" class="text-xs text-gold-400 hover:text-white px-2 py-1">Story</button><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="clamp2 text-[10px] text-gold-400 uppercase tracking-widest font-bold">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><div class="flex flex-col items-end shrink-0"><button onclick="abrirInstaModalKindle(${k.id})" class="text-xs text-gold-400 hover:text-white px-2 py-1">Story</button><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div></div>`;
 }
 function renderizarAbaTodos(feed,scrollToId){
 const itens=[];
@@ -3199,13 +3208,13 @@ ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 ctx.textBaseline='alphabetic';ctx.textAlign='left';
 desenharLogoLili(ctx,W,150,60);
 /* destaque */
-const txt=String(k.observacao||'').replace(/\s+/g,' ').trim(),larg=860,topo=300,base=1450,reserva=190,esp=1.38;
+const txt=String(k.observacao||'').replace(/\s+/g,' ').trim().replace(/^[\u201C\u201E"\u00AB\u2018']+\s*/,'').replace(/\s*[\u201D\u201F"\u00BB\u2019']+$/,''),larg=860,topo=300,base=1450,reserva=190,esp=1.38;
 let tam=76,lin;
 for(;tam>=36;tam-=2){ctx.font=`600 ${tam}px "Inter",sans-serif`;lin=quebrarTexto(ctx,txt,larg);if(lin.length*tam*esp<=base-topo-reserva)break}
 const maxL=Math.max(1,Math.floor((base-topo-reserva)/(tam*esp)));
 if(lin.length>maxL){lin=lin.slice(0,maxL);lin[maxL-1]=cortarLinha(ctx,lin[maxL-1]+' …',larg)}
 const alt=lin.length*tam*esp,y0=topo+(base-topo-(reserva+alt))/2;
-ctx.save();ctx.textAlign='center';ctx.font='800 230px "Nunito","Inter",serif';ctx.fillStyle='rgba(250,204,21,.9)';ctx.fillText('\u201C',W/2,y0+200);ctx.restore();
+ctx.save();ctx.textAlign='center';ctx.font='700 260px Georgia,"Times New Roman",serif';ctx.fillStyle='rgba(250,204,21,.9)';ctx.fillText('\u201C',W/2,y0+235);ctx.restore();
 ctx.save();ctx.textAlign='center';ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=18;ctx.fillStyle='#fff';ctx.font=`600 ${tam}px "Inter",sans-serif`;
 let y=y0+reserva+tam*.85;lin.forEach(t=>{ctx.fillText(t,W/2,y);y+=tam*esp});
 ctx.restore();
