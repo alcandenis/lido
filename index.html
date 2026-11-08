@@ -638,6 +638,32 @@ textarea{
 .card-min-btn:active{background:rgba(255,255,255,.1);color:#fff}
 .card-min-abs{position:absolute;top:.55rem;right:.55rem;z-index:2}
 .card-mini{min-height:3rem}
+
+/* Tela inicial: cards sem desfoque (evita o blur aparecer só depois da animação de entrada) */
+.home-wrap .frosted-card{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Botões de ação dos cards: padrão único em caixa */
+.btn-card{font-size:.75rem;line-height:1.2;padding:.45rem .85rem;border-radius:.8rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#e5e7eb;font-weight:500;white-space:nowrap;transition:background .15s,color .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
+.btn-card:hover,.btn-card:active{background:rgba(255,255,255,.16);color:#fff}
+.btn-card-danger{color:#f87171;background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.28)}
+.btn-card-danger:hover,.btn-card-danger:active{background:rgba(239,68,68,.2);color:#fca5a5}
+.nota-acoes,.card-acoes{gap:.5rem}
+/* Cards sem desfoque (dock mantém o dela) */
+.frosted-card,.home-wrap .frosted-card,#tela-login-inicial .frosted-card,.frosted-modal,#registro-caixa,#modal-registro.registro-card-view #registro-caixa,#welcome-modal #welcome-card.frosted-card,.opt-group,#modal-sub-backup section{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+
+/* Cards e modais sem desfoque (a dock mantém o dela) */
+.frosted-card,.home-wrap .frosted-card,#tela-login-inicial .frosted-card,
+.frosted-modal,#registro-caixa,#modal-registro.registro-card-view #registro-caixa,
+#welcome-modal #welcome-card.frosted-card,.opt-group,#modal-sub-backup section{
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -848,7 +874,7 @@ textarea{
         <button type="button" onclick="fecharModalEscrevendoLivro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">SAIR</button>
         <button type="submit" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Salvar Livro</button>
       </div>
-      <div class="pt-4 mt-1 border-t border-white/10 text-center"><button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="text-xs text-red-400 hover:text-red-300 px-4 py-2.5 rounded-lg">Excluir livro</button></div>
+      <div class="pt-4 mt-1 border-t border-white/10 text-center"><button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="btn-card btn-card-danger">Excluir livro</button></div>
     </form>
 
     <!-- Notas do Bloco do Escritor -->
@@ -953,7 +979,7 @@ textarea{
 <button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="opt-row opt-instalar"><span class="opt-icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span class="opt-dois"><span>Instalar o app</span><small>Use o Lili como aplicativo no celular</small></span><span class="opt-chev" aria-hidden="true">›</span></button>
 </div></section>
 
-<footer class="opt-rodape"><p><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span>Lili</span> · LIDOLIVROS · v1.0.2</p><p>Desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer">@alcandenis</a></p></footer>
+<footer class="opt-rodape"><p><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span>Lili</span> · LIDOLIVROS · v3.2</p><p>Desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer">@alcandenis</a></p></footer>
 </div></div>
 
 <!-- Pop-up Status da Nuvem (Google Drive) -->
@@ -1833,8 +1859,8 @@ function renderizarNotasLivroEscrito(){
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="flex flex-wrap items-center gap-2"><span class="inline-flex rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] text-amber-200">${esc(n.categoria||'Ideia solta')}</span><span class="text-[10px] text-gray-500">${esc(n.dataHora||'Nota antiga')}</span></div>
         <div class="flex items-center gap-3">
-          <button type="button" onclick="editarNotaLivroEscrito(${n.id})" class="text-xs text-gold-400 hover:text-white px-3 py-2 -my-2">Editar</button>
-          <button type="button" onclick="deletarNotaLivroEscrito(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-3 py-2 -my-2">Excluir</button>
+          <button type="button" onclick="editarNotaLivroEscrito(${n.id})" class="btn-card">Editar</button>
+          <button type="button" onclick="deletarNotaLivroEscrito(${n.id},this)" class="btn-card btn-card-danger">Excluir</button>
         </div>
       </div>
       <p class="text-sm leading-relaxed text-gray-200 whitespace-pre-wrap break-words">${esc(n.texto)}</p>
@@ -2819,14 +2845,14 @@ return `<div class="frosted-card relative p-6 md:p-8 w-full space-y-5 shadow-2xl
 <div class="flex items-start gap-5">${imgCapa(l.capa,'w-24 h-36 md:w-28 md:h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-xl md:text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}</div></div>
 ${l.observacao?`<p class="text-gray-100 text-base md:text-lg font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light line-clamp-4">${esc(l.observacao)}</p>`:''}
 <div class="flex items-center justify-between pt-3 border-t border-white/10 gap-2 flex-wrap"><div class="text-gold-400 text-base tracking-widest">${rotuloStatus(l)}</div>
-<div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="text-xs bg-white/10 hover:bg-white/25 text-white px-3 py-1.5 rounded-lg border border-white/10">Story</button><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
+<div class="flex items-center gap-2 card-acoes"><button onclick="abrirInstaModal(${l.id})" class="btn-card">Story</button><button onclick="editarLivro(${l.id})" class="btn-card">Editar</button><button onclick="deletarLivro(${l.id},this)" class="btn-card btn-card-danger">Excluir</button></div></div></div>`;
 }
 function htmlNota(n){
 const tx=n.texto||'',longa=tx.length>160||tx.split('\n').length>4;
-return `<div data-nota="${n.id}" onclick="abrirNotaLeitura(${n.id},event)" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between cursor-pointer"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400 flex items-center gap-1.5">${esc(n.data)}<svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span></div><p class="nota-texto nota-resumo font-obs text-gray-100 text-lg md:text-xl font-light">${htmlNotaRico(n)}</p>${longa?'<span class="nota-ler text-[11px] text-gold-400 font-semibold tracking-wide">Ler nota completa ›</span>':''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="text-xs text-gray-300 hover:text-white px-2 py-1">Copiar</button><button onclick="editarNota(${n.id},this)" class="text-xs text-gold-400 hover:text-white px-2 py-1">Editar</button><button onclick="deletarNota(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div>`;
+return `<div data-nota="${n.id}" onclick="abrirNotaLeitura(${n.id},event)" class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between cursor-pointer"><div class="flex items-center justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Nota</span><span class="text-[11px] text-gray-400 flex items-center gap-1.5">${esc(n.data)}<svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></span></div><p class="nota-texto nota-resumo font-obs text-gray-100 text-lg md:text-xl font-light">${htmlNotaRico(n)}</p>${longa?'<span class="nota-ler text-[11px] text-gold-400 font-semibold tracking-wide">Ler nota completa ›</span>':''}<div class="nota-acoes flex justify-end gap-2 pt-2 border-t border-white/10"><button onclick="copiarNota(${n.id})" class="btn-card">Copiar</button><button onclick="editarNota(${n.id},this)" class="btn-card">Editar</button><button onclick="deletarNota(${n.id},this)" class="btn-card btn-card-danger">Excluir</button></div></div>`;
 }
 function htmlKindle(k){
-return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="clamp2 text-[10px] text-gold-400 uppercase tracking-widest font-bold">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><div class="flex flex-col items-end shrink-0"><button onclick="abrirInstaModalKindle(${k.id})" class="text-xs text-gold-400 hover:text-white px-2 py-1">Story</button><button onclick="deletarNotaKindle(${k.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button></div></div></div>`;
+return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="clamp2 text-[10px] text-gold-400 uppercase tracking-widest font-bold">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><div class="flex flex-col items-stretch shrink-0 gap-1.5 min-w-[5rem]"><button onclick="abrirInstaModalKindle(${k.id})" class="btn-card">Story</button><button onclick="deletarNotaKindle(${k.id},this)" class="btn-card btn-card-danger">Excluir</button></div></div></div>`;
 }
 function renderizarAbaTodos(feed,scrollToId){
 const itens=[];
@@ -2867,7 +2893,7 @@ desejados.forEach((l,i)=>{
   const html=`<div class="frosted-card relative p-5 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between">
     <div class="flex items-center justify-between"><span class="bg-blue-500/80 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">Desejado</span><span class="text-[11px] text-gray-400 uppercase tracking-widest">${i+1} de ${desejados.length}</span></div>
     <div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="space-y-1 my-auto"><h2 class="font-serif text-xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p></div></div>
-    <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/15"><button onclick="editarLivro(${l.id})" class="text-xs bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-3 py-1.5 rounded-lg border border-white/10">Editar / Ler</button><button onclick="deletarLivro(${l.id},this)" class="text-xs bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-3 py-1.5 rounded-lg border border-white/10">Excluir</button></div>
+    <div class="flex items-center justify-end gap-2 pt-3 border-t border-white/15"><button onclick="editarLivro(${l.id})" class="btn-card">Editar / Ler</button><button onclick="deletarLivro(${l.id},this)" class="btn-card btn-card-danger">Excluir</button></div>
   </div>`;
   addSecao(feed,html,bgCustomizado || l.capa,i+1,false);
 });
@@ -2880,7 +2906,7 @@ const itens=[
 ...(filtroSoTextos==='todos'||filtroSoTextos==='kindle'?notasKindle.filter(n=>(n.observacao||'').trim()).map(n=>({tipo:'kindle',obs:n.observacao,rot:`${n.titulo} · ${n.autor}`,capa:n.capa})):[])
 ];
 if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum texto cadastrado ainda.</p></div>`,bgCustomizado || BG_PADRAO,0,false);return}
-itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,bgCustomizado || l.capa || BG_PADRAO,i+1,false));
+itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="btn-card btn-card-danger">Excluir</button>`:''}</div></div>`,bgCustomizado || l.capa || BG_PADRAO,i+1,false));
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
 function abrirPassagem(id){
@@ -2888,7 +2914,7 @@ const l=biblioteca.find(x=>x.id===id);if(!l)return;
 $('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
 <div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
 ${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
-<div class="flex items-center justify-between gap-2 pt-3 border-t border-white/10 flex-wrap"><span class="logo-lili text-lg"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span><div class="flex items-center gap-2"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
+<div class="flex items-center justify-between gap-2 pt-3 border-t border-white/10 flex-wrap"><span class="logo-lili text-lg"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span><div class="flex items-center gap-2"><button onclick="abrirInstaModal(${l.id})" class="btn-card">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="btn-card">Editar</button><button onclick="deletarLivro(${l.id},this)" class="btn-card btn-card-danger">Excluir</button></div></div></div>`;
 $('modal-passagem').classList.remove('hidden');
 }
 function fecharPassagem(){$('modal-passagem').classList.add('hidden')}
