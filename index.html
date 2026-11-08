@@ -3061,6 +3061,20 @@ function cortarLinha(ctx,u,largura){if(ctx.measureText(u).width<=largura)return 
 function pathEstrela(ctx,cx,cy,r){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?r:r*.45,x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath()}
 
 function rrPath(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function desenharFundoDesfocado(ctx,img,W,H,alpha){
+/* desfoque real: capa em baixa resolução (1/5), ampliada com sobra nas bordas e borrada de verdade */
+const sw=216,sh=384,c=document.createElement('canvas');c.width=sw;c.height=sh;
+const cc=c.getContext('2d');cc.imageSmoothingEnabled=true;cc.imageSmoothingQuality='high';
+const e=Math.max(sw/img.width,sh/img.height);
+cc.drawImage(img,(sw-img.width*e)/2,(sh-img.height*e)/2,img.width*e,img.height*e);
+const o=document.createElement('canvas');o.width=W;o.height=H;const oc=o.getContext('2d');
+oc.imageSmoothingEnabled=true;oc.imageSmoothingQuality='high';
+const m=.14,x=-W*m,y=-H*m,w=W*(1+2*m),h=H*(1+2*m);
+if('filter' in oc){oc.filter='blur(36px)';oc.drawImage(c,x,y,w,h);oc.filter='none'}
+else{const d=[[0,0],[-26,0],[26,0],[0,-26],[0,26],[-18,-18],[18,18],[-18,18],[18,-18],[-44,0],[44,0],[0,-44],[0,44]];
+d.forEach(([dx,dy],i)=>{oc.globalAlpha=1/(i+1);oc.drawImage(c,x+dx,y+dy,w,h)});oc.globalAlpha=1}
+ctx.save();ctx.globalAlpha=alpha;ctx.drawImage(o,0,0);ctx.restore();
+}
 async function renderizarStory(l){
 storyNome='story_livro';
 const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
@@ -3069,10 +3083,7 @@ const img=await carregarImg(l.capa);
 const obs=(l.observacao||'').trim();
 ctx.clearRect(0,0,W,H);ctx.fillStyle='#0b0e14';ctx.fillRect(0,0,W,H);
 if(img){
-const mini=document.createElement('canvas');mini.width=27;mini.height=48;
-const mc=mini.getContext('2d'),e=Math.max(27/img.width,48/img.height);
-mc.drawImage(img,(27-img.width*e)/2,(48-img.height*e)/2,img.width*e,img.height*e);
-ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=.7;ctx.drawImage(mini,0,0,W,H);ctx.globalAlpha=1;
+desenharFundoDesfocado(ctx,img,W,H,.7);
 }
 const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(5,7,12,.55)');g.addColorStop(.45,'rgba(5,7,12,.62)');g.addColorStop(1,'rgba(5,7,12,.95)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
@@ -3277,10 +3288,7 @@ const real=k.capa&&!/placehold\.co/.test(k.capa);
 const img=real?await carregarImg(k.capa):null;
 ctx.clearRect(0,0,W,H);ctx.fillStyle='#0b0e14';ctx.fillRect(0,0,W,H);
 if(img){
-const mini=document.createElement('canvas');mini.width=27;mini.height=48;
-const mc=mini.getContext('2d'),e=Math.max(27/img.width,48/img.height);
-mc.drawImage(img,(27-img.width*e)/2,(48-img.height*e)/2,img.width*e,img.height*e);
-ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.globalAlpha=.7;ctx.drawImage(mini,0,0,W,H);ctx.globalAlpha=1;
+desenharFundoDesfocado(ctx,img,W,H,.7);
 }
 const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(5,7,12,.6)');g.addColorStop(.5,'rgba(5,7,12,.68)');g.addColorStop(1,'rgba(5,7,12,.95)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
