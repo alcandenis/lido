@@ -518,9 +518,9 @@ textarea{
 
 /* Card de boas-vindas — mesmo vidro escuro da dock (teste) */
 #welcome-modal #welcome-card.frosted-card{
-  background:rgba(0,0,0,.03)!important;
-  -webkit-backdrop-filter:blur(10px) saturate(0) brightness(1)!important;
-  backdrop-filter:blur(10px) saturate(0) brightness(1)!important;
+  background:rgba(12,12,14,.55)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
+  backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
   border:1px solid rgba(255,255,255,.04)!important;
   border-radius:1.6rem!important;
   box-shadow:
@@ -528,7 +528,7 @@ textarea{
     inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),
     inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),
     inset 0 0 18px rgba(255,255,255,.03),
-    0 8px 28px rgba(0,0,0,.35)!important;
+    0 8px 28px rgba(0,0,0,.5)!important;
 }
 
 /* Todos os cards e modais — vidro escuro da dock */
@@ -538,21 +538,21 @@ textarea{
 .frosted-modal,
 #registro-caixa,
 #modal-registro.registro-card-view #registro-caixa{
-  background:rgba(0,0,0,.03)!important;
-  -webkit-backdrop-filter:blur(10px) saturate(0) brightness(1)!important;
-  backdrop-filter:blur(10px) saturate(0) brightness(1)!important;
+  background:rgba(12,12,14,.55)!important;
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
+  backdrop-filter:blur(10px) saturate(1.8) brightness(.7)!important;
   border:1px solid rgba(255,255,255,.04)!important;
   box-shadow:
     0 0 0 1px rgba(0,0,0,.5),
     inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),
     inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),
     inset 0 0 18px rgba(255,255,255,.03),
-    0 8px 28px rgba(0,0,0,.35)!important;
+    0 8px 28px rgba(0,0,0,.5)!important;
 }
 .frosted-card,.home-wrap .frosted-card,#tela-login-inicial .frosted-card{border-radius:1.4rem!important}
 .frosted-modal,#registro-caixa,#modal-registro.registro-card-view #registro-caixa{border-radius:1.6rem!important}
 .sel-ativo .frosted-card{
-  box-shadow:0 0 0 1px rgba(250,204,21,.65),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),0 8px 28px rgba(0,0,0,.35)!important;
+  box-shadow:0 0 0 1px rgba(250,204,21,.65),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),0 8px 28px rgba(0,0,0,.5)!important;
 }
 @media (prefers-reduced-transparency:reduce){
   .frosted-card,.frosted-modal,#registro-caixa,#welcome-modal #welcome-card.frosted-card{background:rgba(20,20,22,.94)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
@@ -609,11 +609,11 @@ textarea{
 /* Configurações: grupos em vidro escuro, setas e rodapé discreto */
 .opt-sec{margin:0 .35rem .5rem!important}
 .opt-group,#modal-sub-backup section{
-  background:rgba(0,0,0,.03);
-  -webkit-backdrop-filter:blur(10px) saturate(0) brightness(1);
-  backdrop-filter:blur(10px) saturate(0) brightness(1);
+  background:rgba(12,12,14,.55);
+  -webkit-backdrop-filter:blur(10px) saturate(1.8) brightness(.7);
+  backdrop-filter:blur(10px) saturate(1.8) brightness(.7);
   border:1px solid rgba(255,255,255,.04);border-radius:1.4rem;padding:.15rem 1rem;
-  box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),0 8px 28px rgba(0,0,0,.35);
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),inset 1.5px 1.5px 1px -.5px rgba(255,255,255,.2),inset -1.5px -1.5px 1px -.5px rgba(255,255,255,.08),0 8px 28px rgba(0,0,0,.5);
 }
 .opt-group>.opt-row:last-child,.opt-group>.opt-block:last-child{border-bottom:0}
 .opt-group .opt-row{padding:.85rem 0}
@@ -631,6 +631,10 @@ textarea{
 .opt-rodape a{color:#9ca3af;text-decoration:underline}
 
 .lendo-capa{box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.12)!important}
+
+
+.rel-item{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;width:100%;text-align:left;padding:.6rem .8rem;border-radius:.9rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);font-size:.85rem;line-height:1.5;color:#e5e7eb;cursor:pointer;white-space:pre-wrap;overflow-wrap:anywhere}
+.rel-item.aberto{display:block;-webkit-line-clamp:unset}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -2847,11 +2851,26 @@ if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center
 itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,bgCustomizado || l.capa || BG_PADRAO,i+1,false));
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
+function isbn13(v){const d=String(v||'').replace(/[^0-9Xx]/g,'').toUpperCase();if(d.length===13)return d;if(d.length===10){const b='978'+d.slice(0,9);let t=0;for(let i=0;i<12;i++)t+=(+b[i])*(i%2?3:1);return b+((10-t%10)%10)}return ''}
+function mesmoIsbn(a,b){const x=isbn13(a),y=isbn13(b);return !!x&&x===y}
+function relacionadosPorIsbn(l){const r={outras:[],kindle:[]};if(!isbn13(l.isbn))return r;r.outras=biblioteca.filter(x=>x.id!==l.id&&mesmoIsbn(x.isbn,l.isbn));r.kindle=notasKindle.filter(k=>mesmoIsbn(k.isbn,l.isbn));return r}
+async function buscarIsbnLivro(id,btn){const l=biblioteca.find(x=>x.id===id);if(!l)return;if(btn)btn.textContent='Buscando…';let b=null;try{b=await buscarDetalhesLivro(l.titulo,l.autor)}catch(e){}
+const i=b&&isbn13(b.isbn);if(i){l.isbn=i;salvarLocal();abrirPassagem(id)}else{aviso('ISBN não encontrado');if(btn)btn.textContent='Buscar ISBN'}}
 function abrirPassagem(id){
 const l=biblioteca.find(x=>x.id===id);if(!l)return;
+const rel=relacionadosPorIsbn(l);
+const secao=(t,itens)=>`<div class="space-y-2"><p class="text-[10px] font-bold uppercase tracking-widest text-gold-400">${t} (${itens.length})</p>${itens.join('')}</div>`;
+let relHtml='';
+if(!isbn13(l.isbn))relHtml=`<p class="text-xs text-gray-400 pt-3 border-t border-white/10">Sem ISBN neste livro, então não dá para relacionar outras passagens. <button onclick="buscarIsbnLivro(${l.id},this)" class="text-gold-400 underline">Buscar ISBN</button></p>`;
+else{relHtml=`<div class="space-y-4 pt-3 border-t border-white/10"><p class="text-[10px] text-gray-500 tracking-widest">ISBN ${isbn13(l.isbn)}</p>`;
+if(rel.outras.length)relHtml+=secao('Outras passagens',rel.outras.map(x=>`<button onclick="abrirPassagem(${x.id})" class="rel-item">${x.observacao?esc(x.observacao):'Sem anotação'}</button>`));
+if(rel.kindle.length)relHtml+=secao('Marcadores do Kindle',rel.kindle.map(k=>`<div onclick="this.classList.toggle('aberto')" class="rel-item">${esc(k.observacao)}</div>`));
+if(!rel.outras.length&&!rel.kindle.length)relHtml+='<p class="text-xs text-gray-500">Nenhum outro registro com este ISBN.</p>';
+relHtml+='</div>'}
 $('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
 <div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
 ${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
+${relHtml}
 <div class="flex items-center justify-between gap-2 pt-3 border-t border-white/10 flex-wrap"><span class="logo-lili text-lg"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span><div class="flex items-center gap-2"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
 $('modal-passagem').classList.remove('hidden');
 }
@@ -2868,7 +2887,8 @@ if(/\s--\s/.test(linha)){const p=linha.split(/\s+--\s+/).map(x=>x.trim()).filter
 if(!autor)autor=autorPar;
 const mm=titulo.match(/^(.*\S)\s+[-–—]\s+([^-–—]+)$/);
 if(mm){const suf=normKindle(mm[2]);if(suf.length>=4&&[autor,autorPar].map(normKindle).some(r=>r&&(r===suf||r.includes(suf)||suf.includes(r))))titulo=mm[1].trim()}
-return{titulo:titulo||String(bruto||'').trim(),autor:autor||'Autor Desconhecido'}
+const mi=String(bruto||'').match(/isbn\s*-?(?:13|10)?\s*:?\s*([0-9][0-9-]{8,15}[0-9Xx])/i);
+return{titulo:titulo||String(bruto||'').trim(),autor:autor||'Autor Desconhecido',isbn:mi?isbn13(mi[1]):''}
 }
 function capaPlaceholderKindle(t){return `https://placehold.co/400x600/111/fff?text=${encodeURIComponent(t)}`}
 function repararNotasKindleExistentes(){
@@ -2898,28 +2918,30 @@ const brutas=[];
 blocos.forEach(b=>{
 const lin=b.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 if(lin.length<3)return;
-const {titulo,autor}=interpretarTituloKindle(lin[0]);
+const {titulo,autor,isbn}=interpretarTituloKindle(lin[0]);
 const cit=lin.slice(2).join(' ').trim();
 if(!titulo||!cit)return;
 const lm=lin[1].match(/(?:location|posi[cç][aã]o|local)\s+(\d+)(?:\s*-\s*(\d+))?/i);
 const ini=lm?+lm[1]:null,fim=lm?+(lm[2]||lm[1]):null;
-brutas.push({titulo,autor,cit,ini,fim,nb:normKindle(titulo),nt:normKindle(cit)});
+brutas.push({titulo,autor,isbn,cit,ini,fim,nb:normKindle(titulo),nt:normKindle(cit)});
 });
 const perto=(a,b)=>(a.ini!=null&&b.ini!=null)?(a.ini<=b.fim&&b.ini<=a.fim):a.nt.length>=20;
 const manter=brutas.filter((a,i)=>a.nt&&!brutas.some((b,j)=>j!==i&&b.nb===a.nb&&b.nt.includes(a.nt)&&(b.nt.length>a.nt.length||j<i)&&perto(a,b)));
-const novas=[],remover=new Set();
+const novas=[],remover=new Set();let isbnNovo=0;
 manter.forEach((a,idx)=>{
 const mesmas=notasKindle.filter(x=>normKindle(x.titulo)===a.nb);
+if(a.isbn)mesmas.forEach(x=>{if(!x.isbn){x.isbn=a.isbn;isbnNovo++}});
 if(mesmas.some(x=>{const t=normKindle(x.observacao);return t===a.nt||(a.nt.length>=20&&t.includes(a.nt))}))return;
 mesmas.forEach(x=>{const t=normKindle(x.observacao);if(t.length>=20&&a.nt.includes(t))remover.add(x.id)});
-novas.push({id:Date.now()+idx,titulo:a.titulo,autor:a.autor,observacao:a.cit,capa:capaPlaceholderKindle(a.titulo)});
+novas.push({id:Date.now()+idx,titulo:a.titulo,autor:a.autor,observacao:a.cit,isbn:a.isbn||'',capa:capaPlaceholderKindle(a.titulo)});
 });
-if(!novas.length&&!rep.corrigidos&&!rep.removidos){$('kindle-file-input').value='';return aviso('Nenhum marcador novo encontrado.')}
-const titulosCapa=new Set([...rep.titulos,...novas.map(n=>n.titulo)]);
+if(!novas.length&&!rep.corrigidos&&!rep.removidos&&!isbnNovo&&!notasKindle.some(n=>!n.isbn)){$('kindle-file-input').value='';return aviso('Nenhum marcador novo encontrado.')}
+const titulosCapa=new Set([...rep.titulos,...novas.map(n=>n.titulo),...novas.concat(notasKindle).filter(n=>!n.isbn).map(n=>n.titulo)]);
 const autorDe=t=>(novas.find(n=>n.titulo===t)||notasKindle.find(n=>n.titulo===t)||{}).autor;
-const caps={};
-Promise.all([...titulosCapa].map(t=>buscarDetalhesLivro(t,autorDe(t)).then(b=>{if(b.capa)caps[t]=b.capa}).catch(()=>{}))).then(()=>{
+const caps={},isbs={};
+Promise.all([...titulosCapa].map(t=>buscarDetalhesLivro(t,autorDe(t)).then(b=>{if(b.capa)caps[t]=b.capa;const i=isbn13(b.isbn);if(i)isbs[t]=i}).catch(()=>{}))).then(()=>{
 novas.forEach(n=>{if(caps[n.titulo])n.capa=caps[n.titulo]});
+novas.concat(notasKindle).forEach(n=>{if(!n.isbn&&isbs[n.titulo])n.isbn=isbs[n.titulo]});
 notasKindle.forEach(n=>{if(rep.titulos.has(n.titulo)&&caps[n.titulo])n.capa=caps[n.titulo]});
 notasKindle=[...novas,...notasKindle.filter(n=>!remover.has(n.id))];
 salvarLocal();renderizarFeed();
