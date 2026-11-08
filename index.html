@@ -633,8 +633,11 @@ textarea{
 .lendo-capa{box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.12)!important}
 
 
-.rel-item{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;width:100%;text-align:left;padding:.6rem .8rem;border-radius:.9rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);font-size:.85rem;line-height:1.5;color:#e5e7eb;cursor:pointer;white-space:pre-wrap;overflow-wrap:anywhere}
-.rel-item.aberto{display:block;-webkit-line-clamp:unset}
+
+.card-min-btn{width:1.75rem;height:1.75rem;display:flex;align-items:center;justify-content:center;border-radius:.6rem;color:#9ca3af;flex-shrink:0;background:transparent;border:0}
+.card-min-btn:active{background:rgba(255,255,255,.1);color:#fff}
+.card-min-abs{position:absolute;top:.55rem;right:.55rem;z-index:2}
+.card-mini{min-height:3rem}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -772,19 +775,18 @@ textarea{
 <!-- Estou Criando um Livro -->
 <div id="tela-escrevendo-livro" class="fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden">
   <div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10">
-    <div class="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
+    <div class="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <button onclick="fecharModalEscrevendoLivro()" class="text-gray-300 hover:text-gold-400 p-1 -ml-1" aria-label="Voltar"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
         <h2 class="text-base font-bold text-white font-serif">Bloco do Editor</h2>
       </div>
-      <button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/30 px-3 py-1 rounded-lg transition-colors">Excluir Livro</button>
     </div>
-    <div class="max-w-4xl mx-auto px-5 pb-1 grid grid-cols-2 gap-1">
+    <div class="max-w-2xl mx-auto px-5 pb-1 grid grid-cols-2 gap-1">
       <button type="button" id="aba-escritor-livro" onclick="mudarAbaEscritor('livro')" class="tab-reg sm ativo text-center">Dados</button>
       <button type="button" id="aba-escritor-notas" onclick="mudarAbaEscritor('notas')" class="tab-reg sm text-center">Notas</button>
     </div>
   </div>
-  <div class="max-w-4xl mx-auto px-5 pt-5 pb-24 space-y-5">
+  <div class="max-w-2xl mx-auto px-5 pt-5 pb-24 space-y-5">
     <!-- Card de identidade do projeto -->
     <section id="card-resumo-escritor" class="relative">
       <div class="flex items-center gap-4 sm:gap-5">
@@ -796,12 +798,10 @@ textarea{
           </div>
         </div>
         <div class="min-w-0 flex-1 py-1">
-          <p class="text-[10px] uppercase tracking-[.2em] text-amber-200/70 mb-2">Projeto em desenvolvimento</p>
+          <p id="escrita-resumo-rotulo" class="text-[10px] uppercase tracking-[.2em] text-amber-200/70 mb-2">Novo projeto</p>
           <h3 id="escrita-resumo-titulo" class="font-serif text-xl sm:text-2xl font-semibold leading-tight text-white break-words">Seu próximo livro</h3>
           <p id="escrita-resumo-autor" class="text-sm text-gray-300 mt-2 break-words">Autor</p>
-          <div class="mt-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/20 px-2.5 py-1 text-[10px] text-gray-300">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-300"></span> Em escrita
-          </div>
+          <div id="escrita-progresso" class="mt-3 hidden"><div class="h-1.5 rounded-full bg-white/10 overflow-hidden"><div id="escrita-progresso-barra" class="h-full rounded-full btn-gold-degrade" style="width:0%"></div></div><p id="escrita-progresso-txt" class="text-[11px] text-gray-400 mt-1.5"></p></div>
         </div>
       </div>
     </section>
@@ -812,21 +812,26 @@ textarea{
       </div>
       <div>
         <label class="block text-xs font-medium text-gray-300 mb-1">Autor</label>
-        <input type="text" id="escrita_autor" readonly class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-300 focus:outline-none cursor-not-allowed">
+        <input type="text" id="escrita_autor" readonly class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-gray-300 focus:outline-none cursor-not-allowed opacity-80">
+        <p class="text-[10px] text-gray-500 mt-1">Vem do seu perfil, em Configurações.</p>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div>
-          <label class="block text-xs font-medium text-gray-300 mb-1">Capítulos Pretendidos</label>
-          <input type="number" id="escrita_capitulos_totais" min="1" step="1" inputmode="numeric" required placeholder="Ex: 20" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+      <div class="flex gap-3">
+        <div class="w-24">
+          <label class="block text-[11px] font-medium text-gray-300 mb-1 leading-tight">Capítulos (total)</label>
+          <input type="number" id="escrita_capitulos_totais" min="1" step="1" inputmode="numeric" required placeholder="20" class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-center text-white placeholder-gray-500 focus:outline-none focus:border-gold-400">
         </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-300 mb-1">Capítulo Atual</label>
-          <input type="number" id="escrita_capitulo_atual" min="1" step="1" inputmode="numeric" required placeholder="Ex: 3" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+        <div class="w-24">
+          <label class="block text-[11px] font-medium text-gray-300 mb-1 leading-tight">Capítulo atual</label>
+          <input type="number" id="escrita_capitulo_atual" min="1" step="1" inputmode="numeric" required placeholder="3" class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-center text-white placeholder-gray-500 focus:outline-none focus:border-gold-400">
+        </div>
+        <div class="w-24">
+          <label class="block text-[11px] font-medium text-gray-300 mb-1 leading-tight">Páginas escritas</label>
+          <input type="number" id="escrita_paginas" min="0" step="1" inputmode="numeric" required placeholder="45" class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2.5 text-sm text-center text-white placeholder-gray-500 focus:outline-none focus:border-gold-400">
         </div>
       </div>
       <div>
-        <label class="block text-xs font-medium text-gray-300 mb-1">Páginas Escritas Até Agora</label>
-        <input type="number" id="escrita_paginas" min="0" step="1" inputmode="numeric" required placeholder="Ex: 45" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+        <label for="escrita_sinopse" class="block text-xs font-medium text-gray-300 mb-1">Sinopse <span class="text-gray-500">(opcional)</span></label>
+        <textarea id="escrita_sinopse" rows="5" placeholder="Do que trata o seu livro?" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm leading-relaxed text-white placeholder-gray-500 focus:outline-none focus:border-gold-400 resize-y min-h-[120px]"></textarea>
       </div>
       <div>
         <div class="flex items-center justify-between mb-1">
@@ -843,12 +848,13 @@ textarea{
         <button type="button" onclick="fecharModalEscrevendoLivro()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">SAIR</button>
         <button type="submit" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Salvar Livro</button>
       </div>
+      <div class="pt-4 mt-1 border-t border-white/10 text-center"><button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="text-xs text-red-400 hover:text-red-300 px-4 py-2.5 rounded-lg">Excluir livro</button></div>
     </form>
 
     <!-- Notas do Bloco do Escritor -->
     <div id="painel-escritor-notas" class="space-y-4 hidden">
       <h3 class="text-sm font-bold uppercase tracking-wider text-gold-400">Notas do seu livro</h3>
-      <p id="escritor-notas-aviso" class="text-xs text-gray-400 hidden">Salve o livro na aba Livro para adicionar notas.</p>
+      <p id="escritor-notas-aviso" class="text-sm text-gray-300 hidden">Salve o livro na aba Dados para adicionar notas. <button type="button" onclick="mudarAbaEscritor('livro')" class="text-gold-400 underline">Ir para Dados</button></p>
       <div id="escritor-notas-form" class="space-y-3">
         <label for="escrita_nota_categoria" class="block text-xs font-medium text-gray-300">Categoria <span class="text-gray-500">(opcional)</span></label>
         <select id="escrita_nota_categoria" class="w-full bg-[#171717] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-300/70">
@@ -859,12 +865,13 @@ textarea{
         <button type="button" id="btn-add-nota-escrita" onclick="adicionarNotaLivroEscrito()" class="w-full btn-gold-degrade py-2.5 rounded-lg text-xs uppercase tracking-wider">Adicionar Nota</button>
         <button type="button" id="btn-cancelar-edicao-nota" onclick="cancelarEdicaoNotaEscrita()" class="hidden w-full py-2 rounded-lg bg-white/10 text-white text-xs">Cancelar edição</button>
       </div>
-      <div class="pt-4 border-t border-white/10">
+      <div class="pt-1">
         <div id="lista-notas-escrita" class="space-y-3">
           <!-- Injetado dinamicamente -->
         </div>
       </div>
     </div>
+    <div class="flex justify-center pt-4 pb-2"><span class="logo-lili text-lg"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span></div>
   </div>
 </div>
 
@@ -1612,7 +1619,16 @@ function capaPlaceholder(titulo){
   const svg='<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="400" height="600" fill="#111"/><text x="200" y="300" fill="#fff" font-family="sans-serif" font-size="28" text-anchor="middle">'+t+'</text></svg>';
   return 'data:image/svg+xml,'+encodeURIComponent(svg).replace(/'/g,'%27').replace(/\(/g,'%28').replace(/\)/g,'%29');
 }
+let escritaDirty=false,escritaSairConf=false;
+function atualizarProgressoEscritor(){
+  const tot=parseInt($('escrita_capitulos_totais')?.value,10)||0,at=parseInt($('escrita_capitulo_atual')?.value,10)||0,pg=parseInt($('escrita_paginas')?.value,10)||0;
+  const box=$('escrita-progresso'),bar=$('escrita-progresso-barra'),txt=$('escrita-progresso-txt');if(!box)return;
+  if(tot>0&&at>0){const pc=Math.min(100,Math.round(at/tot*100));box.classList.remove('hidden');bar.style.width=pc+'%';txt.textContent=`Capítulo ${at} de ${tot} · ${pc}%${pg>0?' · '+pg+' páginas':''}`}
+  else box.classList.add('hidden');
+  const r=$('escrita-resumo-rotulo');if(r)r.textContent=livroEscrito?'Em escrita':'Novo projeto';
+}
 function atualizarResumoEscritor(){
+  atualizarProgressoEscritor();
   const titulo=( $('escrita_titulo')?.value || livroEscrito?.titulo || '' ).trim();
   const autor=( $('escrita_autor')?.value || livroEscrito?.autor || usuarioNome || 'Autor' ).trim();
   const capa=$('escrita_capa_url')?.value || livroEscrito?.capa || '';
@@ -1665,6 +1681,7 @@ function abrirModalEscrevendoLivro(){
     $('escrita_capitulos_totais').value = livroEscrito.capitulos_totais || '';
     $('escrita_capitulo_atual').value = livroEscrito.capitulo_atual || '';
     $('escrita_paginas').value = livroEscrito.paginas || '';
+    $('escrita_sinopse').value = livroEscrito.sinopse || '';
     $('escrita_capa_url').value = livroEscrito.capa || '';
     $('escrita-capa-nome-label').textContent = livroEscrito.capa ? 'Capa selecionada' : 'Selecionar imagem de capa';
   } else {
@@ -1674,11 +1691,14 @@ function abrirModalEscrevendoLivro(){
     $('escrita-capa-nome-label').textContent = 'Selecionar imagem de capa';
   }
   renderizarNotasLivroEscrito();
+  escritaDirty=false;escritaSairConf=false;
   atualizarBotoesEscritor();
   mudarAbaEscritor('livro');
   $('tela-escrevendo-livro').classList.remove('hidden');
 }
 function fecharModalEscrevendoLivro(){
+  if(escritaDirty&&!escritaSairConf){escritaSairConf=true;aviso('Há alterações não salvas. Toque em sair de novo para descartar.');setTimeout(()=>{escritaSairConf=false},3500);return}
+  escritaDirty=false;escritaSairConf=false;
   cancelarEdicaoNotaEscrita();
   $('tela-escrevendo-livro').classList.add('hidden');
 }
@@ -1695,6 +1715,7 @@ function tratarUploadCapaEscrita(input){
       cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
       $('escrita_capa_url').value=cv.toDataURL('image/jpeg',0.82);
       $('escrita-capa-nome-label').textContent=file.name;
+      escritaDirty=true;
       atualizarResumoEscritor();
       aviso('Capa carregada com sucesso!');
     };
@@ -1711,6 +1732,7 @@ function salvarLivroEscrito(e){
   const capTotais = parseInt($('escrita_capitulos_totais').value, 10) || 1;
   const capAtual = parseInt($('escrita_capitulo_atual').value, 10) || 1;
   const paginas = parseInt($('escrita_paginas').value, 10) || 0;
+  const sinopse = $('escrita_sinopse').value.trim();
   if(!titulo) return aviso('Informe o nome do livro.');
   if(capAtual > capTotais) return aviso('O capítulo atual não pode passar do total.');
   let capa = $('escrita_capa_url').value;
@@ -1738,6 +1760,7 @@ function salvarLivroEscrito(e){
     capitulos_totais: capTotais,
     capitulo_atual: capAtual,
     paginas,
+    sinopse,
     capa,
     atualizadoEm: Date.now()
   };
@@ -1745,6 +1768,7 @@ function salvarLivroEscrito(e){
   localStorage.setItem('livro_escrito', JSON.stringify(livroEscrito));
   localStorage.setItem('historico_escrita', JSON.stringify(historicoEscrita));
 
+  escritaDirty=false;escritaSairConf=false;
   aviso('Livro salvo com sucesso!');
   atualizarBotoesEscritor();
   salvarLocal();
@@ -1783,7 +1807,8 @@ function adicionarNotaLivroEscrito(){
   salvarLocal();
 }
 
-function deletarNotaLivroEscrito(id){
+function deletarNotaLivroEscrito(id,btn){
+  doisToques(btn,()=>{
   if(notaEditandoId === id) cancelarEdicaoNotaEscrita();
   notasLivroEscrito = notasLivroEscrito.filter(n => n.id !== id);
   removidos['e'+id] = Date.now();
@@ -1792,13 +1817,15 @@ function deletarNotaLivroEscrito(id){
   renderizarNotasLivroEscrito();
   aviso('Nota excluída.');
   salvarLocal();
+  });
 }
 
 function renderizarNotasLivroEscrito(){
   const container = $('lista-notas-escrita');
   if(!container) return;
+  if(!livroEscrito){container.innerHTML='';return}
   if(!notasLivroEscrito || !notasLivroEscrito.length){
-    container.innerHTML = '<p class="text-xs text-gray-500">Nenhuma nota cadastrada para este livro ainda.</p>';
+    container.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">Nenhuma nota ainda. Registre a primeira acima.</p>';
     return;
   }
   container.innerHTML = notasLivroEscrito.map(n => `
@@ -1806,8 +1833,8 @@ function renderizarNotasLivroEscrito(){
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div class="flex flex-wrap items-center gap-2"><span class="inline-flex rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-[10px] text-amber-200">${esc(n.categoria||'Ideia solta')}</span><span class="text-[10px] text-gray-500">${esc(n.dataHora||'Nota antiga')}</span></div>
         <div class="flex items-center gap-3">
-          <button type="button" onclick="editarNotaLivroEscrito(${n.id})" class="text-[10px] text-gold-400 hover:text-white">Editar</button>
-          <button type="button" onclick="deletarNotaLivroEscrito(${n.id})" class="text-[10px] text-red-400 hover:text-red-300">Excluir</button>
+          <button type="button" onclick="editarNotaLivroEscrito(${n.id})" class="text-xs text-gold-400 hover:text-white px-3 py-2 -my-2">Editar</button>
+          <button type="button" onclick="deletarNotaLivroEscrito(${n.id},this)" class="text-xs text-red-400 hover:text-red-300 px-3 py-2 -my-2">Excluir</button>
         </div>
       </div>
       <p class="text-sm leading-relaxed text-gray-200 whitespace-pre-wrap break-words">${esc(n.texto)}</p>
@@ -1816,7 +1843,7 @@ function renderizarNotasLivroEscrito(){
 }
 
 // Atualiza o card de destaque enquanto o projeto é preenchido.
-['escrita_titulo','escrita_autor'].forEach(id=>{const el=$(id);if(el)el.addEventListener('input',atualizarResumoEscritor)});
+['escrita_titulo','escrita_autor','escrita_capitulos_totais','escrita_capitulo_atual','escrita_paginas','escrita_sinopse'].forEach(id=>{const el=$(id);if(el)el.addEventListener('input',()=>{escritaDirty=true;atualizarResumoEscritor()})});
 
 function deletarLivroEscrito(btn){
   doisToques(btn, () => {
@@ -2621,7 +2648,7 @@ const subContent = $('sub-tabs-content');
 
 if(abaAtual==='inicio'){
   if(subBar) subBar.classList.add('hidden');
-  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col justify-end pb-28 page-transition'+(modoSel?' modo-sel':'');
+  feed.className='snap-feed-container relative z-10 w-full max-w-2xl mx-auto px-4 md:px-6 flex flex-col pt-20 pb-28 page-transition'+(modoSel?' modo-sel':'');
   feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
 } else {
   if(subBar) subBar.classList.add('hidden');
@@ -2649,6 +2676,11 @@ handleFeedScroll();
 }
 
 function diasDesde(str){if(!str)return null;let d;const m=String(str).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);d=m?new Date(+m[3],+m[2]-1,+m[1]):new Date(str);if(isNaN(d))return null;const n=Math.floor((Date.now()-d.getTime())/864e5);return n<0?null:n}
+function cardsMin(){try{return JSON.parse(lsGet('lido_cards_min')||'{}')||{}}catch(e){return{}}}
+function cardMinimizado(k){const m=cardsMin();return k in m?!!m[k]:k==='editor'}
+function alternarCardInicio(k){const m=cardsMin();m[k]=!cardMinimizado(k);lsSet('lido_cards_min',JSON.stringify(m));renderizarFeed()}
+function minBtn(k,min,abs){return `<button type="button" onclick="event.stopPropagation();alternarCardInicio('${k}')" class="card-min-btn${abs?' card-min-abs':''}" aria-label="${min?'Expandir':'Minimizar'}" title="${min?'Expandir':'Minimizar'}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="${min?'M6 9l6 6 6-6':'M6 15l6-6 6 6'}"/></svg></button>`}
+function miniCard(k,rotulo,texto,extra){return `<div onclick="alternarCardInicio('${k}')" class="frosted-card card-mini px-4 py-3 w-full flex items-center gap-2 cursor-pointer shadow-2xl"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest shrink-0">${rotulo}</span><span class="text-sm text-gray-100 truncate min-w-0 flex-1 font-obs">${texto}</span>${extra?`<span class="text-[11px] text-gray-400 shrink-0">${esc(extra)}</span>`:''}${minBtn(k,true,false)}</div>`}
 function renderizarAbaInicio(feed){
 const total=biblioteca.length,l=biblioteca.filter(x=>statusDe(x)!=='desejado')[0];
 const wrap=document.createElement('div');
@@ -2662,15 +2694,15 @@ const lendo=lendoLista[0],outros=lendoLista.slice(1),dias=diasDesde(lendo.data_i
 const tempo=dias==null?'':dias===0?'Começou hoje':dias===1?'Começou ontem':dias<60?`Lendo há ${dias} dias`:`Lendo há ${Math.floor(dias/30)} meses`;
 const chips=[lendo.formato,lendo.paginas>0?`${lendo.paginas} págs`:''].filter(Boolean).map(c=>`<span class="px-2 py-0.5 rounded-full text-[10px] border border-white/15 text-gray-200">${esc(c)}</span>`).join('');
 const outrosHtml=outros.length?`<button onclick="event.stopPropagation();mudarAba('lendo')" class="flex items-center gap-2 mt-4 pt-3 border-t border-white/10 w-full text-left"><span class="flex -space-x-2 shrink-0">${outros.slice(0,4).map(o=>`<img src="${esc(o.capa||'')}" class="w-7 h-10 object-cover rounded border border-white/20 shadow" onerror="this.style.visibility='hidden'">`).join('')}</span><span class="text-xs text-gray-300 truncate min-w-0 flex-1">Também em leitura: ${outros.slice(0,2).map(o=>esc(o.titulo)).join(', ')}${outros.length>2?` e +${outros.length-2}`:''}</span><span class="text-gray-500 shrink-0">›</span></button>`:'';
-addSecao(wrap,`<div onclick="editarLivro(${lendo.id})" class="frosted-card lendo-hero p-5 w-full cursor-pointer shadow-2xl"><div class="mb-3"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Em leitura</span></div><div class="flex items-center gap-5">${imgCapa(lendo.capa,'lendo-capa w-28 h-40',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-2xl font-bold text-white leading-tight line-clamp-3">${esc(lendo.titulo)}</h3><p class="text-gold-400 text-sm truncate mt-1">${esc(lendo.autor||'')}</p>${chips?`<div class="flex flex-wrap gap-1.5 mt-3">${chips}</div>`:''}${tempo?`<p class="text-xs text-gray-400 mt-3">${tempo}</p>`:''}</div></div>${outrosHtml}</div>`,lendo.capa,0,false);
+addSecao(wrap,cardMinimizado('lendo')?miniCard('lendo','Lendo:',esc(lendo.titulo),outros.length?`+${outros.length} de livros`:''):`<div onclick="editarLivro(${lendo.id})" class="frosted-card lendo-hero relative p-5 w-full cursor-pointer shadow-2xl">${minBtn('lendo',false,true)}<div class="mb-3 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Em leitura</span></div><div class="flex items-center gap-5">${imgCapa(lendo.capa,'lendo-capa w-28 h-40',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-2xl font-bold text-white leading-tight line-clamp-3">${esc(lendo.titulo)}</h3><p class="text-gold-400 text-sm truncate mt-1">${esc(lendo.autor||'')}</p>${chips?`<div class="flex flex-wrap gap-1.5 mt-3">${chips}</div>`:''}${tempo?`<p class="text-xs text-gray-400 mt-3">${tempo}</p>`:''}</div></div>${outrosHtml}</div>`,lendo.capa,0,false);
 }
 // Card do Livro Sendo Escrito ("BLOCO DO EDITOR")
 if(livroEscrito){
-  addSecao(wrap, `<div onclick="abrirModalEscrevendoLivro()" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">SEU PRÓPRIO LIVRO</span><span class="text-[10px] text-gray-400">Acessar Bloco do Editor</span></div><div class="flex items-start gap-4">${imgCapa(livroEscrito.capa,'w-20 h-28',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(livroEscrito.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(usuarioNome||livroEscrito.autor)}</p><div class="text-gold-400 text-sm tracking-wide mt-1">Capítulo ${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</div><p class="text-gray-300 text-xs mt-1">${livroEscrito.paginas} páginas escritas até agora</p></div></div></div>`, livroEscrito.capa, 1, false);
+  addSecao(wrap, cardMinimizado('editor')?miniCard('editor','Escrevendo:',esc(livroEscrito.titulo),`Cap. ${livroEscrito.capitulo_atual}/${livroEscrito.capitulos_totais}`):`<div onclick="abrirModalEscrevendoLivro()" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between">${minBtn('editor',false,true)}<div class="flex items-center justify-between mb-2 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">SEU PRÓPRIO LIVRO</span><span class="text-[10px] text-gray-400">Acessar Bloco do Editor</span></div><div class="flex items-start gap-4">${imgCapa(livroEscrito.capa,'w-20 h-28',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(livroEscrito.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(usuarioNome||livroEscrito.autor)}</p><div class="text-gold-400 text-sm tracking-wide mt-1">Capítulo ${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</div><p class="text-gray-300 text-xs mt-1">${livroEscrito.paginas} páginas escritas até agora</p></div></div></div>`, livroEscrito.capa, 1, false);
 }
 
-if(l)addSecao(wrap,`<div onclick="abrirPassagem(${l.id})" class="frosted-card p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
-if(notas[0])addSecao(wrap,`<div class="frosted-card p-4 w-full shadow-2xl flex flex-col justify-between"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
+if(l)addSecao(wrap,cardMinimizado('passagem')?miniCard('passagem','Passagem:',esc(l.titulo),biblioteca.filter(x=>statusDe(x)!=='desejado').length>1?`+${biblioteca.filter(x=>statusDe(x)!=='desejado').length-1} de passagens`:''):`<div onclick="abrirPassagem(${l.id})" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between">${minBtn('passagem',false,true)}<div class="flex items-center justify-between mb-2 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
+if(notas[0])addSecao(wrap,cardMinimizado('nota')?miniCard('nota','Nota:',esc(notas[0].texto.replace(/\s+/g,' ')),notas.length>1?`+${notas.length-1} de notas`:''):`<div onclick="filtroTodos='notas';mudarAba('todos')" class="frosted-card relative p-4 w-full shadow-2xl flex flex-col justify-between cursor-pointer">${minBtn('nota',false,true)}<span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
 feed.appendChild(wrap);
 homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(bgCustomizado || (homeSemCapa?BG_PADRAO:l.capa));
@@ -2851,26 +2883,11 @@ if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center
 itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="text-xs text-red-400 hover:text-red-300 px-2 py-1">Excluir</button>`:''}</div></div>`,bgCustomizado || l.capa || BG_PADRAO,i+1,false));
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
-function isbn13(v){const d=String(v||'').replace(/[^0-9Xx]/g,'').toUpperCase();if(d.length===13)return d;if(d.length===10){const b='978'+d.slice(0,9);let t=0;for(let i=0;i<12;i++)t+=(+b[i])*(i%2?3:1);return b+((10-t%10)%10)}return ''}
-function mesmoIsbn(a,b){const x=isbn13(a),y=isbn13(b);return !!x&&x===y}
-function relacionadosPorIsbn(l){const r={outras:[],kindle:[]};if(!isbn13(l.isbn))return r;r.outras=biblioteca.filter(x=>x.id!==l.id&&mesmoIsbn(x.isbn,l.isbn));r.kindle=notasKindle.filter(k=>mesmoIsbn(k.isbn,l.isbn));return r}
-async function buscarIsbnLivro(id,btn){const l=biblioteca.find(x=>x.id===id);if(!l)return;if(btn)btn.textContent='Buscando…';let b=null;try{b=await buscarDetalhesLivro(l.titulo,l.autor)}catch(e){}
-const i=b&&isbn13(b.isbn);if(i){l.isbn=i;salvarLocal();abrirPassagem(id)}else{aviso('ISBN não encontrado');if(btn)btn.textContent='Buscar ISBN'}}
 function abrirPassagem(id){
 const l=biblioteca.find(x=>x.id===id);if(!l)return;
-const rel=relacionadosPorIsbn(l);
-const secao=(t,itens)=>`<div class="space-y-2"><p class="text-[10px] font-bold uppercase tracking-widest text-gold-400">${t} (${itens.length})</p>${itens.join('')}</div>`;
-let relHtml='';
-if(!isbn13(l.isbn))relHtml=`<p class="text-xs text-gray-400 pt-3 border-t border-white/10">Sem ISBN neste livro, então não dá para relacionar outras passagens. <button onclick="buscarIsbnLivro(${l.id},this)" class="text-gold-400 underline">Buscar ISBN</button></p>`;
-else{relHtml=`<div class="space-y-4 pt-3 border-t border-white/10"><p class="text-[10px] text-gray-500 tracking-widest">ISBN ${isbn13(l.isbn)}</p>`;
-if(rel.outras.length)relHtml+=secao('Outras passagens',rel.outras.map(x=>`<button onclick="abrirPassagem(${x.id})" class="rel-item">${x.observacao?esc(x.observacao):'Sem anotação'}</button>`));
-if(rel.kindle.length)relHtml+=secao('Marcadores do Kindle',rel.kindle.map(k=>`<div onclick="this.classList.toggle('aberto')" class="rel-item">${esc(k.observacao)}</div>`));
-if(!rel.outras.length&&!rel.kindle.length)relHtml+='<p class="text-xs text-gray-500">Nenhum outro registro com este ISBN.</p>';
-relHtml+='</div>'}
 $('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
 <div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
 ${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
-${relHtml}
 <div class="flex items-center justify-between gap-2 pt-3 border-t border-white/10 flex-wrap"><span class="logo-lili text-lg"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span><div class="flex items-center gap-2"><button onclick="abrirInstaModal(${l.id})" class="text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg border border-white/10">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="text-sm bg-white/10 hover:bg-gold-400 hover:text-black text-gray-300 px-4 py-2 rounded-lg border border-white/10">Editar</button><button onclick="deletarLivro(${l.id},this)" class="text-sm bg-white/10 hover:bg-red-500 hover:text-white text-red-400 px-4 py-2 rounded-lg border border-white/10">Excluir</button></div></div></div>`;
 $('modal-passagem').classList.remove('hidden');
 }
@@ -2887,8 +2904,7 @@ if(/\s--\s/.test(linha)){const p=linha.split(/\s+--\s+/).map(x=>x.trim()).filter
 if(!autor)autor=autorPar;
 const mm=titulo.match(/^(.*\S)\s+[-–—]\s+([^-–—]+)$/);
 if(mm){const suf=normKindle(mm[2]);if(suf.length>=4&&[autor,autorPar].map(normKindle).some(r=>r&&(r===suf||r.includes(suf)||suf.includes(r))))titulo=mm[1].trim()}
-const mi=String(bruto||'').match(/isbn\s*-?(?:13|10)?\s*:?\s*([0-9][0-9-]{8,15}[0-9Xx])/i);
-return{titulo:titulo||String(bruto||'').trim(),autor:autor||'Autor Desconhecido',isbn:mi?isbn13(mi[1]):''}
+return{titulo:titulo||String(bruto||'').trim(),autor:autor||'Autor Desconhecido'}
 }
 function capaPlaceholderKindle(t){return `https://placehold.co/400x600/111/fff?text=${encodeURIComponent(t)}`}
 function repararNotasKindleExistentes(){
@@ -2918,30 +2934,28 @@ const brutas=[];
 blocos.forEach(b=>{
 const lin=b.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 if(lin.length<3)return;
-const {titulo,autor,isbn}=interpretarTituloKindle(lin[0]);
+const {titulo,autor}=interpretarTituloKindle(lin[0]);
 const cit=lin.slice(2).join(' ').trim();
 if(!titulo||!cit)return;
 const lm=lin[1].match(/(?:location|posi[cç][aã]o|local)\s+(\d+)(?:\s*-\s*(\d+))?/i);
 const ini=lm?+lm[1]:null,fim=lm?+(lm[2]||lm[1]):null;
-brutas.push({titulo,autor,isbn,cit,ini,fim,nb:normKindle(titulo),nt:normKindle(cit)});
+brutas.push({titulo,autor,cit,ini,fim,nb:normKindle(titulo),nt:normKindle(cit)});
 });
 const perto=(a,b)=>(a.ini!=null&&b.ini!=null)?(a.ini<=b.fim&&b.ini<=a.fim):a.nt.length>=20;
 const manter=brutas.filter((a,i)=>a.nt&&!brutas.some((b,j)=>j!==i&&b.nb===a.nb&&b.nt.includes(a.nt)&&(b.nt.length>a.nt.length||j<i)&&perto(a,b)));
-const novas=[],remover=new Set();let isbnNovo=0;
+const novas=[],remover=new Set();
 manter.forEach((a,idx)=>{
 const mesmas=notasKindle.filter(x=>normKindle(x.titulo)===a.nb);
-if(a.isbn)mesmas.forEach(x=>{if(!x.isbn){x.isbn=a.isbn;isbnNovo++}});
 if(mesmas.some(x=>{const t=normKindle(x.observacao);return t===a.nt||(a.nt.length>=20&&t.includes(a.nt))}))return;
 mesmas.forEach(x=>{const t=normKindle(x.observacao);if(t.length>=20&&a.nt.includes(t))remover.add(x.id)});
-novas.push({id:Date.now()+idx,titulo:a.titulo,autor:a.autor,observacao:a.cit,isbn:a.isbn||'',capa:capaPlaceholderKindle(a.titulo)});
+novas.push({id:Date.now()+idx,titulo:a.titulo,autor:a.autor,observacao:a.cit,capa:capaPlaceholderKindle(a.titulo)});
 });
-if(!novas.length&&!rep.corrigidos&&!rep.removidos&&!isbnNovo&&!notasKindle.some(n=>!n.isbn)){$('kindle-file-input').value='';return aviso('Nenhum marcador novo encontrado.')}
-const titulosCapa=new Set([...rep.titulos,...novas.map(n=>n.titulo),...novas.concat(notasKindle).filter(n=>!n.isbn).map(n=>n.titulo)]);
+if(!novas.length&&!rep.corrigidos&&!rep.removidos){$('kindle-file-input').value='';return aviso('Nenhum marcador novo encontrado.')}
+const titulosCapa=new Set([...rep.titulos,...novas.map(n=>n.titulo)]);
 const autorDe=t=>(novas.find(n=>n.titulo===t)||notasKindle.find(n=>n.titulo===t)||{}).autor;
-const caps={},isbs={};
-Promise.all([...titulosCapa].map(t=>buscarDetalhesLivro(t,autorDe(t)).then(b=>{if(b.capa)caps[t]=b.capa;const i=isbn13(b.isbn);if(i)isbs[t]=i}).catch(()=>{}))).then(()=>{
+const caps={};
+Promise.all([...titulosCapa].map(t=>buscarDetalhesLivro(t,autorDe(t)).then(b=>{if(b.capa)caps[t]=b.capa}).catch(()=>{}))).then(()=>{
 novas.forEach(n=>{if(caps[n.titulo])n.capa=caps[n.titulo]});
-novas.concat(notasKindle).forEach(n=>{if(!n.isbn&&isbs[n.titulo])n.isbn=isbs[n.titulo]});
 notasKindle.forEach(n=>{if(rep.titulos.has(n.titulo)&&caps[n.titulo])n.capa=caps[n.titulo]});
 notasKindle=[...novas,...notasKindle.filter(n=>!remover.has(n.id))];
 salvarLocal();renderizarFeed();
