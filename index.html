@@ -664,6 +664,13 @@ textarea{
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
+
+.registro-destino{display:flex;gap:.4rem;align-items:flex-start;font-size:.75rem;line-height:1.4;color:#9ca3af}
+.registro-destino b{color:#FACC15;font-weight:600}
+.reg-chip{display:inline-flex;align-items:center;gap:.5rem;max-width:100%;padding:.3rem .7rem .3rem .3rem;border-radius:9999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#e5e7eb;font-size:.75rem}
+.reg-chip img{width:1.4rem;height:2rem;object-fit:cover;border-radius:.3rem;flex-shrink:0}
+.reg-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:10.5rem}
+.reg-chip:active{background:rgba(255,255,255,.16)}
 </style>
 </head>
 <body class="h-full relative select-none">
@@ -761,11 +768,15 @@ textarea{
 <div id="registro-caixa" class="frosted-card w-full max-w-2xl p-6 md:p-8 shadow-2xl space-y-5">
 <form id="bookForm" onsubmit="salvarLivro(event)" class="space-y-3">
 <input type="hidden" id="edit_id">
-<div class="relative">
-<label class="block text-xs font-medium text-gray-300 mb-1">Título</label>
+<input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url"><input type="hidden" id="genero" value=""><input type="hidden" id="isbn" value="">
+<div><label for="observacao" class="block text-sm font-medium text-white mb-1.5">O que você quer guardar?</label><textarea id="observacao" rows="5" oninput="atualizarRegistroUI()" placeholder="Escreva uma passagem, citação ou ideia…" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm leading-relaxed text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
+<div id="reg-livro-area" class="space-y-2">
+<label class="block text-xs font-medium text-gray-300">De qual livro? <span class="text-gray-500">(opcional)</span></label>
+<div id="reg-chips" class="hidden flex-wrap gap-2"></div>
+<div id="reg-busca" class="relative">
 <div class="flex gap-2">
   <div class="relative flex-1">
-    <input type="text" id="titulo" oninput="buscaDebounce(this.value,'modal')" autocomplete="off" placeholder="Digite para buscar no Google Livros..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
+    <input type="text" id="titulo" oninput="buscaDebounce(this.value,'modal');atualizarRegistroUI()" autocomplete="off" placeholder="Buscar livro no Google Livros…" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400">
     <div id="skel-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg shadow-2xl z-50 hidden p-3"><div class="flex items-center gap-3"><div class="w-8 h-12 rounded skeleton-shimmer"></div><div class="flex-1 space-y-1.5"><div class="h-3 w-3/4 rounded skeleton-shimmer"></div><div class="h-2.5 w-1/2 rounded skeleton-shimmer"></div></div></div></div>
     <div id="res-modal" class="absolute left-0 right-0 mt-1 bg-[#0a0a0a]/95 border border-white/15 rounded-lg overflow-hidden shadow-2xl z-50 hidden max-h-56 overflow-y-auto"></div>
   </div>
@@ -776,24 +787,29 @@ textarea{
   <input type="file" id="input-upload-capa" accept="image/*" onchange="tratarUploadCapaManual(this)" class="hidden">
 </div>
 </div>
-<div class="grid grid-cols-[minmax(0,1fr)_6.5rem] gap-2 items-end"><div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><div><label class="block text-xs font-medium text-gray-300 mb-1">Páginas</label><input type="number" id="paginas" min="1" step="1" inputmode="numeric" placeholder="Nº" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div></div>
-<input type="hidden" id="formato" value="Kindle"><input type="hidden" id="nota" value="0"><input type="hidden" id="status" value="lendo"><input type="hidden" id="capa_url"><input type="hidden" id="genero" value=""><input type="hidden" id="isbn" value="">
-<button type="button" id="registro-detalhes-toggle" aria-expanded="false" aria-controls="registro-detalhes" onclick="toggleDetalhesRegistro()" class="inline-flex items-center gap-1.5 text-[11px] text-gold-400 hover:underline transition-colors"><span>Detalhes da leitura</span><span id="registro-detalhes-chevron" aria-hidden="true" class="transition-transform">⌄</span></button>
+<div id="livro-chip" class="hidden items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-2.5">
+<img id="livro-chip-capa" src="" alt="" class="w-9 h-12 object-cover rounded shadow flex-shrink-0">
+<div class="min-w-0 flex-1"><p id="livro-chip-titulo" class="text-sm font-bold text-white truncate"></p><p id="livro-chip-autor" class="text-[11px] text-gray-400 truncate"></p></div>
+<button type="button" onclick="limparLivroRegistro()" class="btn-card" aria-label="Trocar livro">Trocar</button>
+</div>
+</div>
+<div id="reg-status-box" class="hidden"><label class="block text-xs font-medium text-gray-300 mb-1">Status da leitura</label>
+<div class="grid grid-cols-3 gap-2"><button type="button" data-status="lendo" onclick="definirStatus('lendo')" class="seg-btn">Em leitura</button><button type="button" data-status="lido" onclick="definirStatus('lido')" class="seg-btn">Lido</button><button type="button" data-status="abandonado" onclick="definirStatus('abandonado')" class="seg-btn">Abandonado</button></div></div>
+<button type="button" id="registro-detalhes-toggle" aria-expanded="false" aria-controls="registro-detalhes" onclick="toggleDetalhesRegistro()" class="hidden inline-flex items-center gap-1.5 text-xs text-gold-400 hover:underline transition-colors"><span>Mais detalhes do livro</span><span id="registro-detalhes-chevron" aria-hidden="true" class="transition-transform">⌄</span></button>
 <div id="registro-detalhes" class="hidden space-y-3 rounded-lg border border-white/10 bg-black/10 p-3">
+<div class="grid grid-cols-[minmax(0,1fr)_6.5rem] gap-2 items-end"><div><label class="block text-xs font-medium text-gray-300 mb-1">Autor</label><input type="text" id="autor" oninput="atualizarRegistroUI()" placeholder="Nome do autor" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div><div><label class="block text-xs font-medium text-gray-300 mb-1">Páginas</label><input type="number" id="paginas" min="1" step="1" inputmode="numeric" placeholder="Nº" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400"></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Tipo de leitura</label>
 <div class="grid grid-cols-3 gap-2"><button type="button" data-formato="Kindle" onclick="definirFormato('Kindle')" class="seg-btn">Kindle</button><button type="button" data-formato="Audiobook" onclick="definirFormato('Audiobook')" class="seg-btn">Áudio</button><button type="button" data-formato="Físico" onclick="definirFormato('Físico')" class="seg-btn">Físico</button></div></div>
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Status</label>
-<div class="grid grid-cols-3 gap-2"><button type="button" data-status="lendo" onclick="definirStatus('lendo')" class="seg-btn">Em leitura</button><button type="button" data-status="lido" onclick="definirStatus('lido')" class="seg-btn">Lido</button><button type="button" data-status="abandonado" onclick="definirStatus('abandonado')" class="seg-btn">Abandonado</button></div></div>
 <div><label class="block text-xs font-medium text-gray-300 mb-1">Nota <span id="nota-label" class="text-gray-400 font-normal"></span></label><div id="star-picker" class="flex items-center justify-between"></div></div>
 <div><button type="button" id="periodo-toggle" onclick="mostrarPeriodo(true)" class="text-[11px] text-gold-400 hover:underline">+ Adicionar período manualmente</button>
 <div id="periodo-box" class="hidden space-y-2"><div class="flex items-center justify-between"><label class="text-xs font-medium text-gray-300">Período de leitura</label><button type="button" onclick="mostrarPeriodo(false)" class="text-[11px] text-gray-400 hover:text-white">Remover</button></div>
 <div class="grid grid-cols-2 gap-2"><div><span class="block text-[10px] text-gray-400 mb-1">Início</span><input type="date" id="periodo-inicio" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div><div><span class="block text-[10px] text-gray-400 mb-1">Fim (livros lidos)</span><input type="date" id="periodo-fim" style="color-scheme:dark" class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-400"></div></div></div></div>
 </div>
-<div><label class="block text-xs font-medium text-gray-300 mb-1">Anotação</label><textarea id="observacao" rows="3" placeholder="Sua passagem ou citação favorita..." class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:outline-none focus:border-gold-400 resize-none"></textarea></div>
+<p id="registro-destino" class="registro-destino" aria-live="polite"></p>
 <div class="flex gap-2">
-  <button type="button" onclick="cancelarNovaPassagem()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs">SAIR</button>
-  <button type="button" onclick="salvarLivroDesejado(event)" class="flex-none w-11 h-10 rounded-lg bg-white/10 hover:bg-white/15 text-white flex items-center justify-center transition-colors" title="Quero ler" aria-label="Quero ler"><svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.8L6 21V4.75Z"/></svg></button>
-  <button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 rounded-lg text-sm uppercase tracking-wider">Adicionar</button>
+  <button type="button" onclick="cancelarNovaPassagem()" class="btn-card flex-none">Sair</button>
+  <button type="button" id="reg-ler-depois" onclick="salvarLivroDesejado(event)" class="hidden btn-card flex-none">Ler depois</button>
+  <button type="submit" id="btn-salvar-modal" class="flex-1 btn-gold-degrade py-2.5 px-2 rounded-lg text-xs font-bold uppercase tracking-wide whitespace-nowrap">Adicionar</button>
 </div>
 </form>
 </div></div>
@@ -2113,6 +2129,7 @@ w.className='relative';w.style.cssText='width:2.75rem;height:2.75rem';
 w.innerHTML=`<svg viewBox="0 0 24 24" class="absolute inset-0 w-full h-full text-white/20"><path fill="currentColor" d="${STAR_PATH}"/></svg><div class="absolute inset-0 overflow-hidden" style="width:${fr*100}%"><svg viewBox="0 0 24 24" style="width:2.75rem;height:2.75rem" class="text-gold-400"><path fill="currentColor" d="${STAR_PATH}"/></svg></div><button type="button" class="absolute left-0 top-0 w-1/2 h-full" onclick="definirNota(${i-.5})" aria-label="${i-.5} estrelas"></button><button type="button" class="absolute right-0 top-0 w-1/2 h-full" onclick="definirNota(${i})" aria-label="${i} estrelas"></button>`;
 box.appendChild(w);
 }
+if(typeof atualizarRegistroUI==='function')atualizarRegistroUI();
 }
 async function copiarNota(id){
 const n=notas.find(x=>x.id===id);if(!n)return;
@@ -2237,14 +2254,56 @@ function periodoTxt(l){
 const t=l.data_inicio&&l.data_fim?`Lido de ${l.data_inicio} a ${l.data_fim}`:l.data_inicio?`Iniciado em ${l.data_inicio}`:l.data_fim?`Concluído em ${l.data_fim}`:'';
 return t?`<p class="text-xs text-gray-400">${esc(t)}</p>`:'';
 }
+let regEscolhido=false;
+function renderizarChipsLendo(){
+const box=$('reg-chips');if(!box)return;
+const vistos=new Set(),lista=biblioteca.filter(l=>statusDe(l)==='lendo'&&l.titulo&&!vistos.has(l.titulo)&&vistos.add(l.titulo)).slice(0,6);
+box.innerHTML=lista.length?`<span class="w-full text-[10px] uppercase tracking-widest text-gray-500">Lendo agora</span>`+lista.map(l=>`<button type="button" onclick="usarLivroLendo(${l.id})" class="reg-chip"><img src="${esc(l.capa||'')}" alt="" onerror="this.style.display='none'"><span>${esc(l.titulo)}</span></button>`).join(''):'';
+box.dataset.tem=lista.length?'1':'';
+}
+function usarLivroLendo(id){
+const l=biblioteca.find(x=>x.id===id);if(!l)return;
+$('titulo').value=l.titulo;$('autor').value=l.autor&&l.autor!=='Autor Desconhecido'?l.autor:'';$('paginas').value=l.paginas||'';
+$('capa_url').value=l.capa||'';$('genero').value=l.genero||'';if($('isbn'))$('isbn').value=l.isbn||'';
+$('formato').value=l.formato||'Kindle';$('status').value='lendo';$('nota').value=0;
+regEscolhido=true;renderSeletores();$('observacao').focus();
+}
+function escolherLivroRegistro(){regEscolhido=true;atualizarRegistroUI()}
+function limparLivroRegistro(){
+['titulo','autor','paginas','capa_url','genero','isbn'].forEach(i=>{const e=$(i);if(e)e.value=''});
+regEscolhido=false;atualizarRegistroUI();$('titulo').focus();
+}
+function atualizarRegistroUI(){
+const dest=$('registro-destino');if(!dest)return;
+const editId=$('edit_id').value,tit=$('titulo').value.trim(),aut=$('autor').value.trim(),obs=$('observacao').value.trim(),st=$('status').value;
+const temLivro=!!(tit||aut),escolhido=regEscolhido&&!!tit;
+$('livro-chip').classList.toggle('hidden',!escolhido);$('livro-chip').classList.toggle('flex',escolhido);
+$('reg-busca').classList.toggle('hidden',escolhido);
+const chips=$('reg-chips'),mostrarChips=!escolhido&&chips.dataset.tem==='1'&&!editId;
+chips.classList.toggle('hidden',!mostrarChips);chips.classList.toggle('flex',mostrarChips);
+if(escolhido){$('livro-chip-capa').src=$('capa_url').value||`https://placehold.co/300x450/111/fff?text=${encodeURIComponent(tit)}`;$('livro-chip-titulo').textContent=tit;$('livro-chip-autor').textContent=aut||'Autor desconhecido'}
+$('reg-status-box').classList.toggle('hidden',!temLivro);
+$('registro-detalhes-toggle').classList.toggle('hidden',!temLivro);
+const ld=$('reg-ler-depois');if(ld)ld.classList.toggle('hidden',!temLivro||!!editId);
+if(!temLivro){$('registro-detalhes').classList.add('hidden');$('registro-detalhes-toggle').setAttribute('aria-expanded','false')}
+const T=esc(tit||'este livro'),stTxt={lendo:'em leitura',lido:'lido',abandonado:'abandonado'}[st]||'em leitura';
+let linha,rot;
+if(editId){linha=`Editando <b>${T}</b>`;rot='Atualizar'}
+else if(temLivro&&obs){linha=`Será salva como <b>passagem</b> em <b>${T}</b>`;rot='Adicionar passagem'}
+else if(temLivro){linha=`<b>${T}</b> entra na biblioteca como <b>${stTxt}</b>`;rot=st==='lendo'?'Começar leitura':st==='lido'?'Marcar como lido':'Adicionar livro'}
+else if(obs){linha='Será salva como <b>nota</b>. Escolha um livro para virar passagem.';rot='Salvar nota'}
+else{linha='Escreva uma anotação ou escolha um livro.';rot='Adicionar'}
+dest.innerHTML=`<span aria-hidden="true">↳</span><span>${linha}</span>`;
+const btn=$('btn-salvar-modal');btn.textContent=rot;btn.classList.toggle('opacity-60',!temLivro&&!obs&&!editId);
+}
 function prepararNovoRegistro(){
 const detalhes=$('registro-detalhes'),detalhesBtn=$('registro-detalhes-toggle'),detalhesChevron=$('registro-detalhes-chevron');if(detalhes)detalhes.classList.add('hidden');if(detalhesBtn)detalhesBtn.setAttribute('aria-expanded','false');if(detalhesChevron)detalhesChevron.style.transform='rotate(0deg)';
 $('bookForm').reset();
 ['edit_id','capa_url','genero'].forEach(i=>$(i).value='');
 $('formato').value='Kindle';$('nota').value='0';$('status').value='lendo';
 mostrarPeriodo(false);
-renderSeletores();
-$('btn-salvar-modal').innerText='Adicionar';
+regEscolhido=false;renderizarChipsLendo();renderSeletores();
+$('btn-salvar-modal').innerText='Adicionar';atualizarRegistroUI();
 toggleModalNovoRegistro();
 }
 function editarLivro(id){
@@ -2254,8 +2313,8 @@ $('formato').value=l.formato||'Kindle';$('nota').value=l.nota||0;$('status').val
 $('observacao').value=l.observacao||'';$('capa_url').value=l.capa||'';$('genero').value=l.genero||'';if($('isbn'))$('isbn').value=l.isbn||'';
 mostrarPeriodo(!!l.data_inicio);
 if(l.data_inicio){$('periodo-inicio').value=paraISO(l.data_inicio);$('periodo-fim').value=paraISO(l.data_fim)}
-renderSeletores();
-$('btn-salvar-modal').innerText='Atualizar';
+regEscolhido=!!l.titulo;renderizarChipsLendo();renderSeletores();
+$('btn-salvar-modal').innerText='Atualizar';atualizarRegistroUI();
 toggleModalNovoRegistro();
 }
 
@@ -2503,7 +2562,8 @@ row.onclick=()=>{
   if(alvo[3]&&$(alvo[3])){$('paginas').value=b.paginas>0?b.paginas:''};
   if($('genero'))$('genero').value=b.genero||'';
   if($('isbn'))$('isbn').value=b.isbn||'';
-  res.classList.add('hidden')
+  res.classList.add('hidden');
+  if(tipo==='modal')escolherLivroRegistro()
 };
 res.appendChild(row);
 });
