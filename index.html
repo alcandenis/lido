@@ -121,6 +121,15 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .bg-layer-custom{filter:none!important;transform:none!important;}
 .bg-layer-custom{transition:opacity .9s ease,filter .5s ease,transform .5s ease}
 .bg-layer-custom.bg-blur{filter:blur(12px) brightness(.7)!important;transform:scale(1.15)!important}
+.bg-os{position:fixed;inset:0;z-index:5;pointer-events:none;opacity:0;transition:opacity .8s ease;overflow:hidden}
+.bg-os.on{opacity:1}
+.bg-os .os-camada{position:absolute;inset:0}
+.bg-os .os-longe{filter:blur(5px) brightness(.63) saturate(.85);opacity:.4}
+.bg-os .os-perto{filter:blur(2.5px) brightness(.63) saturate(.85);opacity:.6}
+.bg-os i{position:absolute;display:block;border-radius:14%/9.6%;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);animation:osIn .9s ease backwards}
+@keyframes osIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.bg-os i{animation:none}}
+.ghost-card{border:1.5px dashed rgba(255,255,255,.22)!important;background:rgba(12,12,12,.4)!important;display:block;cursor:pointer}
 @keyframes bounceSlow{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 .animate-bounce-slow{animation:bounceSlow 2s infinite ease-in-out}
 .sel-mark{display:none;position:absolute;top:.75rem;right:.75rem;width:1.75rem;height:1.75rem;border-radius:9999px;border:2px solid rgba(255,255,255,.5);align-items:center;justify-content:center;background:rgba(0,0,0,.4);color:transparent;font-size:.9rem;font-weight:700;z-index:2}
@@ -676,12 +685,13 @@ textarea{
 <div id="bg-layer-a" class="bg-layer z-0" style="opacity:1"></div>
 <div id="bg-layer-b" class="bg-layer z-0" style="opacity:0"></div>
 <div id="bg-glow" class="fixed inset-0 pointer-events-none z-0 transition-all duration-700" style="opacity:.25;background:radial-gradient(circle at 50% 30%,rgba(250,204,21,.15),transparent 70%)"></div>
-<div id="home-ret" class="fixed left-1/2 z-[5] pointer-events-none" style="top:50%;height:min(60dvh,116vw);aspect-ratio:.5/.727;transform:translate(-50%,-50%);border-radius:14%/9.6%;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);filter:blur(18px) brightness(.63) saturate(.85);opacity:0;transition:opacity .8s ease"></div>
+<div id="bg-os" class="bg-os" aria-hidden="true"></div>
 <div class="fixed inset-0 bg-gradient-to-t from-[#000000]/95 via-[#000000]/30 to-[#000000]/70 z-0 pointer-events-none"></div>
 
 <!-- Tela Inicial de Login -->
 <div id="tela-login-inicial" class="fixed inset-0 z-[100] bg-[#000000] flex flex-col items-center justify-center p-6 text-center overflow-y-auto">
-  <div class="frosted-card p-8 max-w-md w-full space-y-6 shadow-2xl border border-white/10 my-auto">
+  <div id="bg-os-login" class="bg-os on" aria-hidden="true"></div>
+  <div class="frosted-card relative z-10 p-8 max-w-md w-full space-y-6 shadow-2xl border border-white/10 my-auto">
     <div class="space-y-1">
       <h1 class="text-4xl font-serif font-extrabold tracking-widest">
         <span class="logo-lili"><span id="login-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span>
@@ -931,6 +941,7 @@ textarea{
     <button type="button" id="btn-instalar-lili-welcome" onclick="instalarAppLiLi()" class="btn-liquid-glass-install">
       <span>Instalar o Lili</span>
     </button>
+    <button type="button" id="welcome-importar" onclick="fecharBoasVindas();abrirImportarInicio()" class="text-xs text-gray-400 underline underline-offset-4 py-1">Já tem histórico? Importar</button>
   </section>
 </div>
 
@@ -1047,6 +1058,8 @@ textarea{
 
 <div id="modal-kindle" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharKindle()"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4 text-center"><h2 class="text-lg font-bold text-white">Importar do Kindle</h2><p class="text-sm text-gray-200 leading-relaxed">Conecte seu Kindle via Cabo USB e selecione o arquivo no armazenamento do e-reader.</p><p class="text-xs text-gray-400">Procure por My Clippings.txt, na pasta documents.</p><div class="flex gap-2"><button onclick="fecharKindle()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Cancelar</button><label for="kindle-file-input" class="flex-1 py-2.5 rounded-lg bg-white text-[#000000] text-xs font-semibold text-center cursor-pointer hover:bg-gray-200">Selecionar arquivo</label></div></div></div>
 
+<div id="modal-importar-inicio" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharImportarInicio()"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-3 text-center"><h2 class="text-lg font-bold text-white">Importar histórico</h2><p class="text-sm text-gray-200 leading-relaxed">Traga o que você já tem.</p><button type="button" onclick="fecharImportarInicio();$('csv-file-input').click()" class="w-full py-2.5 rounded-lg bg-white text-[#000000] text-xs font-semibold hover:bg-gray-200">Backup do Lili (CSV ou JSON)</button><button type="button" onclick="fecharImportarInicio();$('modal-kindle').classList.remove('hidden')" class="w-full py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Marcadores do Kindle</button><button type="button" onclick="fecharImportarInicio()" class="w-full py-2 text-xs text-gray-400">Cancelar</button></div></div>
+
 <div id="modal-ia" class="frosted-modal-container fixed inset-0 z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target===this)fecharEnviarIA()"><div class="frosted-modal w-full max-w-sm p-6 shadow-2xl space-y-4"><h2 class="text-lg font-bold text-white">Enviar para IA</h2><p class="text-sm text-gray-200 leading-relaxed">Copie o prompt e cole a mensagem no chat do seu agente de IA. Ele vai analisar o seu histórico de livros.</p><div class="flex gap-2"><button onclick="fecharEnviarIA()" class="flex-1 py-2.5 rounded-lg bg-white/10 text-white text-xs hover:bg-white/20">Fechar</button><button onclick="copiarPromptIA()" class="flex-1 py-2.5 rounded-lg bg-white text-[#000000] text-xs font-semibold hover:bg-gray-200">Copiar prompt</button></div></div></div>
 
 <div id="insta-modal" class="frosted-modal-container fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
@@ -1059,7 +1072,8 @@ textarea{
 
 <script>
 function lsGet(k,d=''){try{const v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
-function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+let _lsAvisoT=0;
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){console.warn('localStorage falhou:',k,e);const t=Date.now();if(t-_lsAvisoT>15000){_lsAvisoT=t;try{aviso('Armazenamento cheio. Alterações não salvas neste aparelho.')}catch(_){}}return false}}
 function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function lerJSON(k){try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:[]}catch(e){return[]}}
 let biblioteca=lerJSON('minha_biblioteca'),notasKindle=lerJSON('notas_kindle'),notas=lerJSON('lido_notas'),usuarioNome=lsGet('lido_usuario_nome');
@@ -1074,7 +1088,7 @@ let abaAtual='inicio',activeBgLayer='A',currentCapaUrl='',modoSel=false,confirma
 const selecionados=new Set(),timers={};
 let removidos={};try{removidos=JSON.parse(lsGet('lido_removidos','{}'))||{}}catch(e){removidos={}}
 let estadoNuvem='',sincronizando=false,sincPendente=false,tSync=null,renovandoResolve=null,fecharTelaPendente=false;
-const BG_PADRAO="https://wallpaper.forfun.com/fetch/d1/d11b37523005f6dfe77d151ee2872b7c";
+const BG_PADRAO="none";
 const STAR_PATH='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z';
 const $=id=>document.getElementById(id);
 function desenharSubLogo(ctx,W,y,esq){
@@ -1286,7 +1300,7 @@ lsSet('historico_escrita',JSON.stringify(historicoEscrita));
 lsSet('notas_livro_escrito',JSON.stringify(notasLivroEscrito));
 lsSet('lido_bg_customizado',bgCustomizado||'');
 lsSet('lido_ts',JSON.stringify(tsCfg));
-}catch(e){}
+}catch(e){console.warn('persistirExtras falhou:',e)}
 }
 function mesclarDados(rem){
 const antes=normPayload(montarPayload());
@@ -1624,9 +1638,10 @@ const a=$('bg-layer-a'),b=$('bg-layer-b'),k=abaAtual==='kindle';
 const vis=activeBgLayer==='A'?a:b,oc=activeBgLayer==='A'?b:a;
 vis.style.opacity=k?'0':'1';oc.style.opacity='0';
 $('bg-glow').style.opacity=k?'0':'.25';
+atualizarOsFundo();
 }
 function atualizarTituloBoasVindas(){const t=$('welcome-title');if(t)t.textContent=usuarioNome?`Olá, ${usuarioNome}`:'Olá,'}
-function mostrarBoasVindas(apenasBoasVindas=false){atualizarTituloBoasVindas();const m=$('welcome-modal'),close=$('welcome-close'),cta=$('welcome-add-first');if(m){m.style.display='flex';document.body.classList.add('welcome-open');document.body.classList.toggle('welcome-menu-open',!!apenasBoasVindas);if(close){close.style.display=apenasBoasVindas?'flex':'none'}if(cta){cta.style.display=apenasBoasVindas?'none':''}}}
+function mostrarBoasVindas(apenasBoasVindas=false){atualizarTituloBoasVindas();const m=$('welcome-modal'),close=$('welcome-close'),cta=$('welcome-add-first');if(m){m.style.display='flex';document.body.classList.add('welcome-open');document.body.classList.toggle('welcome-menu-open',!!apenasBoasVindas);if(close){close.style.display=apenasBoasVindas?'flex':'none'}if(cta){cta.style.display=apenasBoasVindas?'none':''}const imp=$('welcome-importar');if(imp)imp.style.display=apenasBoasVindas?'none':''}}
 function fecharBoasVindas(){const m=$('welcome-modal');if(m)m.style.display='none';document.body.classList.remove('welcome-open','welcome-menu-open')}
 function concluirBoasVindasAposConteudo(){fecharBoasVindas();lsSet('lido_boas_vindas_vista','1')}
 function cancelarNovaPassagem(){toggleModalNovoRegistro();if(lsGet('lido_boas_vindas_vista')!=='1')mostrarBoasVindas()}
@@ -2579,10 +2594,18 @@ const file=input.files[0];
 if(!file)return;
 const reader=new FileReader();
 reader.onload=function(e){
-  const base64=e.target.result;
-  $('capa_url').value=base64;
-  aviso('Capa carregada manualmente com sucesso!');
-  input.value='';
+  const img=new Image();
+  img.onload=function(){
+    const f=Math.min(1,600/Math.max(img.width,img.height));
+    const cv=document.createElement('canvas');
+    cv.width=Math.max(1,Math.round(img.width*f));cv.height=Math.max(1,Math.round(img.height*f));
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    $('capa_url').value=cv.toDataURL('image/jpeg',0.82);
+    aviso('Capa carregada manualmente com sucesso!');
+    input.value='';
+  };
+  img.onerror=()=>{aviso('Erro ao ler o arquivo de imagem.');input.value=''};
+  img.src=e.target.result;
 };
 reader.onerror=()=>aviso('Erro ao ler o arquivo de imagem.');
 reader.readAsDataURL(file);
@@ -2720,7 +2743,32 @@ function atualizarTitulo(){
 }
 let homeSemCapa=false;
 function capaValida(u){return !!u&&!/placehold\.co/.test(u)}
-function mostrarRetangulo(){const r=$('home-ret');if(r)r.style.opacity=(abaAtual==='inicio'&&homeSemCapa)?'.55':'0'}
+let OS_SPECS=null;
+function gerarSpecsOs(){
+const paisagem=innerWidth>innerHeight,cols=paisagem?7:4,rows=paisagem?3:5,out=[];
+for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+if(Math.random()<.22)continue;
+const h=28+Math.random()*44;
+out.push({x:(c+.15+Math.random()*.7)/cols*100,y:(r+.15+Math.random()*.7)/rows*100,h:h,d:Math.random()*.9});
+}
+return out;
+}
+function renderOs(el){
+if(!el||el.dataset.ok)return;
+if(!OS_SPECS)OS_SPECS=gerarSpecsOs();
+const mk=l=>l.map(o=>{const w=o.h*.5/.727;return `<i style="left:${o.x.toFixed(1)}%;top:${o.y.toFixed(1)}%;width:${w.toFixed(1)}px;height:${o.h.toFixed(1)}px;margin:${(-o.h/2).toFixed(1)}px 0 0 ${(-w/2).toFixed(1)}px;animation-delay:${o.d.toFixed(2)}s"></i>`}).join('');
+el.innerHTML=`<div class="os-camada os-longe">${mk(OS_SPECS.filter(o=>o.h<=52))}</div><div class="os-camada os-perto">${mk(OS_SPECS.filter(o=>o.h>52))}</div>`;
+el.dataset.ok='1';
+}
+function atualizarOsFundo(){
+const el=$('bg-os');if(!el)return;
+renderOs(el);
+el.classList.toggle('on',!bgCustomizado&&abaAtual!=='kindle'&&(!currentCapaUrl||currentCapaUrl===BG_PADRAO));
+}
+function mostrarRetangulo(){atualizarOsFundo()}
+function abrirImportarInicio(){$('modal-importar-inicio').classList.remove('hidden')}
+function fecharImportarInicio(){$('modal-importar-inicio').classList.add('hidden')}
+renderOs($('bg-os-login'));renderOs($('bg-os'));
 
 function renderizarFeed(scrollToId=null){
 homeSemCapa=false;
@@ -2788,6 +2836,13 @@ if(livroEscrito){
 
 if(l)addSecao(wrap,cardMinimizado('passagem')?miniCard('passagem','Passagem:',esc(l.titulo),biblioteca.filter(x=>statusDe(x)!=='desejado').length>1?`+${biblioteca.filter(x=>statusDe(x)!=='desejado').length-1} de passagens`:''):`<div onclick="abrirPassagem(${l.id})" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between">${minBtn('passagem',false,true)}<div class="flex items-center justify-between mb-2 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 if(notas[0])addSecao(wrap,cardMinimizado('nota')?miniCard('nota','Nota:',esc(notas[0].texto.replace(/\s+/g,' ')),notas.length>1?`+${notas.length-1} de notas`:''):`<div onclick="filtroTodos='notas';mudarAba('todos')" class="frosted-card relative p-4 w-full shadow-2xl flex flex-col justify-between cursor-pointer">${minBtn('nota',false,true)}<span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
+if(!biblioteca.length&&!notas.length&&!(notasKindle||[]).length&&!livroEscrito){
+const g=(t,d,i)=>addSecao(wrap,`<button type="button" onclick="alternarNovaPassagemDock()" class="frosted-card ghost-card w-full p-4 text-left"><span class="block text-[10px] uppercase tracking-widest text-gray-500">${t}</span><span class="block text-sm text-gray-300 mt-1">${d}</span></button>`,BG_PADRAO,i);
+g('Lendo agora','Registre o livro que você está lendo.',0);
+g('Passagem','Guarde os trechos que ficaram com você.',1);
+g('Nota','Anote ideias soltas, sem livro.',2);
+addSecao(wrap,`<button type="button" onclick="abrirImportarInicio()" class="w-full py-2 text-xs text-gray-400 underline underline-offset-4">Já tem histórico? Importar</button>`,BG_PADRAO,3);
+}
 feed.appendChild(wrap);
 homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(bgCustomizado || (homeSemCapa?BG_PADRAO:l.capa));
@@ -3057,17 +3112,19 @@ function deletarLivro(id,btn){doisToques(btn,()=>{biblioteca=biblioteca.filter(l
 function aplicarBlurFundo(){const on=abaAtual!=='inicio'&&!!bgCustomizado;['bg-layer-a','bg-layer-b'].forEach(i=>{const e=$(i);if(e)e.classList.toggle('bg-blur',on)})}
 function transicionarFundo(url){
 aplicarBlurFundo();
-if(abaAtual==='kindle')return;
+if(abaAtual==='kindle'){atualizarOsFundo();return}
 const targetBg = bgCustomizado || url;
-if(currentCapaUrl===targetBg)return;
+if(currentCapaUrl===targetBg){atualizarOsFundo();return}
 currentCapaUrl=targetBg;
 const a=$('bg-layer-a'),b=$('bg-layer-b');
 const usaCustom = !!bgCustomizado;
 a.classList.toggle('bg-layer-custom', usaCustom);
 b.classList.toggle('bg-layer-custom', usaCustom);
 
-if(activeBgLayer==='A'){b.style.backgroundImage=`url('${targetBg}')`;b.style.opacity='1';a.style.opacity='0';activeBgLayer='B'}
-else{a.style.backgroundImage=`url('${targetBg}')`;a.style.opacity='1';b.style.opacity='0';activeBgLayer='A'}
+const bgImg=targetBg===BG_PADRAO?'none':`url('${targetBg}')`;
+if(activeBgLayer==='A'){b.style.backgroundImage=bgImg;b.style.opacity='1';a.style.opacity='0';activeBgLayer='B'}
+else{a.style.backgroundImage=bgImg;a.style.opacity='1';b.style.opacity='0';activeBgLayer='A'}
+atualizarOsFundo();
 }
 function handleFeedScroll(){
 const feed=$('feed-container'),items=document.querySelectorAll('.snap-item'),pos=feed.scrollTop+feed.clientHeight/2;
@@ -3096,6 +3153,13 @@ document.querySelectorAll('.sel-ativo').forEach(e=>e.classList.remove('sel-ativo
 $('nav-principal').classList.remove('hidden');
 const b=$('sel-bar');b.classList.add('hidden');b.classList.remove('flex');
 }
+document.addEventListener('click',function(ev){
+if(!modoSel)return;
+const c=ev.target.closest&&ev.target.closest('#feed-container [data-id]');
+if(!c)return;
+ev.preventDefault();ev.stopPropagation();
+alternarSel(c.dataset.id);
+},true);
 function alternarSel(id){
 id=String(id);
 if(selecionados.has(id))selecionados.delete(id);else selecionados.add(id);
