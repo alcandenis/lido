@@ -147,7 +147,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .logo-lili{font-family:'Nunito','Varela Round',ui-rounded,'SF Pro Rounded',system-ui,sans-serif;font-weight:800;letter-spacing:.02em}
 .logo-lili .o-filled-yellow-orange{width:.75em;height:1.09em;border-radius:.12em;margin:0 .1em 0 0;vertical-align:-.2em}
 
-/* Dock suspensa — Liquid Glass */
+/* Dock suspensa */
 .dock-wrap{display:flex;justify-content:center;padding:0 1rem}
 .dock-glass{
   position:relative;display:flex;align-items:center;gap:.2rem;padding:.45rem;
@@ -179,7 +179,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
   box-shadow:inset 1px 1px 1px -.5px rgba(255,255,255,.5),inset -1px -1px 1px -.5px rgba(255,255,255,.25);
 }
 
-/* Botão Nova passagem com estilo Liquid Glass Amarelo (sem glow) */
+/* Botão Nova passagem */
 .dock-add{
   width:2.75rem;
   height:2.75rem;
@@ -214,7 +214,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 #modal-registro button[type="submit"]:hover {
   border-color: rgba(255, 255, 255, 0.25);
 }
-/* Estrelas de nota: só vetor, sem borda/vidro dos botões de toque */
+/* Estrelas de nota */
 #modal-registro #star-picker button[type="button"]{border:0!important;box-shadow:none!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;outline:none;-webkit-tap-highlight-color:transparent}
 
 .font-obs{font-family:'Inter',sans-serif;font-style:normal;font-weight:400;line-height:1.65}
@@ -235,7 +235,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .accordion-content{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.16,1,.3,1),opacity .25s;opacity:0}
 .accordion-content.open{max-height:520px;opacity:1}
 
-/* Nova passagem em formato de card, substituindo visualmente o feed */
+/* Nova passagem em formato de card */
 #modal-registro.registro-card-view{
   pointer-events:none!important;
   flex-direction:column!important;
@@ -356,7 +356,7 @@ textarea{
   border-color:rgba(255,255,255,.7);
 }
 
-/* Cabeçalho: sombra suave que desce até as abas e o conteúdo */
+/* Cabeçalho sombra */
 #app-header{background-image:none!important}
 #app-header::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 4.5rem);z-index:-1;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,.8) 0%,rgba(0,0,0,.75) 25%,rgba(0,0,0,.62) 45%,rgba(0,0,0,.4) 62%,rgba(0,0,0,.2) 78%,rgba(0,0,0,.07) 91%,rgba(0,0,0,0) 100%)}
 #feed-container .tab-reg{text-shadow:0 1px 8px rgba(0,0,0,.95),0 0 2px rgba(0,0,0,.8)}
@@ -368,11 +368,10 @@ textarea{
 .sel-ativo .frosted-card{
   box-shadow:0 0 0 1px rgba(250,204,21,.65)!important;
 }
-/* O vidro fica neutro; mantém apenas o dourado original como cor de ação */
 
 
 
-/* Ajustes solicitados: controles compactos e Liquid Glass Dark mais translúcido */
+/* controles compactos e mais translúcido */
 .dock-add{
   width:2.35rem!important;
   height:2rem!important;
@@ -401,7 +400,7 @@ textarea{
   -webkit-backdrop-filter:blur(22px) saturate(.82)!important;
   backdrop-filter:blur(22px) saturate(.82)!important;
 }
-/* Cards da tela inicial: desfoque reforçado */
+/* Cards da tela inicial */
 .home-wrap .frosted-card,
 #welcome-card.frosted-card{
   -webkit-backdrop-filter:blur(40px) saturate(.82)!important;
@@ -450,7 +449,7 @@ textarea{
 
 </style>
 <style>
-/* Styles for the starter page. They only apply to its own classes. */
+/* Styles for the starter page */
 .hello-page {
   margin: 0;
   min-height: 100vh;
@@ -606,7 +605,7 @@ textarea{
   box-shadow:inset 1px 1px 1px -.5px rgba(255,255,255,.3),inset -1px -1px 1px -.5px rgba(255,255,255,.12)!important;
 }
 
-/* Configurações: grupos em vidro escuro, setas e rodapé discreto */
+/* Configurações: grupos em vidro escuro, setas e rodapé */
 .opt-sec{margin:0 .35rem .5rem!important}
 .opt-group,#modal-sub-backup section{
   background:rgba(12,12,14,.55);
@@ -639,25 +638,25 @@ textarea{
 .card-min-abs{position:absolute;top:.55rem;right:.55rem;z-index:2}
 .card-mini{min-height:3rem}
 
-/* Tela inicial: cards sem desfoque (evita o blur aparecer só depois da animação de entrada) */
+/* Tela inicial: cards sem desfoque */
 .home-wrap .frosted-card{
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
 
-/* Botões de ação dos cards: padrão único em caixa */
+/* Botões de ação dos cards */
 .btn-card{font-size:.75rem;line-height:1.2;padding:.45rem .85rem;border-radius:.8rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#e5e7eb;font-weight:500;white-space:nowrap;transition:background .15s,color .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
 .btn-card:hover,.btn-card:active{background:rgba(255,255,255,.16);color:#fff}
 .btn-card-danger{color:#f87171;background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.28)}
 .btn-card-danger:hover,.btn-card-danger:active{background:rgba(239,68,68,.2);color:#fca5a5}
 .nota-acoes,.card-acoes{gap:.5rem}
-/* Cards sem desfoque (dock mantém o dela) */
+/* Cards sem desfoque */
 .frosted-card,.home-wrap .frosted-card,#tela-login-inicial .frosted-card,.frosted-modal,#registro-caixa,#modal-registro.registro-card-view #registro-caixa,#welcome-modal #welcome-card.frosted-card,.opt-group,#modal-sub-backup section{
   -webkit-backdrop-filter:none!important;
   backdrop-filter:none!important;
 }
 
-/* Cards e modais sem desfoque (a dock mantém o dela) */
+/* Cards e modais sem desfoque */
 .frosted-card,.home-wrap .frosted-card,#tela-login-inicial .frosted-card,
 .frosted-modal,#registro-caixa,#modal-registro.registro-card-view #registro-caixa,
 #welcome-modal #welcome-card.frosted-card,.opt-group,#modal-sub-backup section{
@@ -689,7 +688,7 @@ textarea{
       </h1>
       <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">LIDOLIVROS</p>
     </div>
-    <p class="text-xs text-gray-300 leading-relaxed">Adicione sua conta do Google para manter seus dados em todos os lugares.</p>
+    <p class="text-xs text-gray-300 leading-relaxed">Adicione sua conta do Google para acessar seus dados em todos os lugares.</p>
     
     <div class="space-y-3 text-left">
       <label class="block text-xs font-medium text-gray-300">Como prefere ser chamado(a)?</label>
@@ -709,7 +708,7 @@ textarea{
 
     <div class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-left">
       <p class="text-[11px] text-amber-300/90 leading-tight">
-        Aplicação em fase de desenvolvimento.
+        Os dados salvos ficam na sua conta do Google Drive, no arquivo acessível LidosBackup
       </p>
     </div>
   </div>
@@ -814,7 +813,7 @@ textarea{
 </form>
 </div></div>
 
-<!-- Estou Criando um Livro -->
+<!-- Bloco do Editor -->
 <div id="tela-escrevendo-livro" class="fixed inset-0 z-50 bg-[#000000] overflow-y-auto hidden">
   <div class="sticky top-0 z-10 bg-[#000000]/80 backdrop-blur-xl border-b border-white/10">
     <div class="max-w-2xl mx-auto px-5 py-4 flex items-center justify-between">
@@ -841,7 +840,7 @@ textarea{
         </div>
         <div class="min-w-0 flex-1 py-1">
           <p id="escrita-resumo-rotulo" class="text-[10px] uppercase tracking-[.2em] text-amber-200/70 mb-2">Novo projeto</p>
-          <h3 id="escrita-resumo-titulo" class="font-serif text-xl sm:text-2xl font-semibold leading-tight text-white break-words">Seu próximo livro</h3>
+          <h3 id="escrita-resumo-titulo" class="font-serif text-xl sm:text-2xl font-semibold leading-tight text-white break-words">Seu próprio livro</h3>
           <p id="escrita-resumo-autor" class="text-sm text-gray-300 mt-2 break-words">Autor</p>
           <div id="escrita-progresso" class="mt-3 hidden"><div class="h-1.5 rounded-full bg-white/10 overflow-hidden"><div id="escrita-progresso-barra" class="h-full rounded-full btn-gold-degrade" style="width:0%"></div></div><p id="escrita-progresso-txt" class="text-[11px] text-gray-400 mt-1.5"></p></div>
         </div>
@@ -893,7 +892,7 @@ textarea{
       <div class="pt-4 mt-1 border-t border-white/10 text-center"><button type="button" id="btn-excluir-livro-escrito" onclick="deletarLivroEscrito(this)" class="btn-card btn-card-danger">Excluir livro</button></div>
     </form>
 
-    <!-- Notas do Bloco do Escritor -->
+    <!-- Notas do Bloco do Editor -->
     <div id="painel-escritor-notas" class="space-y-4 hidden">
       <h3 class="text-sm font-bold uppercase tracking-wider text-gold-400">Notas do seu livro</h3>
       <p id="escritor-notas-aviso" class="text-sm text-gray-300 hidden">Salve o livro na aba Dados para adicionar notas. <button type="button" onclick="mudarAbaEscritor('livro')" class="text-gold-400 underline">Ir para Dados</button></p>
@@ -924,13 +923,13 @@ textarea{
     <span id="welcome-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span>
     <h2 id="welcome-title" class="font-serif font-semibold text-white">Olá,</h2>
     <div id="welcome-copy">
-      <p>O LIDOLIVROS (Lili) é um aplicativo para registro de leituras e notas que preserva seus dados de forma descentralizada. Conectado ao seu próprio Google Drive, você mantém um backup na nuvem e acessa seus dados em outros dispositivos.</p>
-      <p>O arquivo de backup é <strong class="text-white">LidosBackup</strong> e ocupa menos de 1MB.</p>
-      <p>Registre livros e notas avulsas, organize marcadores do Kindle, crie uma Lista de Desejo, gere prompts para receber indicações de IA e consulte suas estatísticas na página Lidos.</p>
+      <p>O Lili é um aplicativo para registro de leituras e notas que preserva seus dados no seu próprio Google Drive, sem a dependência de servidores externos, permitindo fácil acesso aos seus arquivos mesmo fora da aplicação.</p>
+      <p>Navegue pela Dock e conheça as funções <strong class="text-white">Registro de leitura (comentários, notas e mais), Estatísticas, Ranking, marcadores do Kindle, notas avulsas</strong> e mais.</p>
+      <p>Você pode adicionar um atalho do Lili na sua tela inicial.</p>
     </div>
-    <!-- Botão de Instalação com efeito Liquid Glass -->
+    <!-- Botão de Instalação -->
     <button type="button" id="btn-instalar-lili-welcome" onclick="instalarAppLiLi()" class="btn-liquid-glass-install">
-      <span>Instalar o Lili no Dispositivo</span>
+      <span>Instalar o Lili</span>
     </button>
   </section>
 </div>
@@ -2144,7 +2143,7 @@ function deletarNota(id,btn){doisToques(btn,()=>{notas=notas.filter(n=>n.id!==id
 
 /* tela dedicada de leitura de nota */
 let notaLeituraId=null,notaLeituraEdit=false,rtRange=null;
-/* texto rico: só <b>, <i>, <u> e quebras de linha */
+/* texto rico */
 function rtSerializar(raiz){
 let html='',texto='';
 const wrap=(t,c)=>{if(!t)return '';let r=t;if(c.u)r='<u>'+r+'</u>';if(c.i)r='<i>'+r+'</i>';if(c.b)r='<b>'+r+'</b>';return r};
@@ -2782,7 +2781,7 @@ const chips=[lendo.formato,lendo.paginas>0?`${lendo.paginas} págs`:''].filter(B
 const outrosHtml=outros.length?`<button onclick="event.stopPropagation();mudarAba('lendo')" class="flex items-center gap-2 mt-4 pt-3 border-t border-white/10 w-full text-left"><span class="flex -space-x-2 shrink-0">${outros.slice(0,4).map(o=>`<img src="${esc(o.capa||'')}" class="w-7 h-10 object-cover rounded border border-white/20 shadow" onerror="this.style.visibility='hidden'">`).join('')}</span><span class="text-xs text-gray-300 truncate min-w-0 flex-1">Também em leitura: ${outros.slice(0,2).map(o=>esc(o.titulo)).join(', ')}${outros.length>2?` e +${outros.length-2}`:''}</span><span class="text-gray-500 shrink-0">›</span></button>`:'';
 addSecao(wrap,cardMinimizado('lendo')?miniCard('lendo','Lendo:',esc(lendo.titulo),outros.length?`+${outros.length} de livros`:''):`<div onclick="editarLivro(${lendo.id})" class="frosted-card lendo-hero relative p-5 w-full cursor-pointer shadow-2xl">${minBtn('lendo',false,true)}<div class="mb-3 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Em leitura</span></div><div class="flex items-center gap-5">${imgCapa(lendo.capa,'lendo-capa w-28 h-40',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-2xl font-bold text-white leading-tight line-clamp-3">${esc(lendo.titulo)}</h3><p class="text-gold-400 text-sm truncate mt-1">${esc(lendo.autor||'')}</p>${chips?`<div class="flex flex-wrap gap-1.5 mt-3">${chips}</div>`:''}${tempo?`<p class="text-xs text-gray-400 mt-3">${tempo}</p>`:''}</div></div>${outrosHtml}</div>`,lendo.capa,0,false);
 }
-// Card do Livro Sendo Escrito ("BLOCO DO EDITOR")
+// Card do Bloco do Editor
 if(livroEscrito){
   addSecao(wrap, cardMinimizado('editor')?miniCard('editor','Escrevendo:',esc(livroEscrito.titulo),`Cap. ${livroEscrito.capitulo_atual}/${livroEscrito.capitulos_totais}`):`<div onclick="abrirModalEscrevendoLivro()" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between">${minBtn('editor',false,true)}<div class="flex items-center justify-between mb-2 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">SEU PRÓPRIO LIVRO</span><span class="text-[10px] text-gray-400">Acessar Bloco do Editor</span></div><div class="flex items-start gap-4">${imgCapa(livroEscrito.capa,'w-20 h-28',null,null)}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(livroEscrito.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(usuarioNome||livroEscrito.autor)}</p><div class="text-gold-400 text-sm tracking-wide mt-1">Capítulo ${livroEscrito.capitulo_atual} de ${livroEscrito.capitulos_totais}</div><p class="text-gray-300 text-xs mt-1">${livroEscrito.paginas} páginas escritas até agora</p></div></div></div>`, livroEscrito.capa, 1, false);
 }
@@ -3287,7 +3286,7 @@ if(tipos.length){
   });
   yy=py+ph;
 }
-/* Abandonados (info pequena) */
+/* Abandonados */
 const aband=biblioteca.filter(l=>statusDe(l)==='abandonado').length;
 if(aband>0){
   ctx.save();ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=12;
@@ -3296,7 +3295,7 @@ if(aband>0){
   yy+=50;
 }
 
-/* Top 3 pela nota */
+/* Top 3 */
 if(top3.length){
   ctx.save();ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=14;
   ctx.textAlign='center';ctx.font='800 40px "Inter",sans-serif';ctx.fillStyle='#FACC15';
