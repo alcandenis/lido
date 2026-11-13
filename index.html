@@ -129,7 +129,7 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .bg-os i{position:absolute;display:block;border-radius:14%/9.6%;background:linear-gradient(135deg,#facc15 0%,#fb923c 100%);animation:osIn .9s ease backwards}
 @keyframes osIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.bg-os i{animation:none}}
-.ghost-card{border:1.5px dashed rgba(255,255,255,.22)!important;background:rgba(12,12,12,.4)!important;display:block;cursor:pointer}
+.home-wrap #welcome-modal{position:static!important;display:block!important;padding:0!important;overflow:visible!important;pointer-events:auto!important}
 @keyframes bounceSlow{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 .animate-bounce-slow{animation:bounceSlow 2s infinite ease-in-out}
 .sel-mark{display:none;position:absolute;top:.75rem;right:.75rem;width:1.75rem;height:1.75rem;border-radius:9999px;border:2px solid rgba(255,255,255,.5);align-items:center;justify-content:center;background:rgba(0,0,0,.4);color:transparent;font-size:.9rem;font-weight:700;z-index:2}
@@ -927,23 +927,6 @@ textarea{
 </div>
 
 <!-- Boas-vindas -->
-<div id="welcome-modal" class="fixed inset-0 z-[45] flex items-center justify-center p-3" style="display:none" aria-labelledby="welcome-title">
-  <section id="welcome-card" class="frosted-card shadow-2xl relative mx-auto">
-    <button type="button" id="welcome-close" onclick="fecharBoasVindas()" aria-label="Fechar Boas-vindas" title="Fechar" style="display:none;position:absolute;top:.65rem;right:.65rem;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:9999px;color:#d1d5db;background:rgba(0,0,0,.03);font-size:1.35rem;line-height:1">×</button>
-    <span id="welcome-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span>
-    <h2 id="welcome-title" class="font-serif font-semibold text-white">Olá,</h2>
-    <div id="welcome-copy">
-      <p>O Lili é um aplicativo para registro de leituras e notas que preserva seus dados no seu próprio Google Drive, sem a dependência de servidores externos, permitindo fácil acesso aos seus arquivos mesmo fora da aplicação.</p>
-      <p>Navegue pela Dock e conheça as funções <strong class="text-white">Registro de leitura (comentários, notas e mais), Estatísticas, Ranking, marcadores do Kindle, notas avulsas</strong> e mais.</p>
-      <p>Você pode adicionar um atalho do Lili na sua tela inicial.</p>
-    </div>
-    <!-- Botão de Instalação -->
-    <button type="button" id="btn-instalar-lili-welcome" onclick="instalarAppLiLi()" class="btn-liquid-glass-install">
-      <span>Instalar o Lili</span>
-    </button>
-    <button type="button" id="welcome-importar" onclick="fecharBoasVindas();abrirImportarInicio()" class="text-xs text-gray-400 underline underline-offset-4 py-1">Já tem histórico? Importar</button>
-  </section>
-</div>
 
 <!-- Tela dedicada de leitura de nota -->
 <div id="nota-leitura" class="hidden" role="dialog" aria-modal="true" aria-label="Nota">
@@ -1641,8 +1624,13 @@ $('bg-glow').style.opacity=k?'0':'.25';
 atualizarOsFundo();
 }
 function atualizarTituloBoasVindas(){const t=$('welcome-title');if(t)t.textContent=usuarioNome?`Olá, ${usuarioNome}`:'Olá,'}
-function mostrarBoasVindas(apenasBoasVindas=false){atualizarTituloBoasVindas();const m=$('welcome-modal'),close=$('welcome-close'),cta=$('welcome-add-first');if(m){m.style.display='flex';document.body.classList.add('welcome-open');document.body.classList.toggle('welcome-menu-open',!!apenasBoasVindas);if(close){close.style.display=apenasBoasVindas?'flex':'none'}if(cta){cta.style.display=apenasBoasVindas?'none':''}const imp=$('welcome-importar');if(imp)imp.style.display=apenasBoasVindas?'none':''}}
-function fecharBoasVindas(){const m=$('welcome-modal');if(m)m.style.display='none';document.body.classList.remove('welcome-open','welcome-menu-open')}
+let welcomeForcado=false;
+function htmlBoasVindas(forcado,vazio){
+const nome=usuarioNome?`Olá, ${esc(usuarioNome)}`:'Olá,';
+return `<div id="welcome-modal" aria-labelledby="welcome-title"><section id="welcome-card" class="frosted-card shadow-2xl relative mx-auto">${forcado?'<button type="button" id="welcome-close" onclick="fecharBoasVindas()" aria-label="Fechar Boas-vindas" title="Fechar" style="display:flex;position:absolute;top:.65rem;right:.65rem;width:2rem;height:2rem;align-items:center;justify-content:center;border-radius:9999px;color:#d1d5db;background:rgba(0,0,0,.03);font-size:1.35rem;line-height:1">×</button>':''}<span id="welcome-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span><h2 id="welcome-title" class="font-serif font-semibold text-white">${nome}</h2><div id="welcome-copy"><p>O Lili é um aplicativo para registro de leituras e notas que preserva seus dados no seu próprio Google Drive, sem a dependência de servidores externos, permitindo fácil acesso aos seus arquivos mesmo fora da aplicação.</p><p>Navegue pela Dock e conheça as funções <strong class="text-white">Registro de leitura (comentários, notas e mais), Estatísticas, Ranking, marcadores do Kindle, notas avulsas</strong> e mais.</p><p>Você pode adicionar um atalho do Lili na sua tela inicial.</p></div><button type="button" id="btn-instalar-lili-welcome" onclick="instalarAppLiLi()" class="btn-liquid-glass-install"><span>Instalar o Lili</span></button>${vazio?'<button type="button" id="welcome-importar" onclick="abrirImportarInicio()" class="text-xs text-gray-400 underline underline-offset-4 py-1">Já tem histórico? Importar</button>':''}</section></div>`;
+}
+function mostrarBoasVindas(forcar=false){if(forcar)welcomeForcado=true;if(abaAtual==='inicio')renderizarFeed();else if(forcar)mudarAba('inicio')}
+function fecharBoasVindas(){if(welcomeForcado){welcomeForcado=false;if(abaAtual==='inicio')renderizarFeed()}document.body.classList.remove('welcome-open','welcome-menu-open')}
 function concluirBoasVindasAposConteudo(){fecharBoasVindas();lsSet('lido_boas_vindas_vista','1')}
 function cancelarNovaPassagem(){toggleModalNovoRegistro();if(lsGet('lido_boas_vindas_vista')!=='1')mostrarBoasVindas()}
 function atualizarIconeDockNovaPassagem(){const modal=$('modal-registro'),aberto=!!(modal&&!modal.classList.contains('hidden')),btn=$('dock-add-button'),path=$('dock-add-icon-path');if(path)path.setAttribute('d',aberto?'M6 6l12 12M18 6L6 18':'M12 5v14m7-7H5');if(btn){btn.title=aberto?'Fechar Nova passagem':'Nova passagem';btn.setAttribute('aria-label',aberto?'Fechar Nova passagem':'Abrir Nova passagem')}}
@@ -2763,7 +2751,7 @@ el.dataset.ok='1';
 function atualizarOsFundo(){
 const el=$('bg-os');if(!el)return;
 renderOs(el);
-el.classList.toggle('on',!bgCustomizado&&abaAtual!=='kindle'&&(!currentCapaUrl||currentCapaUrl===BG_PADRAO));
+el.classList.toggle('on',!bgCustomizado&&abaAtual!=='kindle'&&abaAtual!=='lidos'&&(!currentCapaUrl||currentCapaUrl===BG_PADRAO));
 }
 function mostrarRetangulo(){atualizarOsFundo()}
 function abrirImportarInicio(){$('modal-importar-inicio').classList.remove('hidden')}
@@ -2772,6 +2760,7 @@ renderOs($('bg-os-login'));renderOs($('bg-os'));
 
 function renderizarFeed(scrollToId=null){
 homeSemCapa=false;
+if(abaAtual!=='inicio')welcomeForcado=false;
 aplicarBlurFundo();
 atualizarTitulo();
 const feed=$('feed-container');
@@ -2836,14 +2825,10 @@ if(livroEscrito){
 
 if(l)addSecao(wrap,cardMinimizado('passagem')?miniCard('passagem','Passagem:',esc(l.titulo),biblioteca.filter(x=>statusDe(x)!=='desejado').length>1?`+${biblioteca.filter(x=>statusDe(x)!=='desejado').length-1} de passagens`:''):`<div onclick="abrirPassagem(${l.id})" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between">${minBtn('passagem',false,true)}<div class="flex items-center justify-between mb-2 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 if(notas[0])addSecao(wrap,cardMinimizado('nota')?miniCard('nota','Nota:',esc(notas[0].texto.replace(/\s+/g,' ')),notas.length>1?`+${notas.length-1} de notas`:''):`<div onclick="filtroTodos='notas';mudarAba('todos')" class="frosted-card relative p-4 w-full shadow-2xl flex flex-col justify-between cursor-pointer">${minBtn('nota',false,true)}<span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
-if(!biblioteca.length&&!notas.length&&!(notasKindle||[]).length&&!livroEscrito){
-const g=(t,d,i)=>addSecao(wrap,`<button type="button" onclick="alternarNovaPassagemDock()" class="frosted-card ghost-card w-full p-4 text-left"><span class="block text-[10px] uppercase tracking-widest text-gray-500">${t}</span><span class="block text-sm text-gray-300 mt-1">${d}</span></button>`,BG_PADRAO,i);
-g('Lendo agora','Registre o livro que você está lendo.',0);
-g('Passagem','Guarde os trechos que ficaram com você.',1);
-g('Nota','Anote ideias soltas, sem livro.',2);
-addSecao(wrap,`<button type="button" onclick="abrirImportarInicio()" class="w-full py-2 text-xs text-gray-400 underline underline-offset-4">Já tem histórico? Importar</button>`,BG_PADRAO,3);
-}
+const vazio=!biblioteca.length&&!notas.length&&!(notasKindle||[]).length&&!livroEscrito;
+if(vazio||welcomeForcado){const w=addSecao(wrap,htmlBoasVindas(welcomeForcado,vazio),BG_PADRAO,0);if(!vazio)wrap.insertBefore(w,wrap.firstChild)}
 feed.appendChild(wrap);
+if(vazio||welcomeForcado){try{atualizarBotaoInstalarLiLi()}catch(e){}}
 homeSemCapa=!l||!capaValida(l.capa);
 transicionarFundo(bgCustomizado || (homeSemCapa?BG_PADRAO:l.capa));
 if(!homeSemCapa && !bgCustomizado){const im=new Image();im.onerror=()=>{if(abaAtual==='inicio'&&biblioteca[0]===l){homeSemCapa=true;transicionarFundo(BG_PADRAO);mostrarRetangulo()}};im.src=l.capa}
