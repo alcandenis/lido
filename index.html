@@ -1984,7 +1984,7 @@ return `<button onclick="abrirPassagem(${x.id})" class="flex items-center gap-3 
 }
 function htmlCapasLidos(l){
 if(!l.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro concluído ainda.</p>';
-return `<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">${[...l].sort(favPrimeiro).map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">${x.favorito?`<span class="absolute top-1 right-1" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))">${iconeCoracao(14)}</span>`:''}</button>`).join('')}</div>`;
+return `<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">${[...l].sort(favPrimeiro).map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">${x.favorito?'<span class="absolute inset-0 pointer-events-none" style="background:radial-gradient(circle at 100% 0%,rgba(248,113,113,.45) 0%,rgba(248,113,113,0) 50%)"></span>':''}</button>`).join('')}</div>`;
 }
 function parseData(br){let m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br||''));if(m)return{m:+m[2],a:+m[3]};m=/^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/.exec(String(br||''));return m?{m:+m[2],a:+m[1]}:null}
 function barraStat(rot,n,max,cor='linear-gradient(90deg,#FACC15,#F59E0B)'){return `<div class="space-y-1.5"><div class="flex justify-between gap-3 text-xs"><span class="text-gray-200 truncate pr-2">${esc(rot)}</span><span class="text-white font-semibold tabular-nums">${n}</span></div><div class="stats-track"><div class="h-full rounded-full" style="width:${max?Math.round(n/max*100):0}%;background:${cor}"></div></div></div>`}
@@ -2811,7 +2811,7 @@ wrap.className='home-wrap space-y-3 pb-4 w-full my-auto';
 
 
 // Card "Em leitura" (destaque)
-const lendoLista=biblioteca.filter(x=>statusDe(x)==='lendo');
+const lendoLista=biblioteca.filter(x=>statusDe(x)==='lendo').sort(principalPrimeiro);
 if(lendoLista.length){
 const lendo=lendoLista[0],outros=lendoLista.slice(1),dias=diasDesde(lendo.data_inicio);
 const tempo=dias==null?'':dias===0?'Começou hoje':dias===1?'Começou ontem':dias<60?`Lendo há ${dias} dias`:`Lendo há ${Math.floor(dias/30)} meses`;
@@ -2975,12 +2975,12 @@ transicionarFundo(bgCustomizado || BG_PADRAO);
 if(scrollToId)setTimeout(()=>{const c=$(`card-item-${scrollToId}`);if(c)c.scrollIntoView({behavior:'smooth',block:'start'})},100);
 }
 function renderizarAbaLendo(feed){
-const lendo=biblioteca.filter(l=>statusDe(l)==='lendo');
+const lendo=biblioteca.filter(l=>statusDe(l)==='lendo').sort(principalPrimeiro);
 addSecao(feed,`<div class="px-1"><h2 class="text-lg font-bold text-white font-serif mb-1">Em leitura</h2></div>`,bgCustomizado || BG_PADRAO,0,false);
 if(!lendo.length){
   addSecao(feed,`<div class="frosted-card p-6 w-full text-center"><p class="text-sm text-gray-400">Nenhum livro em leitura.</p></div>`,bgCustomizado || BG_PADRAO,1,false);
 }else{
-  addSecao(feed,`<div class="w-full">${lendo.map(l=>`<button onclick="editarLivro(${l.id})" class="flex items-center gap-4 w-full text-left py-3 border-b border-white/10 last:border-0" aria-label="${esc(l.titulo)}"><span class="relative w-14 h-20 flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(l.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block font-serif text-base font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</span><span class="block text-sm text-gold-400 truncate mt-0.5">${esc(l.autor||'')}</span>${l.data_inicio?`<span class="block text-xs text-gray-400 mt-1">Desde ${esc(String(l.data_inicio).replace(/^(\d{4})-(\d{2})-(\d{2}).*$/,'$3/$2/$1'))}</span>`:''}</span></button>`).join('')}</div>`,bgCustomizado || BG_PADRAO,1,false);
+  addSecao(feed,`<div class="w-full">${lendo.map(l=>`<div class="flex items-center gap-2 border-b border-white/10 last:border-0"><button onclick="editarLivro(${l.id})" class="flex items-center gap-4 flex-1 min-w-0 text-left py-3" aria-label="${esc(l.titulo)}"><span class="relative w-14 h-20 flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(l.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block font-serif text-base font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</span><span class="block text-sm text-gold-400 truncate mt-0.5">${esc(l.autor||'')}</span>${infoLendo(l)?`<span class="block text-xs text-gray-400 mt-1">${esc(infoLendo(l))}</span>`:''}</span></button><button onclick="alternarPrincipal(${l.id})" aria-pressed="${l.principal?'true':'false'}" aria-label="${l.principal?'Remover como leitura principal':'Marcar como leitura principal'}" class="flex-shrink-0 text-[10px] uppercase tracking-wide px-2.5 py-1 rounded-full border ${l.principal?'border-transparent font-semibold':'border-white/20 text-gray-300'}" ${l.principal?'style="background:linear-gradient(90deg,#facc15,#fb923c);color:#000"':''}>${l.principal?'Principal':'Destacar'}</button></div>`).join('')}</div>`,bgCustomizado || BG_PADRAO,1,false);
 }
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
@@ -3012,7 +3012,23 @@ itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
 const COR_FAV='#F87171';
-function iconeCoracao(px,cheio=true){return `<svg viewBox="0 0 24 24" width="${px}" height="${px}" fill="${cheio?COR_FAV:'none'}" stroke="${cheio?COR_FAV:'currentColor'}" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 21C12 21 3 14.5 3 8.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 2.5C21 14.5 12 21 12 21z"/></svg>`}
+const principalPrimeiro=(a,b)=>(b.principal?1:0)-(a.principal?1:0);
+function infoLendo(l){
+const d=diasDesde(l.data_inicio);
+const t=d==null?'':d===0?'Começou hoje':d===1?'Começou ontem':d<60?`Lendo há ${d} dias`:`Lendo há ${Math.floor(d/30)} meses`;
+const ds=l.data_inicio?'Desde '+String(l.data_inicio).replace(/^(\d{4})-(\d{2})-(\d{2}).*$/,'$3/$2/$1'):'';
+return [t,ds].filter(Boolean).join(' · ');
+}
+function alternarPrincipal(id){
+const l=biblioteca.find(x=>x.id===id);if(!l)return;
+const novo=!l.principal;
+biblioteca.forEach(x=>{if(x.principal)x.principal=false});
+l.principal=novo;
+salvarLocal();
+aviso(novo?'Leitura principal definida.':'Leitura principal removida.');
+renderizarFeed();
+}
+function iconeCoracao(px,cheio=true){return `<svg viewBox="0 0 24 24" width="${px}" height="${px}" fill="${cheio?COR_FAV:'none'}" stroke="${cheio?COR_FAV:'currentColor'}" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path stroke-linecap="round" d="M12 20.3c-.5 0-1-.2-1.4-.5C6 16 3 13.3 3 9.9 3 7.2 5.1 5 7.8 5c1.7 0 3.2.9 4.2 2.3C13 5.9 14.5 5 16.2 5 18.9 5 21 7.2 21 9.9c0 3.4-3 6.1-7.6 9.9-.4.3-.9.5-1.4.5z"/></svg>`}
 function livroFavorito(){return biblioteca.find(x=>x.favorito&&statusDe(x)!=='desejado')||null}
 const favPrimeiro=(a,b)=>(b.favorito?1:0)-(a.favorito?1:0);
 function alternarFavorito(id){
