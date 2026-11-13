@@ -1968,22 +1968,23 @@ const optAno=`<select onchange="definirRankAno(this.value)" class="${selCls}">${
 const optMes=`<select onchange="definirRankMes(this.value)" class="${selCls}">${MESES_RK.map((m,k)=>`<option value="${k+1}"${k+1===rankMes?' selected':''}>${m}</option>`).join('')}</select>`;
 const menu=rankMenu?`<div class="frosted-card p-3 w-full max-w-xs mt-2 space-y-3 shadow-2xl"><div class="grid grid-cols-3 gap-1">${[['geral','Geral'],['mes','Mês'],['ano','Ano']].map(([k,r])=>`<button onclick="definirRankModo('${k}')" class="tab-reg sm${rankModo===k?' ativo':''} text-center">${r}</button>`).join('')}</div>${rankModo==='mes'?`<div class="flex gap-2">${optMes}${optAno}</div>`:rankModo==='ano'?`<div class="flex gap-2">${optAno}</div>`:''}</div>`:'';
 const btn=`<div class="px-1 pb-2"><button onclick="toggleRankMenu()" class="tab-reg sm ativo inline-flex items-center gap-2" aria-expanded="${rankMenu}"><span>${rot}</span><span aria-hidden="true">${rankMenu?'▴':'▾'}</span></button>${menu}</div>`;
-const corpo=(rankModo!=='geral'&&!f.some(x=>(parseFloat(x.nota)||0)>0))?'<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado neste período.</p>':htmlRanking(f);
+const corpo=(rankModo!=='geral'&&!f.some(x=>x.favorito||(parseFloat(x.nota)||0)>0))?'<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado neste período.</p>':htmlRanking(f);
 return btn+corpo;
 }
 function htmlRanking(lidos){
-const av=lidos.filter(x=>(parseFloat(x.nota)||0)>0).sort((a,b)=>(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR'));
+const av=lidos.filter(x=>x.favorito||(parseFloat(x.nota)||0)>0).sort((a,b)=>favPrimeiro(a,b)||(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR'));
 if(!av.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado ainda.</p>';
 let pos=0,ant=null;
 return `<div class="w-full">${av.map((x,i)=>{
 const n=parseFloat(x.nota)||0;
-pos=i+1;
-const topo=pos<=3;
-return `<button onclick="abrirPassagem(${x.id})" class="flex items-center gap-3 w-full text-left py-2 border-b border-white/5 last:border-0" aria-label="${esc(x.titulo)}"><span class="w-6 flex-shrink-0 text-center text-sm font-semibold tabular-nums ${topo?'text-gold-400':'text-gray-400'}">${pos}</span><span class="relative w-9 h-[3.4rem] flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(x.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block text-sm font-semibold text-white truncate">${esc(x.titulo)}</span><span class="block text-[11px] text-gray-400 truncate">${esc(x.autor||'')}</span></span><span class="flex-shrink-0 text-right">${gerarEstrelasStr(n)}<span class="block text-[11px] text-gray-300 tabular-nums mt-0.5">${String(n).replace('.',',')}</span></span></button>`}).join('')}</div>`;
+const fav=!!x.favorito;
+if(!fav)pos++;
+const topo=!fav&&pos<=3;
+return `<button onclick="abrirPassagem(${x.id})" class="flex items-center gap-3 w-full text-left py-2 border-b border-white/5 last:border-0" aria-label="${esc(x.titulo)}"><span class="w-6 flex-shrink-0 text-center text-sm font-semibold tabular-nums ${topo?'text-gold-400':'text-gray-400'}">${fav?iconeCoracao(16):pos}</span><span class="relative w-9 h-[3.4rem] flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(x.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block text-sm font-semibold text-white truncate">${esc(x.titulo)}</span><span class="block text-[11px] text-gray-400 truncate">${esc(x.autor||'')}</span></span><span class="flex-shrink-0 text-right">${gerarEstrelasStr(n)}<span class="block text-[11px] text-gray-300 tabular-nums mt-0.5">${String(n).replace('.',',')}</span></span></button>`}).join('')}</div>`;
 }
 function htmlCapasLidos(l){
 if(!l.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro concluído ainda.</p>';
-return `<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">${l.map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></button>`).join('')}</div>`;
+return `<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">${[...l].sort(favPrimeiro).map(x=>`<button onclick="abrirPassagem(${x.id})" class="relative aspect-[2/3] rounded-md overflow-hidden border border-white/10 bg-[#1b2230] hover:border-white/50 transition-colors" aria-label="${esc(x.titulo)}"><span class="absolute inset-0 flex items-center justify-center p-1 text-[9px] text-gray-300 text-center leading-tight">${esc(x.titulo)}</span><img src="${esc(x.capa)}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'">${x.favorito?`<span class="absolute top-1 right-1" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))">${iconeCoracao(14)}</span>`:''}</button>`).join('')}</div>`;
 }
 function parseData(br){let m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br||''));if(m)return{m:+m[2],a:+m[3]};m=/^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/.exec(String(br||''));return m?{m:+m[2],a:+m[1]}:null}
 function barraStat(rot,n,max,cor='linear-gradient(90deg,#FACC15,#F59E0B)'){return `<div class="space-y-1.5"><div class="flex justify-between gap-3 text-xs"><span class="text-gray-200 truncate pr-2">${esc(rot)}</span><span class="text-white font-semibold tabular-nums">${n}</span></div><div class="stats-track"><div class="h-full rounded-full" style="width:${max?Math.round(n/max*100):0}%;background:${cor}"></div></div></div>`}
@@ -2824,6 +2825,8 @@ if(livroEscrito){
 }
 
 if(l)addSecao(wrap,cardMinimizado('passagem')?miniCard('passagem','Passagem:',esc(l.titulo),biblioteca.filter(x=>statusDe(x)!=='desejado').length>1?`+${biblioteca.filter(x=>statusDe(x)!=='desejado').length-1} de passagens`:''):`<div onclick="abrirPassagem(${l.id})" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between">${minBtn('passagem',false,true)}<div class="flex items-center justify-between mb-2 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
+const fv=livroFavorito();
+if(fv)addSecao(wrap,`<div onclick="abrirPassagem(${fv.id})" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex items-center gap-3"><img src="${esc(fv.capa||'')}" alt="" class="w-12 h-[4.5rem] object-cover rounded border border-white/15 flex-shrink-0" onerror="this.style.visibility='hidden'"><div class="min-w-0"><span class="flex items-center gap-1 text-[11px] uppercase tracking-widest font-bold" style="color:${COR_FAV}">${iconeCoracao(12)}Livro favorito</span><span class="block text-white font-serif text-lg font-semibold truncate">${esc(fv.titulo)}</span><span class="block text-xs text-gray-400 truncate">${esc(fv.autor||'')}</span></div></div>`,bgCustomizado||fv.capa||BG_PADRAO);
 if(notas[0])addSecao(wrap,cardMinimizado('nota')?miniCard('nota','Nota:',esc(notas[0].texto.replace(/\s+/g,' ')),notas.length>1?`+${notas.length-1} de notas`:''):`<div onclick="filtroTodos='notas';mudarAba('todos')" class="frosted-card relative p-4 w-full shadow-2xl flex flex-col justify-between cursor-pointer">${minBtn('nota',false,true)}<span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
 const vazio=!biblioteca.length&&!notas.length&&!(notasKindle||[]).length&&!livroEscrito;
 if(vazio||welcomeForcado){const w=addSecao(wrap,htmlBoasVindas(welcomeForcado,vazio),BG_PADRAO,0);if(!vazio)wrap.insertBefore(w,wrap.firstChild)}
@@ -3008,9 +3011,23 @@ if(!itens.length){addSecao(feed,`<div class="frosted-card p-6 w-full text-center
 itens.forEach((l,i)=>addSecao(feed,`<div class="frosted-card p-6 w-full space-y-3 shadow-2xl h-full flex flex-col justify-between"><p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.obs)}</p><div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10"><p class="text-xs text-gold-400 truncate">${esc(l.rot)}</p>${l.nota?`<button onclick="deletarNota(${l.id},this)" class="btn-card btn-card-danger">Excluir</button>`:''}</div></div>`,bgCustomizado || l.capa || BG_PADRAO,i+1,false));
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
+const COR_FAV='#F87171';
+function iconeCoracao(px,cheio=true){return `<svg viewBox="0 0 24 24" width="${px}" height="${px}" fill="${cheio?COR_FAV:'none'}" stroke="${cheio?COR_FAV:'currentColor'}" stroke-width="2" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M12 21C12 21 3 14.5 3 8.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 2.5C21 14.5 12 21 12 21z"/></svg>`}
+function livroFavorito(){return biblioteca.find(x=>x.favorito&&statusDe(x)!=='desejado')||null}
+const favPrimeiro=(a,b)=>(b.favorito?1:0)-(a.favorito?1:0);
+function alternarFavorito(id){
+const l=biblioteca.find(x=>x.id===id);if(!l)return;
+const novo=!l.favorito;
+biblioteca.forEach(x=>{if(x.favorito)x.favorito=false});
+l.favorito=novo;
+salvarLocal();
+aviso(novo?'Livro favorito definido.':'Favorito removido.');
+renderizarFeed();
+abrirPassagem(id);
+}
 function abrirPassagem(id){
 const l=biblioteca.find(x=>x.id===id);if(!l)return;
-$('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div>
+$('passagem-conteudo').innerHTML=`<div class="space-y-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2">${etiquetaStatus(l)}<span class="text-sm text-gray-300 font-light">${l.formato==='Audiobook'?'Áudio':esc(l.formato)}</span></div><div class="flex items-center gap-1"><button onclick="alternarFavorito(${l.id})" class="p-1 text-gray-400 hover:text-white" aria-pressed="${l.favorito?'true':'false'}" aria-label="${l.favorito?'Remover dos favoritos':'Favoritar livro'}">${iconeCoracao(22,!!l.favorito)}</button><button onclick="fecharPassagem()" class="text-gray-400 hover:text-white p-1" aria-label="Fechar">✕</button></div></div>
 <div class="flex items-start gap-4">${imgCapa(l.capa,'w-28 h-40',l.id,'livro')}<div class="space-y-1.5 my-auto"><h2 class="font-serif text-2xl font-bold text-white leading-tight">${esc(l.titulo)}</h2><p class="text-gold-400 text-sm font-medium">por ${esc(l.autor)}</p>${periodoTxt(l)}<div class="text-gold-400 text-lg tracking-widest">${rotuloStatus(l)}</div></div></div>
 ${l.observacao?`<p class="text-gray-100 text-lg md:text-xl font-obs border-l-2 border-gold-400/80 pl-4 py-1 font-light leading-relaxed">${esc(l.observacao)}</p>`:''}
 <div class="flex items-center justify-between gap-2 pt-3 border-t border-white/10 flex-wrap"><span class="logo-lili text-lg"><span class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span><div class="flex items-center gap-2"><button onclick="abrirInstaModal(${l.id})" class="btn-card">Story</button><button onclick="fecharPassagem();editarLivro(${l.id})" class="btn-card">Editar</button><button onclick="deletarLivro(${l.id},this)" class="btn-card btn-card-danger">Excluir</button></div></div></div>`;
