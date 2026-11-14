@@ -696,7 +696,6 @@ textarea{
       <h1 class="text-4xl font-serif font-extrabold tracking-widest">
         <span class="logo-lili"><span id="login-logo-o" class="o-filled-yellow-orange" aria-hidden="true"></span><span class="text-white">Lili</span></span>
       </h1>
-      <p class="text-[10px] text-gray-400 tracking-[0.3em] uppercase">LIDOLIVROS</p>
     </div>
     <p class="text-xs text-gray-300 leading-relaxed">Adicione sua conta do Google para acessar seus dados em todos os lugares.</p>
     
@@ -740,7 +739,7 @@ textarea{
       <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
     </svg>
   </button>
-  <button onclick="toggleModalOpcoes()" class="self-start h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Configurações" title="Configurações"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9h16M4 15h16"/></svg></button>
+  <button onclick="toggleModalOpcoes()" class="self-start h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Configurações" title="Configurações"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5h16M4 10h13M4 15h10M4 20h7"/></svg></button>
 </div>
 </header>
 
@@ -766,7 +765,7 @@ textarea{
 <div class="dock-wrap" style="padding-bottom:calc(.75rem + env(safe-area-inset-bottom,0px))">
 <div class="dock-glass pointer-events-auto">
 <button onclick="mudarAba('inicio')" id="btn-tab-inicio" class="dock-tab" title="Início" aria-label="Início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></button>
-<button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab" title="Textos" aria-label="Textos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></button>
+<button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab" title="Textos" aria-label="Textos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M5 10h14M5 14h14M5 18h8"/></svg></button>
 <button id="dock-add-button" onclick="alternarNovaPassagemDock()" class="dock-add" title="Nova passagem" aria-label="Abrir Nova passagem"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="dock-add-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.75" d="M12 5v14m7-7H5"/></svg></button>
 <button onclick="mudarAba('buscar')" id="btn-tab-buscar" class="dock-tab" title="Buscar" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></button>
 <button onclick="mudarAba('lidos')" id="btn-tab-lidos" class="dock-tab" title="Lidos" aria-label="Lidos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5 10.5 9.8M17 2.5 13.5 9.8"/><circle cx="12" cy="15" r="5.5"/></svg></button>
@@ -988,7 +987,7 @@ textarea{
 <button type="button" id="btn-instalar-lili" onclick="instalarAppLiLi()" class="opt-row opt-instalar"><span class="opt-icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 6v8m-3-3 3 3 3-3"/><path d="M9 18h6"/></svg></span><span class="opt-dois"><span>Instalar o app</span><small>Use o Lili como aplicativo no celular</small></span><span class="opt-chev" aria-hidden="true">›</span></button>
 </div></section>
 
-<footer class="opt-rodape"><p><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span>Lili</span> · LIDOLIVROS · v3.2</p><p>Desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer">@alcandenis</a></p></footer>
+<footer class="opt-rodape"><p><span class="logo-lili"><span class="o-filled-yellow-orange" aria-hidden="true"></span>Lili</span> · v3.2</p><p>Desenhado por <a href="https://www.instagram.com/alcandenis" target="_blank" rel="noopener noreferrer">@alcandenis</a></p></footer>
 </div></div>
 
 <!-- Pop-up Status da Nuvem (Google Drive) -->
@@ -1968,19 +1967,57 @@ const optAno=`<select onchange="definirRankAno(this.value)" class="${selCls}">${
 const optMes=`<select onchange="definirRankMes(this.value)" class="${selCls}">${MESES_RK.map((m,k)=>`<option value="${k+1}"${k+1===rankMes?' selected':''}>${m}</option>`).join('')}</select>`;
 const menu=rankMenu?`<div class="frosted-card p-3 w-full max-w-xs mt-2 space-y-3 shadow-2xl"><div class="grid grid-cols-3 gap-1">${[['geral','Geral'],['mes','Mês'],['ano','Ano']].map(([k,r])=>`<button onclick="definirRankModo('${k}')" class="tab-reg sm${rankModo===k?' ativo':''} text-center">${r}</button>`).join('')}</div>${rankModo==='mes'?`<div class="flex gap-2">${optMes}${optAno}</div>`:rankModo==='ano'?`<div class="flex gap-2">${optAno}</div>`:''}</div>`:'';
 const btn=`<div class="px-1 pb-2"><button onclick="toggleRankMenu()" class="tab-reg sm ativo inline-flex items-center gap-2" aria-expanded="${rankMenu}"><span>${rot}</span><span aria-hidden="true">${rankMenu?'▴':'▾'}</span></button>${menu}</div>`;
-const corpo=(rankModo!=='geral'&&!f.some(x=>x.favorito||(parseFloat(x.nota)||0)>0))?'<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado neste período.</p>':htmlRanking(f);
+const corpo=(rankModo!=='geral'&&!f.length)?'<p class="text-sm text-gray-400 p-2">Nenhum livro lido neste período.</p>':htmlRanking(f);
 return btn+corpo;
 }
+let rankSemNotaAberto=false;
+function toggleRankSemNota(){rankSemNotaAberto=!rankSemNotaAberto;renderizarFeed()}
+function dataFimNum(br){let m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(br||''));if(m)return +m[3]*10000+ +m[2]*100+ +m[1];m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(br||''));return m?+m[1]*10000+ +m[2]*100+ +m[3]:0}
+function mesAnoCurto(br){const p=parseData(br);return p?MESES_RK[p.m-1].slice(0,3).toLowerCase()+'/'+p.a:''}
+function iconeFormato(f){
+const a='width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+if(f==='Audiobook')return `<svg ${a}><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>`;
+if(f==='Físico')return `<svg ${a}><path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2z"/><path d="M12 6v14"/></svg>`;
+return `<svg ${a}><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M11 18h2"/></svg>`;
+}
+function metaRk(x){const m=mesAnoCurto(x.data_fim);return `<span class="flex items-center justify-end gap-1 text-[10px] text-gray-500 tabular-nums" title="${esc(x.formato||'')}">${iconeFormato(x.formato)}${m?`<span>${m}</span>`:''}</span>`}
+function linhaRk(x){
+return `<button onclick="abrirPassagem(${x.id})" class="flex items-center gap-3 w-full text-left py-2 border-b border-white/5 last:border-0" aria-label="${esc(x.titulo)}"><span class="relative w-9 h-[3.4rem] flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(x.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block text-sm font-semibold text-white truncate">${esc(x.titulo)}</span><span class="block text-[11px] text-gray-400 truncate">${esc(x.autor||'')}</span></span><span class="flex-shrink-0">${metaRk(x)}</span></button>`;
+}
 function htmlRanking(lidos){
-const av=lidos.filter(x=>x.favorito||(parseFloat(x.nota)||0)>0).sort((a,b)=>favPrimeiro(a,b)||(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR'));
-if(!av.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado ainda.</p>';
-let pos=0,ant=null;
-return `<div class="w-full">${av.map((x,i)=>{
-const n=parseFloat(x.nota)||0;
-const fav=!!x.favorito;
-if(!fav)pos++;
-const topo=!fav&&pos<=3;
-return `<button onclick="abrirPassagem(${x.id})" class="flex items-center gap-3 w-full text-left py-2 border-b border-white/5 last:border-0" aria-label="${esc(x.titulo)}"><span class="w-6 flex-shrink-0 text-center text-sm font-semibold tabular-nums ${topo?'text-gold-400':'text-gray-400'}">${fav?iconeCoracao(16):pos}</span><span class="relative w-9 h-[3.4rem] flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/10"><img src="${esc(x.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="flex-1 min-w-0"><span class="block text-sm font-semibold text-white truncate">${esc(x.titulo)}</span><span class="block text-[11px] text-gray-400 truncate">${esc(x.autor||'')}</span></span><span class="flex-shrink-0 text-right">${gerarEstrelasStr(n)}<span class="block text-[11px] text-gray-300 tabular-nums mt-0.5">${String(n).replace('.',',')}</span></span></button>`}).join('')}</div>`;
+const nt=x=>parseFloat(x.nota)||0;
+const tit=x=>String(x.titulo||'');
+const fav=lidos.find(x=>x.favorito)||null;
+const rated=lidos.filter(x=>nt(x)>0&&x!==fav).sort((a,b)=>nt(b)-nt(a)||dataFimNum(b.data_fim)-dataFimNum(a.data_fim)||tit(a).localeCompare(tit(b),'pt-BR'));
+const semNota=lidos.filter(x=>nt(x)<=0&&x!==fav).sort((a,b)=>dataFimNum(b.data_fim)-dataFimNum(a.data_fim)||tit(a).localeCompare(tit(b),'pt-BR'));
+if(!fav&&!rated.length&&!semNota.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro avaliado ainda.</p>';
+const avaliados=lidos.filter(x=>nt(x)>0);
+const media=avaliados.length?(avaliados.reduce((s,x)=>s+nt(x),0)/avaliados.length).toFixed(1).replace('.',','):'';
+const resumo=avaliados.length?`<p class="px-1 pb-3 text-xs text-gray-400">${avaliados.length} ${avaliados.length===1?'livro avaliado':'livros avaliados'} · média ${media}</p>`:'';
+let out=resumo;
+if(fav){
+const nf=nt(fav);
+out+=`<button onclick="abrirPassagem(${fav.id})" class="frosted-card relative overflow-hidden w-full p-3 mb-3 text-left flex items-center gap-3 shadow-2xl" aria-label="${esc(fav.titulo)}"><span class="absolute inset-0 pointer-events-none" style="z-index:0;background:radial-gradient(circle at 0% 0%,rgba(248,113,113,.10) 0%,rgba(248,113,113,0) 50%)"></span><span class="relative w-12 h-[4.5rem] flex-shrink-0 rounded overflow-hidden bg-[#1b2230] border border-white/15" style="z-index:1"><img src="${esc(fav.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"></span><span class="relative flex-1 min-w-0" style="z-index:1"><span class="flex items-center gap-1 text-[11px] uppercase tracking-widest font-bold" style="color:${COR_FAV}">${iconeCoracao(12)}Favoritado</span><span class="block text-white font-serif text-base font-semibold truncate">${esc(fav.titulo)}</span><span class="block text-xs text-gray-400 truncate">${esc(fav.autor||'')}</span></span><span class="relative flex-shrink-0 text-right" style="z-index:1">${nf?gerarEstrelasStr(nf)+`<span class="block text-[11px] text-gray-300 tabular-nums mt-0.5">${String(nf).replace('.',',')}</span>`:''}${metaRk(fav)}</span></button>`;
+}
+const podio=rated.slice(0,3),resto=rated.slice(3);
+if(podio.length){
+const cores=['#FACC15','#D1D5DB','#CD7F32'];
+out+=`<div class="grid grid-cols-3 gap-2 mb-2">${podio.map((x,i)=>`<button onclick="abrirPassagem(${x.id})" class="text-left min-w-0" aria-label="${i+1}º: ${esc(x.titulo)}"><span class="relative block aspect-[2/3] rounded-md overflow-hidden bg-[#1b2230] border" style="border-color:${cores[i]}"><img src="${esc(x.capa||'')}" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.display='none'"><span class="absolute top-1 left-1 w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style="background:${cores[i]};color:#000">${i+1}</span></span><span class="block text-xs font-semibold text-white mt-1.5 leading-tight line-clamp-2">${esc(x.titulo)}</span><span class="block mt-0.5">${gerarEstrelasStr(nt(x))}</span></button>`).join('')}</div>`;
+}
+if(resto.length){
+const grupos=[];
+resto.forEach(x=>{const n=nt(x);const g=grupos[grupos.length-1];if(g&&g.n===n)g.l.push(x);else grupos.push({n,l:[x]})});
+out+=grupos.map(g=>{
+const noPodio=podio.some(x=>nt(x)===g.n);
+const k=g.l.length;
+const cont=noPodio?`mais ${k}`:`${k} ${k===1?'livro':'livros'}`;
+return `<div class="flex items-center gap-2 pt-4 pb-1 px-1"><span class="text-xs font-semibold tabular-nums text-gold-400">★ ${String(g.n).replace('.',',')}</span><span class="text-[11px] text-gray-500">· ${cont}</span><span class="flex-1 h-px bg-white/10"></span></div>${g.l.map(linhaRk).join('')}`;
+}).join('');
+}
+if(semNota.length){
+out+=`<div class="pt-5"><button onclick="toggleRankSemNota()" class="w-full flex items-center gap-2 px-1 pb-1 text-left" aria-expanded="${rankSemNotaAberto}"><span class="text-xs font-semibold text-gray-300">Sem nota</span><span class="text-[11px] text-gray-500">· ${semNota.length}</span><span class="flex-1 h-px bg-white/10"></span><span class="text-gray-400 text-xs" aria-hidden="true">${rankSemNotaAberto?'▴':'▾'}</span></button>${rankSemNotaAberto?semNota.map(linhaRk).join(''):''}</div>`;
+}
+return `<div class="w-full">${out}</div>`;
 }
 function htmlCapasLidos(l){
 if(!l.length)return '<p class="text-sm text-gray-400 p-2">Nenhum livro concluído ainda.</p>';
@@ -3305,7 +3342,7 @@ ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.35});
 }
 ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='600 24px "Inter",sans-serif';
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
-ctx.fillText('LILI - LIDOLIVROS',W/2,1872);
+ctx.fillText('LILI',W/2,1872);
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
 try{storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'))}catch(e){storyBlob=null}
 }
@@ -3430,7 +3467,7 @@ ctx.textAlign='center';
 ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillRect(W/2-300,1810,600,2);
 ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='600 24px "Inter",sans-serif';
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
-ctx.fillText('LILI - LIDOLIVROS',W/2,1862);
+ctx.fillText('LILI',W/2,1862);
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
 ctx.restore();
 
