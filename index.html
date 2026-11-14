@@ -111,6 +111,9 @@ select{color-scheme:dark;background:rgba(255,255,255,.08)!important}
 .stats-clean .stats-panel{background:rgba(20,20,20,.52);border:1px solid rgba(255,255,255,.075);border-radius:1rem;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .stats-clean .stats-tile{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055);border-radius:.65rem;padding:.5rem .25rem;width:100%}
 .stats-clean .grid-cols-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem}
+.stats-clean .grid-cols-5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.35rem}
+.stats-clean .stats-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+.stats-clean .stats-tile>div:last-child{line-height:1.2;overflow-wrap:anywhere}
 .stats-clean .stats-heading{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#a3a3a3;font-weight:650}
 .stats-clean .stats-month-bar{border-radius:5px 5px 2px 2px;min-height:0;transition:height .25s ease;}
 .stats-clean .stats-legend-dot{width:.55rem;height:.55rem;border-radius:999px;display:inline-block;flex-shrink:0}
@@ -3321,10 +3324,6 @@ const sx=s0+i*gap;pathEstrela(ctx,sx,y,r);ctx.fillStyle='rgba(250,204,21,.2)';ct
 const fr=Math.max(0,Math.min(1,l.nota-i));
 if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx-r,y-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx,y,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
 }
-}else if(statusDe(l)==='lendo'){
-ctx.font='700 30px "Inter",sans-serif';const tw=ctx.measureText('EM LEITURA').width+64;
-rrPath(ctx,W/2-tw/2,y-34,tw,56,28);ctx.fillStyle='rgba(250,204,21,.16)';ctx.fill();ctx.strokeStyle='rgba(250,204,21,.6)';ctx.lineWidth=2;ctx.stroke();
-ctx.fillStyle='#FACC15';ctx.fillText('EM LEITURA',W/2,y+6);
 }
 y+=obs?105:100;
 let tam=obs?64:72,lin;
@@ -3456,13 +3455,6 @@ const cw=480,ch=720,peek1=160,peek2=150,bw=cw+peek1+peek2,x0=(W-bw)/2,yc=470;
 if(top3.length){
 const pos=[x0,x0+peek1,x0+peek1+peek2];
 for(let i=top3.length-1;i>=0;i--)desenharCapaStory(ctx,topImgs[i],top3[i],pos[i],yc,cw,ch,i===0?0:i===1?.25:.45);
-ctx.save();ctx.textAlign='center';
-for(let i=0;i<top3.length;i++){
-const vis=i===0?pos[0]:pos[i-1]+cw,bx=vis+44,by=yc+44;
-ctx.beginPath();ctx.arc(bx,by,32,0,Math.PI*2);ctx.fillStyle='#FACC15';ctx.fill();
-ctx.fillStyle='#000';ctx.font='800 38px "Inter",sans-serif';ctx.fillText(String(i+1),bx,by+13);
-}
-ctx.restore();
 /* Lista: 1 - título - estrelas */
 ctx.save();ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=14;
 top3.forEach((l,i)=>{
