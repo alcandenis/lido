@@ -2035,6 +2035,7 @@ if(!anos.includes(aCur))anos.push(aCur);
 anos.sort((a,b)=>b-a);
 if(anoStats===null||!anos.includes(anoStats))anoStats=aCur;
 const doAno=dados.filter(x=>x.p&&x.p.a===anoStats);
+const md=mesDestaqueAno(doAno.map(x=>x.l));
 const noMes=dados.filter(x=>x.p&&x.p.a===aCur&&x.p.m===mCur).length;
 const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 const porMes=meses.map((_,i)=>doAno.filter(x=>x.p.m===i+1).length),maxM=Math.max(...porMes,1);
@@ -2122,7 +2123,7 @@ if(livroEscrito){
 
 return `<div class="stats-clean space-y-3">
 <div class="grid grid-cols-5">${tile('No mês',noMes)}${tile('No ano '+anoStats,doAno.length)}${tile('Páginas ('+anoStats+')',paginasDoAno.toLocaleString('pt-BR'))}${tile('Livros total',lidos.length)}${tile('Páginas total',totalPaginas.toLocaleString('pt-BR'))}</div>
-<section class="stats-panel p-4 w-full space-y-3"><div class="flex items-center justify-between gap-2"><h3 class="stats-heading">Leituras por mês · ${anoStats}</h3><button onclick="abrirInstaModalStats(${anoStats})" class="text-[11px] btn-gold-degrade px-3 py-1.5 rounded-lg flex items-center gap-1.5"><span>Story do ano</span></button></div><div class="flex flex-wrap gap-1.5">${chips}</div><div class="flex items-end gap-1.5 pt-2" style="height:9rem">${porMes.map((n,i)=>`<div class="flex-1 h-full flex flex-col items-center justify-end gap-1 min-w-0"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full stats-month-bar" style="height:${n?Math.max(5,Math.round(n/maxM*100)):0}px;background:${paleta[i%paleta.length]};opacity:${n?1:.15}"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div></section>
+<section class="stats-panel p-4 w-full space-y-3"><div class="flex items-center justify-between gap-2"><h3 class="stats-heading">Leituras por mês · ${anoStats}</h3><button onclick="abrirInstaModalStats(${anoStats})" class="text-[11px] btn-gold-degrade px-3 py-1.5 rounded-lg flex items-center gap-1.5"><span>Story do ano</span></button></div><div class="flex flex-wrap gap-1.5">${chips}</div><div class="flex items-end gap-1.5 pt-2" style="height:9rem">${porMes.map((n,i)=>`<div class="flex-1 h-full flex flex-col items-center justify-end gap-1 min-w-0"><span class="text-[10px] text-gray-300 h-3">${n||''}</span><div class="w-full stats-month-bar" style="height:${n?Math.max(5,Math.round(n/maxM*100)):0}px;background:${paleta[i%paleta.length]};opacity:${n?1:.15}"></div><span class="text-[9px] text-gray-500">${meses[i]}</span></div>`).join('')}</div>${md?`<div class="flex items-center justify-between gap-3 pt-3 border-t border-white/10 text-xs"><span class="text-gray-400">Mês em que mais li</span><span class="text-white font-semibold text-right">${MESES_RK[md.m-1]} · ${detalheMesDestaque(md)}</span></div>`:''}</section>
 ${livroProgressoHtml}
 ${genreHtml}
 ${secStat('Por formato',`<div class="space-y-3">${Object.entries(tipos).map(([k,n],i)=>barraStat(k,n,maxT,paleta[i%paleta.length])).join('')}</div>`)}
@@ -3348,6 +3349,39 @@ if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
 try{storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'))}catch(e){storyBlob=null}
 }
 
+function mesDestaqueAno(livros){
+const por={};
+livros.forEach(l=>{const p=parseData(l.data_fim);if(!p)return;const o=por[p.m]||(por[p.m]={m:p.m,pag:0,n:0});o.pag+=Math.max(0,parseInt(l.paginas,10)||0);o.n++});
+const ms=Object.values(por);if(!ms.length)return null;
+const temPag=ms.some(o=>o.pag>0);
+const b=ms.sort((a,c)=>temPag?(c.pag-a.pag||c.n-a.n||a.m-c.m):(c.n-a.n||a.m-c.m))[0];
+return{m:b.m,pag:b.pag,n:b.n,temPag};
+}
+function detalheMesDestaque(b){return b.temPag?`${b.pag.toLocaleString('pt-BR')} ${b.pag===1?'página':'páginas'}`:`${b.n} ${b.n===1?'livro':'livros'}`}
+function desenharTituloGlass(ctx,W,texto,yBase){
+const hC=170,yT=112,fonte='800 64px "Inter",sans-serif';
+const c=document.createElement('canvas');c.width=W;c.height=hC;
+const x=c.getContext('2d');
+x.textAlign='center';x.textBaseline='alphabetic';x.font=fonte;
+if(x.letterSpacing!==undefined)x.letterSpacing='3px';
+const w=x.measureText(texto).width,x0=W/2-w/2-10,x1=W/2+w/2+10;
+x.fillStyle='#fff';x.fillText(texto,W/2,yT);
+x.globalCompositeOperation='source-in';
+const g=x.createLinearGradient(x0,yT-64,x1,yT+10);g.addColorStop(0,'#facc15');g.addColorStop(1,'#fb923c');
+x.fillStyle=g;x.fillRect(0,0,W,hC);
+x.globalCompositeOperation='source-atop';
+const br=x.createLinearGradient(0,yT-62,0,yT+4);br.addColorStop(0,'rgba(255,255,255,.62)');br.addColorStop(.5,'rgba(255,255,255,.10)');br.addColorStop(1,'rgba(255,255,255,0)');
+x.fillStyle=br;x.fillRect(0,0,W,hC);
+const rim=x.createLinearGradient(0,yT-14,0,yT+4);rim.addColorStop(0,'rgba(255,255,255,0)');rim.addColorStop(1,'rgba(255,255,255,.30)');
+x.fillStyle=rim;x.fillRect(0,0,W,hC);
+x.globalCompositeOperation='source-over';
+x.lineWidth=2.5;x.lineJoin='round';x.strokeStyle='rgba(255,255,255,.55)';x.strokeText(texto,W/2,yT);
+ctx.save();
+ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=22;ctx.shadowOffsetY=8;
+ctx.globalAlpha=.94;
+ctx.drawImage(c,0,yBase-yT);
+ctx.restore();
+}
 function desenharFundoOsStory(ctx,W,H){
 const g=ctx.createRadialGradient(W/2,0,0,W/2,0,H*.7);g.addColorStop(0,'rgba(250,204,21,.12)');g.addColorStop(1,'rgba(250,204,21,0)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
@@ -3407,12 +3441,8 @@ const top3=doAno.filter(l=>nt(l)>0&&l!==fav).sort((a,b)=>nt(b)-nt(a)||dataFimNum
 const topImgs=await Promise.all(top3.map(l=>carregarImg(l.capa)));
 
 ctx.textBaseline='alphabetic';
-ctx.save();ctx.shadowColor='rgba(0,0,0,.75)';ctx.shadowBlur=16;
-desenharLogoLili(ctx,W,130,56,60);desenharSubLogo(ctx,W,180,60);
-ctx.textAlign='center';
-ctx.font='800 64px "Inter",sans-serif';ctx.fillStyle='#ffffff';
-if(ctx.letterSpacing!==undefined)ctx.letterSpacing='3px';
-ctx.fillText('LEITURAS DE '+ano,W/2,335);
+desenharTituloGlass(ctx,W,'LEITURAS DE '+ano,335);
+ctx.save();ctx.shadowColor='rgba(0,0,0,.75)';ctx.shadowBlur=16;ctx.textAlign='center';
 if(top3.length){
 ctx.font='800 38px "Inter",sans-serif';ctx.fillStyle='#FACC15';
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='8px';
@@ -3458,13 +3488,18 @@ const totalPaginas=doAno.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0
 const aband=biblioteca.filter(l=>statusDe(l)==='abandonado').length;
 ctx.save();ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=14;
 ctx.fillStyle='rgba(255,255,255,.2)';ctx.fillRect(W/2-300,1440,600,2);
-let yi=1510;
-linhaInfoStory(ctx,W,yi,String(totalLivros),totalLivros===1?'livro lido no total':'livros lidos no total');yi+=58;
-linhaInfoStory(ctx,W,yi,totalPaginas.toLocaleString('pt-BR'),totalPaginas===1?'página lida no total':'páginas lidas no total');yi+=58;
+let yi=1492;
+linhaInfoStory(ctx,W,yi,String(totalLivros),totalLivros===1?'livro lido no total':'livros lidos no total');yi+=52;
+linhaInfoStory(ctx,W,yi,totalPaginas.toLocaleString('pt-BR'),totalPaginas===1?'página lida no total':'páginas lidas no total');yi+=52;
+const melhor=mesDestaqueAno(doAno);
+if(melhor){
+const det=detalheMesDestaque(melhor);
+linhaInfoStory(ctx,W,yi,MESES_RK[melhor.m-1],`foi o mês em que mais li (${det})`);yi+=52;
+}
 if(fav){
 ctx.font='800 40px "Inter",sans-serif';
 const tf=cortarLinha(ctx,fav.titulo||'',W-120-300);
-linhaInfoStory(ctx,W,yi,tf,'favoritado',COR_FAV);yi+=58;
+linhaInfoStory(ctx,W,yi,tf,'favoritado',COR_FAV);yi+=52;
 }
 if(aband>0)linhaInfoStory(ctx,W,yi,String(aband),aband===1?'abandonado':'abandonados');
 else linhaInfoStory(ctx,W,yi,'','Nenhum abandonado');
@@ -3473,7 +3508,7 @@ ctx.restore();
 /* Rodapé */
 ctx.save();ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=12;
 ctx.textAlign='center';
-ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillRect(W/2-300,1810,600,2);
+desenharLogoLili(ctx,W,1800,52);
 ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='600 28px "Inter",sans-serif';
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='2px';
 ctx.fillText('lili.vercel.app',W/2,1862);
