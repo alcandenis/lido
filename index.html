@@ -3348,127 +3348,135 @@ if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
 try{storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'))}catch(e){storyBlob=null}
 }
 
+function desenharFundoOsStory(ctx,W,H){
+const g=ctx.createRadialGradient(W/2,0,0,W/2,0,H*.7);g.addColorStop(0,'rgba(250,204,21,.12)');g.addColorStop(1,'rgba(250,204,21,0)');
+ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+const temF='filter' in ctx;
+const camada=(blur,alpha,hMin,hMax,cols,rows)=>{
+const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+for(let r=0;r<rows;r++)for(let k=0;k<cols;k++){
+if(Math.random()<.2)continue;
+const h=hMin+Math.random()*(hMax-hMin),w=h*.5/.727;
+const px=(k+.15+Math.random()*.7)/cols*W,py=(r+.15+Math.random()*.7)/rows*H;
+const gr=x.createLinearGradient(px-w/2,py-h/2,px+w/2,py+h/2);gr.addColorStop(0,'#facc15');gr.addColorStop(1,'#fb923c');
+x.fillStyle=gr;rrPath(x,px-w/2,py-h/2,w,h,w*.14);x.fill();
+}
+ctx.save();ctx.globalAlpha=alpha*(temF?1:.5);
+if(temF)ctx.filter=`blur(${blur}px) brightness(.63) saturate(.85)`;
+ctx.drawImage(c,0,0);ctx.restore();
+};
+camada(16,.4,75,135,4,7);
+camada(8,.6,140,200,3,4);
+}
+function desenharCapaStory(ctx,img,l,x,y,w,h,escurecer){
+ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=40;ctx.shadowOffsetX=16;ctx.shadowOffsetY=10;
+rrPath(ctx,x,y,w,h,18);ctx.fillStyle='#1b2230';ctx.fill();ctx.restore();
+if(img){
+ctx.save();rrPath(ctx,x,y,w,h,18);ctx.clip();
+const cr=w/h,ir=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;
+if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
+ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h);ctx.restore();
+}else{
+ctx.save();ctx.textAlign='center';ctx.font='500 28px "Inter",sans-serif';ctx.fillStyle='rgba(255,255,255,.55)';
+const tl=quebrarTexto(ctx,l.titulo,w-40).slice(0,5);
+tl.forEach((t,k)=>ctx.fillText(cortarLinha(ctx,t,w-40),x+w/2,y+h/2-(tl.length-1)*18+k*36));ctx.restore();
+}
+if(escurecer>0){ctx.save();rrPath(ctx,x,y,w,h,18);ctx.fillStyle=`rgba(0,0,0,${escurecer})`;ctx.fill();ctx.restore()}
+rrPath(ctx,x,y,w,h,18);ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=2;ctx.stroke();
+}
+function linhaInfoStory(ctx,W,y,destaque,resto,corDest){
+ctx.save();ctx.textAlign='left';
+ctx.font='800 40px "Inter",sans-serif';const wD=destaque?ctx.measureText(destaque).width:0;
+ctx.font='500 34px "Inter",sans-serif';const wR=ctx.measureText(resto).width;
+const gap=destaque?14:0,x=(W-(wD+gap+wR))/2;
+if(destaque){ctx.font='800 40px "Inter",sans-serif';ctx.fillStyle=corDest||'#FACC15';ctx.fillText(destaque,x,y)}
+ctx.font='500 34px "Inter",sans-serif';ctx.fillStyle='#e5e7eb';ctx.fillText(resto,x+wD+gap,y);
+ctx.restore();
+}
 async function renderizarStoryStats(ano){
 storyNome='story_estatisticas';
 const ctx=$('story-canvas').getContext('2d'),W=1080,H=1920;
 try{await Promise.all(['400 40px','500 40px','600 40px','700 40px','800 40px'].map(f=>document.fonts.load(f+' "Inter"')))}catch(e){}
 ctx.clearRect(0,0,W,H);ctx.fillStyle='#000000';ctx.fillRect(0,0,W,H);
+desenharFundoOsStory(ctx,W,H);
 
+const nt=l=>parseFloat(l.nota)||0;
 const doAno=biblioteca.filter(l=>{const p=parseData(l.data_fim);return statusDe(l)==='lido'&&p&&p.a===ano});
-const top3=doAno.filter(l=>(parseFloat(l.nota)||0)>0).sort((a,b)=>(parseFloat(b.nota)||0)-(parseFloat(a.nota)||0)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR')).slice(0,3);
-const covers=doAno.map(l=>l.capa).filter(c=>c&&!c.includes('placehold.co')).slice(0,60);
-const loadedImgs=(await Promise.all(covers.map(carregarImg))).filter(Boolean);
+const fav=doAno.find(l=>l.favorito)||null;
+const top3=doAno.filter(l=>nt(l)>0&&l!==fav).sort((a,b)=>nt(b)-nt(a)||dataFimNum(b.data_fim)-dataFimNum(a.data_fim)||String(a.titulo||'').localeCompare(String(b.titulo||''),'pt-BR')).slice(0,3);
 const topImgs=await Promise.all(top3.map(l=>carregarImg(l.capa)));
-
-/* Fundo: todas as capas do ano em grade, preenchendo a tela */
-if(loadedImgs.length>0){
-  const n=loadedImgs.length,cols=Math.max(2,Math.ceil(Math.sqrt(n/1.185))),rows=Math.max(2,Math.ceil(n/cols)),cellW=W/cols,cellH=H/rows;
-  let imgIdx=0;
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const img=loadedImgs[imgIdx%n];imgIdx++;
-      const x=c*cellW,y=r*cellH,ir=img.width/img.height,cr=cellW/cellH;
-      let sx=0,sy=0,sw=img.width,sh=img.height;
-      if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
-      ctx.drawImage(img,sx,sy,sw,sh,x,y,Math.ceil(cellW),Math.ceil(cellH));
-    }
-  }
-}
-const g=ctx.createLinearGradient(0,0,0,H);
-g.addColorStop(0,'rgba(0,0,0,0.62)');g.addColorStop(0.5,'rgba(0,0,0,0.5)');g.addColorStop(1,'rgba(0,0,0,0.72)');
-ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 
 ctx.textBaseline='alphabetic';
 ctx.save();ctx.shadowColor='rgba(0,0,0,.75)';ctx.shadowBlur=16;
 desenharLogoLili(ctx,W,130,56,60);desenharSubLogo(ctx,W,180,60);
 ctx.textAlign='center';
-ctx.font='800 50px "Inter",sans-serif';ctx.fillStyle='#ffffff';
+ctx.font='800 64px "Inter",sans-serif';ctx.fillStyle='#ffffff';
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='3px';
-ctx.fillText('RETROSPECTIVA LITERÁRIA',W/2,325);
+ctx.fillText('LEITURAS DE '+ano,W/2,335);
+if(top3.length){
+ctx.font='800 38px "Inter",sans-serif';ctx.fillStyle='#FACC15';
+if(ctx.letterSpacing!==undefined)ctx.letterSpacing='8px';
+ctx.fillText('TOP '+top3.length,W/2,398);
+}
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
-ctx.font='800 150px "Inter",sans-serif';ctx.fillStyle='#FACC15';
-ctx.fillText(String(ano),W/2,465);
 ctx.restore();
 
+/* Capas empilhadas: a 1ª na frente, as outras aparecem por trás, à direita */
+const cw=480,ch=720,peek1=160,peek2=150,bw=cw+peek1+peek2,x0=(W-bw)/2,yc=470;
+if(top3.length){
+const pos=[x0,x0+peek1,x0+peek1+peek2];
+for(let i=top3.length-1;i>=0;i--)desenharCapaStory(ctx,topImgs[i],top3[i],pos[i],yc,cw,ch,i===0?0:i===1?.25:.45);
+ctx.save();ctx.textAlign='center';
+for(let i=0;i<top3.length;i++){
+const vis=i===0?pos[0]:pos[i-1]+cw,bx=vis+44,by=yc+44;
+ctx.beginPath();ctx.arc(bx,by,32,0,Math.PI*2);ctx.fillStyle='#FACC15';ctx.fill();
+ctx.fillStyle='#000';ctx.font='800 38px "Inter",sans-serif';ctx.fillText(String(i+1),bx,by+13);
+}
+ctx.restore();
+/* Lista: 1 - título - estrelas */
+ctx.save();ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=14;
+top3.forEach((l,i)=>{
+const y=1262+i*66;
+ctx.textAlign='left';ctx.font='800 38px "Inter",sans-serif';ctx.fillStyle='#FACC15';ctx.fillText(String(i+1),x0,y);
+ctx.font='600 34px "Inter",sans-serif';ctx.fillStyle='#ffffff';ctx.fillText(cortarLinha(ctx,l.titulo||'',bw-56-190),x0+56,y);
+const n=nt(l),r=15,sg=34,s0=x0+bw-r-sg*4,sy=y-12;
+for(let k=0;k<5;k++){
+const sx=s0+k*sg;pathEstrela(ctx,sx,sy,r);ctx.fillStyle='rgba(250,204,21,.28)';ctx.fill();
+const fr=Math.max(0,Math.min(1,n-k));
+if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx-r,sy-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx,sy,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
+}
+});
+ctx.restore();
+}else{
+ctx.save();ctx.textAlign='center';ctx.font='500 34px "Inter",sans-serif';ctx.fillStyle='rgba(255,255,255,.6)';
+ctx.fillText('Nenhum livro avaliado em '+ano,W/2,yc+ch/2);ctx.restore();
+}
+
+/* Informações */
 const totalLivros=doAno.length;
 const totalPaginas=doAno.reduce((s,l)=>s+Math.max(0,parseInt(l.paginas,10)||0),0);
-const cy0=525,ch0=130,cw0=440;
-drawStatCard(ctx,W/2-cw0-20,cy0,cw0,ch0,`${totalLivros}`,totalLivros===1?'Livro Lido':'Livros Lidos',56,22);
-drawStatCard(ctx,W/2+20,cy0,cw0,ch0,`${totalPaginas.toLocaleString('pt-BR')}`,'Páginas Lidas',56,22);
-
-/* Tipos (só os que têm livro lido) */
-const tipos=[['KINDLE',doAno.filter(l=>l.formato==='Kindle').length],['FÍSICO',doAno.filter(l=>l.formato==='Físico').length],['ÁUDIO',doAno.filter(l=>l.formato==='Audiobook').length]].filter(t=>t[1]>0);
-let yy=cy0+ch0;
-if(tipos.length){
-  ctx.font='600 26px "Inter",sans-serif';
-  const gapP=18,ph=60,itens=tipos.map(([rot,n])=>({rot,n:String(n),lw:ctx.measureText(rot).width,nw:ctx.measureText(String(n)).width}));
-  itens.forEach(it=>it.w=it.lw+it.nw+14+56);
-  const tot=itens.reduce((a,it)=>a+it.w,0)+gapP*(itens.length-1);
-  let x=(W-tot)/2;const py=yy+40;
-  itens.forEach(it=>{
-    ctx.save();rrPath(ctx,x,py,it.w,ph,30);ctx.fillStyle='rgba(20,20,20,.78)';ctx.fill();ctx.strokeStyle='rgba(255,255,255,.14)';ctx.lineWidth=2;ctx.stroke();ctx.restore();
-    ctx.textAlign='left';ctx.fillStyle='#e5e7eb';ctx.fillText(it.rot,x+28,py+39);
-    ctx.fillStyle='#FACC15';ctx.font='800 26px "Inter",sans-serif';ctx.fillText(it.n,x+28+it.lw+14,py+39);ctx.font='600 26px "Inter",sans-serif';
-    x+=it.w+gapP;
-  });
-  yy=py+ph;
-}
-/* Abandonados */
 const aband=biblioteca.filter(l=>statusDe(l)==='abandonado').length;
-if(aband>0){
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=12;
-  ctx.textAlign='center';ctx.font='500 24px "Inter",sans-serif';ctx.fillStyle='rgba(255,255,255,.8)';
-  ctx.fillText(`${aband} ${aband===1?'livro abandonado':'livros abandonados'}`,W/2,yy+50);ctx.restore();
-  yy+=50;
+ctx.save();ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=14;
+ctx.fillStyle='rgba(255,255,255,.2)';ctx.fillRect(W/2-300,1440,600,2);
+let yi=1510;
+linhaInfoStory(ctx,W,yi,String(totalLivros),totalLivros===1?'livro lido no total':'livros lidos no total');yi+=58;
+linhaInfoStory(ctx,W,yi,totalPaginas.toLocaleString('pt-BR'),totalPaginas===1?'página lida no total':'páginas lidas no total');yi+=58;
+if(fav){
+ctx.font='800 40px "Inter",sans-serif';
+const tf=cortarLinha(ctx,fav.titulo||'',W-120-300);
+linhaInfoStory(ctx,W,yi,tf,'favoritado',COR_FAV);yi+=58;
 }
+if(aband>0)linhaInfoStory(ctx,W,yi,String(aband),aband===1?'abandonado':'abandonados');
+else linhaInfoStory(ctx,W,yi,'','Nenhum abandonado');
+ctx.restore();
 
-/* Top 3 */
-if(top3.length){
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=14;
-  ctx.textAlign='center';ctx.font='800 40px "Inter",sans-serif';ctx.fillStyle='#FACC15';
-  if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
-  ctx.fillText(top3.length===1?'TOP 1 DO ANO':`TOP ${top3.length} DO ANO`,W/2,yy+120);
-  if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
-  ctx.restore();
-  const cw=300,ch=450,gap=45,total=top3.length*cw+(top3.length-1)*gap,x0=(W-total)/2,cy=yy+160;
-  top3.forEach((l,i)=>{
-    const x=x0+i*(cw+gap),img=topImgs[i];
-    ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=40;ctx.shadowOffsetY=16;
-    rrPath(ctx,x,cy,cw,ch,18);ctx.fillStyle='#1b2230';ctx.fill();ctx.restore();
-    if(img){
-      ctx.save();rrPath(ctx,x,cy,cw,ch,18);ctx.clip();
-      const cr=cw/ch,ir=img.width/img.height;let sx=0,sy=0,sw=img.width,sh=img.height;
-      if(ir>cr){sw=img.height*cr;sx=(img.width-sw)/2}else{sh=img.width/cr;sy=(img.height-sh)/2}
-      ctx.drawImage(img,sx,sy,sw,sh,x,cy,cw,ch);ctx.restore();
-    }else{
-      ctx.textAlign='center';ctx.font='500 26px "Inter",sans-serif';ctx.fillStyle='rgba(255,255,255,.55)';
-      const tl=quebrarTexto(ctx,l.titulo,cw-40).slice(0,5);
-      tl.forEach((t,k)=>ctx.fillText(cortarLinha(ctx,t,cw-40),x+cw/2,cy+ch/2-(tl.length-1)*17+k*34));
-    }
-    rrPath(ctx,x,cy,cw,ch,18);ctx.strokeStyle='rgba(255,255,255,.25)';ctx.lineWidth=2;ctx.stroke();
-    ctx.beginPath();ctx.arc(x+6,cy+6,38,0,Math.PI*2);ctx.fillStyle='#FACC15';ctx.fill();
-    ctx.fillStyle='#000';ctx.font='800 42px "Inter",sans-serif';ctx.textAlign='center';ctx.fillText(String(i+1),x+6,cy+21);
-    ctx.save();ctx.shadowColor='rgba(0,0,0,.85)';ctx.shadowBlur=14;
-    ctx.font='700 28px "Inter",sans-serif';ctx.fillStyle='#fff';
-    let ty=cy+ch+52;
-    const tl2=quebrarTexto(ctx,l.titulo,cw+20).slice(0,2);
-    tl2.forEach((t,k)=>{ctx.fillText(k===tl2.length-1&&tl2.length===2?cortarLinha(ctx,t,cw+20):t,x+cw/2,ty);ty+=34});
-    ctx.restore();
-    const nt=parseFloat(l.nota)||0,r=15,sg=36,s0=x+cw/2-sg*2,sy2=cy+ch+52+34*2+22;
-    for(let k=0;k<5;k++){
-      const sx2=s0+k*sg;pathEstrela(ctx,sx2,sy2,r);ctx.fillStyle='rgba(250,204,21,.28)';ctx.fill();
-      const fr=Math.max(0,Math.min(1,nt-k));
-      if(fr>0){ctx.save();ctx.beginPath();ctx.rect(sx2-r,sy2-r,2*r*fr,2*r);ctx.clip();pathEstrela(ctx,sx2,sy2,r);ctx.fillStyle='#FACC15';ctx.fill();ctx.restore()}
-    }
-  });
-}
-
+/* Rodapé */
 ctx.save();ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=12;
 ctx.textAlign='center';
 ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillRect(W/2-300,1810,600,2);
-ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='600 24px "Inter",sans-serif';
-if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
-ctx.fillText('LILI',W/2,1862);
+ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='600 28px "Inter",sans-serif';
+if(ctx.letterSpacing!==undefined)ctx.letterSpacing='2px';
+ctx.fillText('lili.vercel.app',W/2,1862);
 if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
 ctx.restore();
 
