@@ -731,18 +731,8 @@ textarea{
 <h1 id="titulo-app" class="text-[1.98rem] md:text-[2.4rem] font-serif font-semibold tracking-widest leading-none"></h1>
 </div>
 <div class="flex items-center gap-3 pointer-events-auto">
-  <button onclick="toggleModalCloud()" class="h-[1.98rem] md:h-[2.4rem] flex items-center transition-transform hover:scale-105" aria-label="Status do Google Drive" title="Status da Nuvem">
-    <svg id="header-cloud-icon" class="w-7 h-7 transition-colors" viewBox="0 0 24 24" fill="none" stroke="url(#cloudGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <defs>
-        <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop id="cloud-stop-1" offset="0%" stop-color="#ffffff"/>
-          <stop id="cloud-stop-2" offset="100%" stop-color="#ffffff"/>
-        </linearGradient>
-      </defs>
-      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
-    </svg>
-  </button>
-  <button onclick="toggleModalOpcoes()" class="self-start h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Configurações" title="Configurações"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg></button>
+  <button id="header-buscar-btn" onclick="mudarAba('buscar')" class="h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Buscar" title="Buscar"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></button>
+  <button onclick="toggleModalOpcoes()" class="relative self-start h-[1.98rem] md:h-[2.4rem] flex items-center text-gray-200 hover:text-gold-400 transition-colors" aria-label="Configurações" title="Configurações"><svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/></svg><span id="header-sync-dot" class="hidden absolute top-0.5 right-0 w-2 h-2 rounded-full" style="background:#fb923c" aria-hidden="true"></span></button>
 </div>
 </header>
 
@@ -768,9 +758,9 @@ textarea{
 <div class="dock-wrap" style="padding-bottom:calc(.75rem + env(safe-area-inset-bottom,0px))">
 <div class="dock-glass pointer-events-auto">
 <button onclick="mudarAba('inicio')" id="btn-tab-inicio" class="dock-tab" title="Início" aria-label="Início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></button>
-<button onclick="mudarAba('todos')" id="btn-tab-todos" class="dock-tab" title="Textos" aria-label="Textos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M5 10h14M5 14h14M5 18h8"/></svg></button>
+<button onclick="abrirTextosDock()" id="btn-tab-todos" class="dock-tab" title="Textos" aria-label="Textos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M5 10h14M5 14h14M5 18h8"/></svg></button>
 <button id="dock-add-button" onclick="alternarNovaPassagemDock()" class="dock-add" title="Nova passagem" aria-label="Abrir Nova passagem"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path id="dock-add-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.75" d="M12 5v14m7-7H5"/></svg></button>
-<button onclick="mudarAba('buscar')" id="btn-tab-buscar" class="dock-tab" title="Buscar" aria-label="Buscar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg></button>
+<button onclick="abrirNotasDock()" id="btn-tab-notas" class="dock-tab" title="Notas" aria-label="Notas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5h6v12.5l-3 4.5-3-4.5z"/><path d="M9 7h6"/><path d="M9 16h6"/></svg></button>
 <button onclick="mudarAba('lidos')" id="btn-tab-lidos" class="dock-tab" title="Lidos" aria-label="Lidos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2.5 10.5 9.8M17 2.5 13.5 9.8"/><circle cx="12" cy="15" r="5.5"/></svg></button>
 </div></div>
 </nav>
@@ -959,7 +949,7 @@ textarea{
 
 <section><h3 class="opt-sec">Dados</h3>
 <div class="opt-group">
-<div class="opt-row"><button onclick="conectarGoogleDrive()" class="text-left flex-1"><span>Google Drive</span></button><span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400">Desconectado</span></div>
+<div class="opt-row"><button onclick="abrirStatusNuvem()" class="text-left flex-1"><span>Google Drive</span></button><span id="google-status-badge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/10 text-gray-400">Desconectado</span></div>
 <button type="button" onclick="abrirSubMenuBackup()" class="opt-row"><span>Backup e nuvem</span><span class="opt-chev" aria-hidden="true">›</span></button>
 </div></section>
 
@@ -1175,10 +1165,12 @@ const cores={desconectado:['#ffffff','#ffffff'],ok:['#facc15','#fb923c'],sincron
 const s1=$('cloud-stop-1'),s2=$('cloud-stop-2'),ic=$('header-cloud-icon');
 if(s1&&s2){s1.setAttribute('stop-color',cores[0]);s2.setAttribute('stop-color',cores[1])}
 if(ic)ic.classList.toggle('animate-pulse',e==='sincronizando');
+const dotS=$('header-sync-dot');if(dotS)dotS.classList.toggle('hidden',!(e==='reconectar'||e==='erro'));
 const rb=$('cloud-reconectar');if(rb)rb.classList.toggle('hidden',!(e==='reconectar'||e==='erro'));
 const sb=$('cloud-sync-agora');if(sb)sb.classList.toggle('hidden',e==='desconectado'||e==='reconectar');
 }
 
+function abrirStatusNuvem(){if(lsGet('lido_google_conectado')==='1'){toggleModalOpcoes();toggleModalCloud()}else conectarGoogleDrive()}
 function toggleModalCloud() {
   const modal = $('modal-cloud');
   modal.classList.toggle('hidden');
@@ -1613,11 +1605,20 @@ function salvarNomeUsuario(){
 function mudarAba(aba){
 if(modoSel)sairSelecao();
 abaAtual=aba;
-['inicio','todos','buscar','lidos'].forEach(a=>{$('btn-tab-'+a).className='dock-tab'+(a===aba?' ativo':'')});
+atualizarDockAtiva();
 atualizarFundoAba();
 renderizarFeed();
 voltarAoTopo();
+if(aba==='buscar'){const i=$('input-busca-global');if(i)i.focus()}
 }
+function atualizarDockAtiva(){
+const ativo=['inicio','todos','notas','lidos'].includes(abaAtual)?abaAtual:'';
+['inicio','todos','notas','lidos'].forEach(a=>{const b=$('btn-tab-'+a);if(b)b.className='dock-tab'+(a===ativo?' ativo':'')});
+const hb=$('header-buscar-btn');if(hb)hb.classList.toggle('text-gold-400',abaAtual==='buscar');
+}
+function abrirNotasDock(){mudarAba('notas')}
+function abrirTextosDock(){mudarAba('todos')}
+function irParaAbaDock(id){if(id==='notas')abrirNotasDock();else if(id==='todos')abrirTextosDock();else mudarAba(id)}
 function atualizarFundoAba(){
 const a=$('bg-layer-a'),b=$('bg-layer-b'),k=abaAtual==='kindle';
 const vis=activeBgLayer==='A'?a:b,oc=activeBgLayer==='A'?b:a;
@@ -2273,6 +2274,7 @@ function excluirNotaLeitura(btn){doisToques(btn,()=>{const id=notaLeituraId;nota
 /* deslizar o dedo na dock para trocar de aba */
 (function(){
 function iniciar(){
+atualizarDockAtiva();
 const dock=document.querySelector('#nav-principal .dock-glass');if(!dock||dock.dataset.swipe)return;dock.dataset.swipe='1';
 let ativo=false,moveu=false,x0=0,ultimo=null;
 const abaDe=el=>{const b=el&&el.closest&&el.closest('.dock-tab');return b&&b.id?b:null};
@@ -2281,7 +2283,7 @@ dock.addEventListener('pointermove',e=>{
 if(!ativo)return;
 if(!moveu){if(Math.abs(e.clientX-x0)<10)return;moveu=true}
 const b=abaDe(document.elementFromPoint(e.clientX,e.clientY));
-if(b&&b!==ultimo){ultimo=b;mudarAba(b.id.replace('btn-tab-',''));if(navigator.vibrate)navigator.vibrate(6)}
+if(b&&b!==ultimo){ultimo=b;irParaAbaDock(b.id.replace('btn-tab-',''));if(navigator.vibrate)navigator.vibrate(6)}
 });
 const fim=()=>{ativo=false;setTimeout(()=>{moveu=false},0)};
 dock.addEventListener('pointerup',fim);dock.addEventListener('pointercancel',fim);
@@ -2821,7 +2823,7 @@ if(abaAtual==='inicio'){
   feed.style.paddingTop = 'calc(5.5rem + env(safe-area-inset-top,0px))';
 
   if(abaAtual==='todos'){
-    subContent.innerHTML = `<div class="grid grid-cols-4 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['notas','Notas'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
+    subContent.innerHTML = `<div class="grid grid-cols-3 gap-1 w-full">${[['tudo','Tudo'],['livros','Livros'],['kindle','Kindle']].map(([k,r])=>`<button onclick="definirFiltroTodos('${k}')" class="tab-reg sm${filtroTodos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='lidos'){
     subContent.innerHTML = `<div class="grid grid-cols-3 gap-1 w-full">${[['capas','Capas'],['stats','Estatísticas'],['ranking','Ranking']].map(([k,r])=>`<button onclick="definirAbaLidos('${k}')" class="tab-reg sm${abaLidos===k?' ativo':''} text-center">${r}</button>`).join('')}</div>`;
   } else if(abaAtual==='observacoes'){
@@ -2833,7 +2835,7 @@ if(abaAtual==='inicio'){
   }
 }
 
-const fn={todos:renderizarAbaTodos,buscar:renderizarAbaBusca,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados,lendo:renderizarAbaLendo}[abaAtual];
+const fn={todos:renderizarAbaTodos,notas:renderizarAbaNotas,buscar:renderizarAbaBusca,lidos:renderizarAbaLidos,observacoes:renderizarAbaObservacoes,desejados:renderizarAbaDesejados,lendo:renderizarAbaLendo}[abaAtual];
 if(fn)fn(feed,scrollToId);else renderizarAbaInicio(feed);
 if((abaAtual==='todos'||abaAtual==='lidos'||abaAtual==='observacoes')&&subContent&&subContent.innerHTML){const t=document.createElement('div');t.className='w-full mb-3';t.innerHTML=subContent.innerHTML;feed.insertBefore(t,feed.firstChild)}
 mostrarRetangulo();
@@ -2869,7 +2871,7 @@ if(livroEscrito){
 if(l)addSecao(wrap,cardMinimizado('passagem')?miniCard('passagem','Passagem:',esc(l.titulo),biblioteca.filter(x=>statusDe(x)!=='desejado').length>1?`+${biblioteca.filter(x=>statusDe(x)!=='desejado').length-1} de passagens`:''):`<div onclick="abrirPassagem(${l.id})" class="frosted-card relative p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex flex-col justify-between">${minBtn('passagem',false,true)}<div class="flex items-center justify-between mb-2 pr-8"><span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Sua última passagem</span><span class="text-[10px] text-gray-400"></span></div><div class="flex items-start gap-4">${imgCapa(l.capa,'w-20 h-28',l.id,'livro')}<div class="min-w-0 flex-1"><h3 class="font-serif text-xl font-bold text-white leading-tight line-clamp-2">${esc(l.titulo)}</h3><p class="text-gold-400 text-sm truncate">por ${esc(l.autor)}</p><div class="text-gold-400 text-sm tracking-widest mt-1">${rotuloStatus(l)}</div>${l.observacao?`<p class="text-gray-100 text-sm font-obs mt-2 line-clamp-3 leading-snug">${esc(l.observacao)}</p>`:''}</div></div></div>`,l.capa,2,false);
 const fv=livroFavorito();
 if(fv)addSecao(wrap,`<div onclick="abrirFavorito(${fv.id})" class="frosted-card relative overflow-hidden p-4 w-full cursor-pointer shadow-2xl hover:bg-white/10 transition-colors flex items-center gap-3"><span class="absolute inset-0 pointer-events-none" style="z-index:0;background:radial-gradient(circle at 0% 0%,rgba(248,113,113,.10) 0%,rgba(248,113,113,0) 50%)"></span><img src="${esc(fv.capa||'')}" alt="" class="relative w-12 h-[4.5rem] object-cover rounded border border-white/15 flex-shrink-0" style="z-index:1" onerror="this.style.visibility='hidden'"><div class="relative min-w-0" style="z-index:1"><span class="flex items-center gap-1 text-[11px] uppercase tracking-widest font-bold" style="color:${COR_FAV}">${iconeCoracao(12)}Favoritado</span><span class="block text-white font-serif text-lg font-semibold truncate">${esc(fv.titulo)}</span><span class="block text-xs text-gray-400 truncate">${esc(fv.autor||'')}</span></div></div>`,bgCustomizado||fv.capa||BG_PADRAO);
-if(notas[0])addSecao(wrap,cardMinimizado('nota')?miniCard('nota','Nota:',esc(notas[0].texto.replace(/\s+/g,' ')),notas.length>1?`+${notas.length-1} de notas`:''):`<div onclick="filtroTodos='notas';mudarAba('todos')" class="frosted-card relative p-4 w-full shadow-2xl flex flex-col justify-between cursor-pointer">${minBtn('nota',false,true)}<span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
+if(notas[0])addSecao(wrap,cardMinimizado('nota')?miniCard('nota','Nota:',esc(notas[0].texto.replace(/\s+/g,' ')),notas.length>1?`+${notas.length-1} de notas`:''):`<div onclick="mudarAba('notas')" class="frosted-card relative p-4 w-full shadow-2xl flex flex-col justify-between cursor-pointer">${minBtn('nota',false,true)}<span class="text-[11px] text-gold-gradient font-bold uppercase tracking-widest">Última nota</span><p class="font-obs text-gray-100 text-sm mt-2 line-clamp-3 leading-snug">${esc(notas[0].texto)}</p></div>`,l?l.capa:BG_PADRAO,3,false);
 const vazio=!biblioteca.length&&!notas.length&&!(notasKindle||[]).length&&!livroEscrito;
 if(vazio||welcomeForcado){const w=addSecao(wrap,htmlBoasVindas(welcomeForcado,vazio),BG_PADRAO,0);if(!vazio)wrap.insertBefore(w,wrap.firstChild)}
 feed.appendChild(wrap);
@@ -2881,7 +2883,7 @@ if(!homeSemCapa && !bgCustomizado){const im=new Image();im.onerror=()=>{if(abaAt
 
 let filtroTodos='tudo';
 let filtroSoTextos='todos';
-function definirFiltroTodos(f){filtroTodos=f;renderizarFeed();voltarAoTopo()}
+function definirFiltroTodos(f){filtroTodos=f;atualizarDockAtiva();renderizarFeed();voltarAoTopo()}
 function definirFiltroSoTextos(f){filtroSoTextos=f;renderizarFeed();voltarAoTopo()}
 
 function renderizarAbaBusca(feed){
@@ -2979,6 +2981,10 @@ function executarBuscaGlobal(termo){
 function clicarResultadoBusca(tipo, id){
   if(tipo === 'livro'){
     abrirPassagem(id);
+  } else if(tipo === 'nota'){
+    mudarAba('notas');
+  } else if(tipo === 'kindle'){
+    filtroTodos='kindle';mudarAba('todos');
   } else {
     mudarAba('todos');
   }
@@ -2998,11 +3004,17 @@ return `<div data-nota="${n.id}" onclick="abrirNotaLeitura(${n.id},event)" class
 function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="clamp2 text-[10px] text-gold-400 uppercase tracking-widest font-bold">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><div class="flex flex-col items-stretch shrink-0 gap-1.5 min-w-[5rem]"><button onclick="abrirInstaModalKindle(${k.id})" class="btn-card">Story</button><button onclick="deletarNotaKindle(${k.id},this)" class="btn-card btn-card-danger">Excluir</button></div></div></div>`;
 }
+function renderizarAbaNotas(feed){
+addSecao(feed,`<div class="px-1 flex items-center justify-between"><h2 class="text-lg font-bold text-white font-serif">Notas</h2><span class="text-[11px] text-gray-400 uppercase tracking-widest">${notas.length} ${notas.length===1?'nota':'notas'}</span></div>`,bgCustomizado || BG_PADRAO,0,false);
+if(!notas.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center space-y-3"><p class="text-sm text-gray-400">Nenhuma nota ainda.</p><button type="button" onclick="alternarNovaPassagemDock()" class="btn-card">Escrever uma nota</button></div>`,bgCustomizado || BG_PADRAO,1,false);
+else notas.forEach((n,i)=>addSecao(feed,htmlNota(n),bgCustomizado || BG_PADRAO,i+1,false));
+transicionarFundo(bgCustomizado || BG_PADRAO);
+}
 function renderizarAbaTodos(feed,scrollToId){
+if(filtroTodos==='notas')filtroTodos='tudo';
 const itens=[];
 const bibFiltrada=biblioteca.filter(l=>statusDe(l)!=='desejado');
 if(filtroTodos==='tudo'||filtroTodos==='livros')bibFiltrada.forEach(l=>itens.push({t:'livro',id:l.id,d:l}));
-if(filtroTodos==='tudo'||filtroTodos==='notas')notas.forEach(n=>itens.push({t:'nota',id:n.id,d:n}));
 if(filtroTodos==='tudo'||filtroTodos==='kindle')notasKindle.forEach(k=>itens.push({t:'kindle',id:k.id,d:k}));
 if(filtroTodos==='tudo')itens.sort((a,b)=>b.id-a.id);
 
@@ -3304,7 +3316,6 @@ desenharFundoDesfocado(ctx,img,W,H,.7);
 const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(5,7,12,.55)');g.addColorStop(.45,'rgba(5,7,12,.62)');g.addColorStop(1,'rgba(5,7,12,.95)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 ctx.textBaseline='alphabetic';ctx.textAlign='left';
-desenharLogoLili(ctx,W,150,60);desenharSubLogo(ctx,W,198);
 const cw=obs?560:680,ch=obs?840:1020,cx=(W-cw)/2,cy=290;
 ctx.save();ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=70;ctx.shadowOffsetY=28;
 rrPath(ctx,cx,cy,cw,ch,28);ctx.fillStyle='#1b2230';ctx.fill();ctx.restore();
@@ -3334,20 +3345,26 @@ y+=22;ctx.font='600 34px "Inter",sans-serif';ctx.fillStyle='#FACC15';
 ctx.fillText(cortarLinha(ctx,String(l.autor||'').toUpperCase(),900),W/2,y);
 if(obs){
 y+=60;ctx.fillStyle='rgba(250,204,21,.7)';ctx.fillRect(W/2-40,y,80,3);
-y+=75;const esp=1790-y;let t=46,ol;
+y+=75;const esp=1720-y;let t=46,ol;
 for(;t>=26;t-=2){ctx.font=`italic 400 ${t}px "Inter",sans-serif`;ol=quebrarTexto(ctx,obs,840);if(ol.length*t*1.35<=esp)break}
 const max=Math.max(1,Math.floor(esp/(t*1.35)));
 if(ol.length>max){ol=ol.slice(0,max);ol[max-1]=cortarLinha(ctx,ol[max-1]+' …',840)}
 ctx.font=`italic 400 ${t}px "Inter",sans-serif`;ctx.fillStyle='rgba(255,255,255,.92)';
 ol.forEach(tx=>{ctx.fillText(tx,W/2,y);y+=t*1.35});
 }
-ctx.fillStyle='rgba(255,255,255,.5)';ctx.font='600 24px "Inter",sans-serif';
-if(ctx.letterSpacing!==undefined)ctx.letterSpacing='4px';
-ctx.fillText('LILI',W/2,1872);
-if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
+desenharRodapeStory(ctx,W);
 try{storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'))}catch(e){storyBlob=null}
 }
 
+function desenharRodapeStory(ctx,W){
+ctx.save();ctx.shadowColor='rgba(0,0,0,.8)';ctx.shadowBlur=12;ctx.textAlign='center';
+desenharLogoLili(ctx,W,1800,52);
+ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='600 28px "Inter",sans-serif';
+if(ctx.letterSpacing!==undefined)ctx.letterSpacing='2px';
+ctx.fillText('lili.vercel.app',W/2,1862);
+if(ctx.letterSpacing!==undefined)ctx.letterSpacing='0px';
+ctx.restore();
+}
 function mesDestaqueAno(livros){
 const por={};
 livros.forEach(l=>{const p=parseData(l.data_fim);if(!p)return;const o=por[p.m]||(por[p.m]={m:p.m,pag:0,n:0});o.pag+=Math.max(0,parseInt(l.paginas,10)||0);o.n++});
@@ -3540,9 +3557,8 @@ desenharFundoDesfocado(ctx,img,W,H,.7);
 const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(5,7,12,.6)');g.addColorStop(.5,'rgba(5,7,12,.68)');g.addColorStop(1,'rgba(5,7,12,.95)');
 ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 ctx.textBaseline='alphabetic';ctx.textAlign='left';
-desenharLogoLili(ctx,W,150,60);
 /* destaque */
-const txt=String(k.observacao||'').replace(/\s+/g,' ').trim().replace(/^[\u201C\u201E"\u00AB\u2018']+\s*/,'').replace(/\s*[\u201D\u201F"\u00BB\u2019']+$/,''),larg=860,topo=300,base=1450,reserva=190,esp=1.38;
+const txt=String(k.observacao||'').replace(/\s+/g,' ').trim().replace(/^[\u201C\u201E"\u00AB\u2018']+\s*/,'').replace(/\s*[\u201D\u201F"\u00BB\u2019']+$/,''),larg=860,topo=240,base=1390,reserva=190,esp=1.38;
 let tam=76,lin;
 for(;tam>=36;tam-=2){ctx.font=`600 ${tam}px "Inter",sans-serif`;lin=quebrarTexto(ctx,txt,larg);if(lin.length*tam*esp<=base-topo-reserva)break}
 const maxL=Math.max(1,Math.floor((base-topo-reserva)/(tam*esp)));
@@ -3554,14 +3570,15 @@ let y=y0+reserva+tam*.85;lin.forEach(t=>{ctx.fillText(t,W/2,y);y+=tam*esp});
 ctx.restore();
 /* infos do livro */
 ctx.save();ctx.textAlign='center';
-ctx.fillStyle='#FACC15';rrPath(ctx,W/2-60,1566,120,5,3);ctx.fill();
-let ty=1650,tt=42,tl;
+ctx.fillStyle='#FACC15';rrPath(ctx,W/2-60,1500,120,5,3);ctx.fill();
+let ty=1584,tt=42,tl;
 for(;tt>=30;tt-=2){ctx.font=`800 ${tt}px "Inter",sans-serif`;tl=quebrarTexto(ctx,k.titulo||'',880);if(tl.length<=2)break}
 if(tl.length>2){tl=tl.slice(0,2);tl[1]=cortarLinha(ctx,tl[1]+' …',880)}
 ctx.fillStyle='#fff';tl.forEach(t=>{ctx.fillText(t,W/2,ty);ty+=tt*1.2});
 ctx.font='400 30px "Inter",sans-serif';ctx.fillStyle='rgba(255,255,255,.65)';
 ctx.fillText('por '+cortarLinha(ctx,k.autor||'Autor desconhecido',820),W/2,ty+14);
 ctx.restore();
+desenharRodapeStory(ctx,W);
 try{storyBlob=await new Promise(r=>$('story-canvas').toBlob(r,'image/png'))}catch(e){storyBlob=null}
 }
 async function abrirInstaModalKindle(id){const k=notasKindle.find(x=>x.id===id);if(!k)return;storyBlob=null;$('insta-modal').classList.remove('hidden');await renderizarStoryKindle(k)}
