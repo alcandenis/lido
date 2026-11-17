@@ -586,6 +586,7 @@ textarea{
 .nl-texto{max-width:42rem;margin:0 auto;color:#f3f4f6;font-size:1.1rem;line-height:1.8;font-weight:300;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;hyphens:none}
 .nl-edit{display:block;width:100%;max-width:42rem;min-height:65vh;margin:0 auto;padding:1rem;color:#fff;font-size:1.05rem;line-height:1.7;white-space:pre-wrap;tab-size:4;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:1rem;resize:none;outline:none}
 .nl-edit:focus{border-color:#FACC15}
+.nl-edit:empty::before{content:'Escreva sua nota...';color:#6b7280;pointer-events:none}
 
 /* Nota: animação, formatação e rodapé */
 @keyframes nlIn{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:none}}
@@ -2217,6 +2218,14 @@ function htmlSeguro(h){try{const d=new DOMParser().parseFromString('<body>'+h+'<
 function htmlNotaRico(n){return n.html?htmlSeguro(n.html):esc(n.texto||'')}
 
 function mostrarNotaLeitura(){const el=$('nota-leitura');el.classList.remove('hidden','fechando','abrindo');void el.offsetWidth;el.classList.add('abrindo');$('nl-corpo').scrollTop=0}
+let notaNovaRascunho=null;
+function notaAtualLeitura(){return notas.find(x=>x.id===notaLeituraId)||(notaNovaRascunho&&notaNovaRascunho.id===notaLeituraId?notaNovaRascunho:null)}
+function descartarRascunhoOk(){const ed=$('nl-edit');return !(ed&&ed.textContent.trim())||confirm('Descartar esta nota?')}
+function novaNotaEditor(){
+notaNovaRascunho={id:Date.now(),texto:'',data:new Date().toLocaleDateString('pt-BR')};
+notaLeituraId=notaNovaRascunho.id;notaLeituraEdit=true;
+renderizarNotaLeitura();mostrarNotaLeitura();focarEditorNota();
+}
 function abrirNotaLeitura(id,ev,editar){
 if(ev){if(modoSel)return;if(ev.target.closest('button,textarea,a'))return;if(ev.currentTarget&&ev.currentTarget.querySelector('textarea'))return}
 if(!notas.find(x=>x.id===id))return;
@@ -2225,13 +2234,14 @@ if(notaLeituraEdit)focarEditorNota();
 }
 function fecharNotaLeitura(){
 const el=$('nota-leitura');if(!el||el.classList.contains('hidden'))return;
+if(notaNovaRascunho&&notaLeituraEdit&&!descartarRascunhoOk())return;
 el.classList.remove('abrindo');el.classList.add('fechando');
-notaLeituraId=null;notaLeituraEdit=false;
+notaLeituraId=null;notaLeituraEdit=false;notaNovaRascunho=null;
 setTimeout(()=>{if(el.classList.contains('fechando')){el.classList.add('hidden');el.classList.remove('fechando')}},200);
 }
 function focarEditorNota(){const ed=$('nl-edit');if(!ed)return;ed.focus();const rg=document.createRange();rg.selectNodeContents(ed);rg.collapse(false);const sl=getSelection();sl.removeAllRanges();sl.addRange(rg);rtRange=rg.cloneRange()}
 function renderizarNotaLeitura(){
-const n=notas.find(x=>x.id===notaLeituraId);if(!n){fecharNotaLeitura();return}
+const n=notaAtualLeitura();if(!n){fecharNotaLeitura();return}
 $('nl-data').textContent=n.data||'Nota';
 $('nl-fmt').classList.toggle('hidden',!notaLeituraEdit);
 $('nl-rodape').classList.toggle('hidden',notaLeituraEdit);
@@ -2259,13 +2269,14 @@ document.addEventListener('selectionchange',()=>{
 if(!notaLeituraEdit)return;const ed=$('nl-edit');if(!ed)return;
 const sl=getSelection();if(sl.rangeCount&&ed.contains(sl.anchorNode)){rtRange=sl.getRangeAt(0).cloneRange();atualizarBotoesFmt()}
 });
-function cancelarEdicaoNotaLeitura(){notaLeituraEdit=false;renderizarNotaLeitura()}
+function cancelarEdicaoNotaLeitura(){if(notaNovaRascunho&&notaNovaRascunho.id===notaLeituraId){fecharNotaLeitura();return}notaLeituraEdit=false;renderizarNotaLeitura()}
 function salvarNotaLeitura(){
-const n=notas.find(x=>x.id===notaLeituraId),ed=$('nl-edit');if(!n||!ed)return;
+const n=notaAtualLeitura(),ed=$('nl-edit');if(!n||!ed)return;
 const r=rtSerializar(ed);
 if(!r.texto.trim()){aviso('A nota não pode ficar vazia');return}
 n.texto=r.texto;
 if(/<(b|i|u)>/.test(r.html))n.html=r.html;else delete n.html;
+if(n===notaNovaRascunho){notas.unshift(n);notaNovaRascunho=null}
 salvarLocal();rerenderMantendoScroll();
 notaLeituraEdit=false;renderizarNotaLeitura();
 }
@@ -3005,8 +3016,8 @@ function htmlKindle(k){
 return `<div class="frosted-card p-6 md:p-7 w-full space-y-4 shadow-2xl h-full flex flex-col justify-between"><p class="text-white text-lg md:text-xl font-obs font-light">${esc(k.observacao)}</p><div class="flex items-center gap-3 pt-3 border-t border-white/10">${imgCapa(k.capa,'w-9 h-12',k.id,'kindle')}<div class="min-w-0 flex-1"><p class="clamp2 text-[10px] text-gold-400 uppercase tracking-widest font-bold">Kindle · ${esc(k.titulo)}</p><p class="text-[11px] text-gray-400 truncate">por ${esc(k.autor)}</p></div><div class="flex flex-col items-stretch shrink-0 gap-1.5 min-w-[5rem]"><button onclick="abrirInstaModalKindle(${k.id})" class="btn-card">Story</button><button onclick="deletarNotaKindle(${k.id},this)" class="btn-card btn-card-danger">Excluir</button></div></div></div>`;
 }
 function renderizarAbaNotas(feed){
-addSecao(feed,`<div class="px-1 flex items-center justify-between"><h2 class="text-lg font-bold text-white font-serif">Notas</h2><span class="text-[11px] text-gray-400 uppercase tracking-widest">${notas.length} ${notas.length===1?'nota':'notas'}</span></div>`,bgCustomizado || BG_PADRAO,0,false);
-if(!notas.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center space-y-3"><p class="text-sm text-gray-400">Nenhuma nota ainda.</p><button type="button" onclick="alternarNovaPassagemDock()" class="btn-card">Escrever uma nota</button></div>`,bgCustomizado || BG_PADRAO,1,false);
+addSecao(feed,`<div class="px-1 flex items-center justify-between"><h2 class="text-lg font-bold text-white font-serif">Notas</h2><div class="flex items-center gap-3"><span class="text-[11px] text-gray-400 uppercase tracking-widest">${notas.length} ${notas.length===1?'nota':'notas'}</span><button type="button" onclick="novaNotaEditor()" class="text-[11px] btn-gold-degrade px-3 py-1.5 rounded-lg">+ Nova nota</button></div></div>`,bgCustomizado || BG_PADRAO,0,false);
+if(!notas.length)addSecao(feed,`<div class="frosted-card p-6 w-full text-center space-y-3"><p class="text-sm text-gray-400">Nenhuma nota ainda.</p><button type="button" onclick="novaNotaEditor()" class="btn-card">Escrever uma nota</button></div>`,bgCustomizado || BG_PADRAO,1,false);
 else notas.forEach((n,i)=>addSecao(feed,htmlNota(n),bgCustomizado || BG_PADRAO,i+1,false));
 transicionarFundo(bgCustomizado || BG_PADRAO);
 }
